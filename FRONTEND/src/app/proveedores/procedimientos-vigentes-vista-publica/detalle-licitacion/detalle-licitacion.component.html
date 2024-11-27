@@ -1,0 +1,399 @@
+<app-header-publico></app-header-publico>
+
+<div class="entrada" style="overflow-x: clip">
+  <div class="row cls-titulo-portal">
+    <div class="col-12 d-flex justify-content-center">
+      <div class="d-grid text-center">
+        <h2>Detalles de la licitación</h2>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="card container mt-5" style="padding: 2% 5% 2% 5%" *ngIf="!loader">
+  <div class="row">
+    <div class="d-inline-block col-12">
+      <h2 class="d-inline-block me-2">{{detProcedimiento.numero_procedimiento}}</h2>
+      <h6 class="d-inline-block">
+          <span class="{{detProcedimiento.estilo}}" >{{detProcedimiento.nombre_estatus_procedimiento}}</span>
+      </h6>
+      <hr>
+    </div>
+    <div class="col-md-12">
+      <h3>Detalles Generales</h3>
+      <hr />
+      <div class="row">
+        <div class="col-4">
+          <p>
+            <strong>Número de Licitación:</strong>
+            {{ detProcedimiento.numero_procedimiento | uppercase}}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Dependencia:</strong>
+            {{ detProcedimiento.nombre_unidad_responsable | uppercase }}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Tipo de Licitación:</strong>
+            {{ detProcedimiento.nombre_contratacion | uppercase }}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <p>
+            <strong>Procedimiento:</strong>
+            {{ detProcedimiento.nombre_procedimiento | uppercase }}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Licitación de Tecnología:</strong>
+            {{ detProcedimiento.licitacion_tecnologia ? "SI" : "NO" }}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Modalidad:</strong>
+            {{ detProcedimiento.nombre_modalidad }}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <p>
+            <strong>Concepto del Contrato:</strong>
+            {{ detProcedimiento.descripcion_concepto_contratacion | uppercase}}
+          </p>
+        </div>
+        <div class="col-6">
+          <p><strong>Número de Oficio de Autorización:</strong>
+            <span>{{ detProcedimiento.numero_oficio_autorizacion}}</span></p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <p>
+            <strong>Tiempos recortados:</strong>
+            {{ detProcedimiento.licitacion_recortada ? "SI" : "NO" }}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Estatus:</strong>
+            <span class="{{ detProcedimiento.estilo }}">
+              {{ detProcedimiento.nombre_estatus_procedimiento| uppercase }}</span
+            >
+          </p>
+        </div>
+        
+      </div>
+    </div>
+    <div class="col-md-12">
+      <h3>Detalles de la Convocatoria</h3>
+      <hr />
+      <div class="row">
+        <div class="col-4">
+          <p>
+            <strong>Publicación de Convocatoria/Invitación:</strong>
+            {{ detProcedimiento.fecha_publicacion | fechasPipe:'fecha' }}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Fecha Límite de Inscripción:</strong>
+            {{ detProcedimiento.fecha_limite_inscripcion | fechasPipe:'fecha' }}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Fecha de Visita al Lugar:</strong>
+            {{ detProcedimiento.fecha_visita_lugar | fechasPipe:'fecha' }}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <p>
+            <strong>Hora de Visita:</strong>
+            {{ detProcedimiento.fecha_visita_lugar | fechasPipe:'hora' }}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Visitas Adicionales en Bases:</strong>
+            {{ detProcedimiento.existen_visitas_adicionales ? "SI" : "NO" }}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Ubicación del Lugar:</strong>
+            {{ detProcedimiento.descripcion_lugar }}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <p>
+            <strong>Fecha de Junta de Aclaraciones:</strong>
+            {{ detProcedimiento.fecha_junta_aclaraciones | fechasPipe:'fecha'}}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Hora de Junta:</strong>
+            {{ detProcedimiento.fecha_junta_aclaraciones | fechasPipe:'hora' }}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Juntas Adicionales en Bases:</strong>
+            {{ detProcedimiento.existen_juntas_adicionales ? "SI" : "NO" }}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <p>
+            <strong>Fecha de Apertura de Propuestas:</strong>
+            {{ detProcedimiento.fecha_apertura | fechasPipe:'fecha' }}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Hora de Apertura:</strong>
+            {{ detProcedimiento.fecha_apertura | fechasPipe:'hora' }}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Fecha de Fallo:</strong> {{ detProcedimiento.fecha_fallo | fechasPipe:'fecha' }}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <p>
+            <strong>Hora del Fallo:</strong>
+            {{ detProcedimiento.fecha_fallo | fechasPipe:'hora' }}
+          </p>
+        </div>
+        <div class="col-4">
+          <p>
+            <strong>Fecha Estimada de Inicio de la Obra:</strong>
+            {{ detProcedimiento.fecha_inicio_obra_nueva | fechasPipe:'fecha' }}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4">
+          <p *ngIf="detProcedimiento.id_tipo_unidad_responsable === 3 || detProcedimiento.id_tipo_unidad_responsable === 4 ">
+            <strong>Cuota de Inscripción:</strong>
+            {{ detProcedimiento.costo_inscripcion_aut | currency }}
+          </p>
+          <p *ngIf="detProcedimiento.id_tipo_unidad_responsable !== 3 || detProcedimiento.id_tipo_unidad_responsable !== 4">
+            <strong>Cuota de Inscripción:</strong>
+            {{ detProcedimiento.costo_inscripcion | currency }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-12" *ngIf="fechasNuevasExist()">
+      <h3>Nuevas fechas</h3>
+      <hr />
+      <div class="row">
+        <div class="col-4" *ngIf="detProcedimiento.fecha_limite_inscripcion_nueva !== null">
+          <p>
+            <strong>Fecha Límite de Inscripción:</strong>
+            {{ detProcedimiento.fecha_limite_inscripcion_nueva 
+                | fechasPipe:'fecha'
+            }}
+          </p>
+        </div>
+        <div class="col-4" *ngIf="detProcedimiento.fecha_inicio_obra_nueva !== null">
+          <p>
+            <strong>Fecha Estimada de Inicio de la Obra:</strong>
+            {{ detProcedimiento.fecha_inicio_obra_nueva | fechasPipe:'fecha' }}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4" *ngIf="detProcedimiento.fecha_junta_aclaraciones_nueva !== null">
+          <p>
+            <strong>Fecha de Junta de Aclaraciones:</strong>
+            {{
+              detProcedimiento.fecha_junta_aclaraciones_nueva
+                 | fechasPipe:'fecha'
+            }}
+          </p>
+        </div>
+        <div class="col-4" *ngIf="detProcedimiento.fecha_junta_aclaraciones_nueva !== null">
+          <p>
+            <strong>Hora de Junta:</strong>
+            {{ detProcedimiento.fecha_junta_aclaraciones_nueva
+               | fechasPipe:'hora' }}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4" *ngIf="detProcedimiento.fecha_apertura_nueva !== null">
+          <p>
+            <strong>Fecha de Apertura de Propuestas:</strong>
+            {{ detProcedimiento.fecha_apertura_nueva | fechasPipe:'fecha' }}
+          </p>
+        </div>
+        <div class="col-4" *ngIf="detProcedimiento.fecha_apertura_nueva !== null">
+          <p>
+            <strong>Hora de Apertura:</strong>
+            {{ detProcedimiento.fecha_apertura_nueva | fechasPipe:'hora' }}
+          </p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-4" *ngIf="detProcedimiento.fecha_fallo !== null">
+          <p>
+            <strong>Fecha de Fallo:</strong> {{ detProcedimiento.fecha_fallo | fechasPipe:'fecha' }}
+          </p>
+        </div>
+        <div class="col-4" *ngIf="detProcedimiento.fecha_fallo !== null">
+          <p>
+            <strong>Hora del Fallo:</strong>
+            {{ detProcedimiento.fecha_fallo | fechasPipe:'hora' }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <div id="anexosConvocatoria">
+      <div class="row">
+        <div class="col-12">
+          <h3>Anexos de Convocatoria</h3>
+          <hr />
+        </div>
+        <div class="col-sm-6 col-12">
+          <p><strong>Convocatoria / Invitación:</strong> <button class="btn btn-warning btn-sm btn-circle me-2 ms-2 " type="button"
+            (click)="descargarConvocatoriaPdf()">
+                <i class="bi bi-download"></i>
+            </button></p>
+        </div>
+        <div class="col-sm-6 col-12">
+          <p><strong>Base:</strong><button class="btn btn-warning btn-sm btn-circle me-2 ms-2 " type="button"
+            (click)="descargarBasesPdf()">
+                <i class="bi bi-download"></i>
+            </button></p>
+        </div>
+      </div>
+    </div>
+    <div id="anexoProcedimiento">
+      <h3>Anexos del procedimiento</h3>
+      <hr>
+      <div class="card mt-3">
+        <div class="container table-responsive">
+          <table class="table table-striped" aria-describedby="tabla_anexos">
+            <thead>
+              <tr>
+                <th scope="col">Tipo de archivo</th>
+                <th scope="col">Comentarios</th>
+                <th scope="col">Anexo</th>
+              </tr>
+            </thead>
+            <tbody>
+              <ng-container *ngFor="let anexo of lst_anexos; let i = index">
+                <ng-container *ngIf="anexo">
+                  <tr>
+                    <td>{{ anexo?.nombre_tipo_archivo }}</td>
+                    <td>{{ anexo?.comentarios }}</td>
+                    <td>
+                      <button class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                        (click)="descargarAnexoProcedimiento(anexo)">
+                        <i class="bi bi-download"></i>
+                      </button>
+                    </td>
+                  </tr>
+                </ng-container>
+              </ng-container>
+              
+              <ng-container *ngIf="detProcedimiento.url_archivo_aviso_diferendo">
+                <tr>
+                  <td>ACTA DIFERIMIENTO APERTURA</td>
+                  <td></td>
+                  <td>
+                    <button class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                      (click)="descargarActaProcedimiento(detProcedimiento.url_archivo_aviso_diferendo, 'ACTA_DIFERIMIENTO_APERTURA', 1)">
+                      <i class="bi bi-download"></i>
+                    </button>
+                  </td>
+                </tr>
+              </ng-container>
+              
+              <ng-container *ngIf="detProcedimiento.url_archivo_acto_recepcion">
+                <tr>
+                  <td>ACTA APERTURA DE PROPUESTAS</td>
+                  <td></td>
+                  <td>
+                    <button class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                      (click)="descargarActaProcedimiento(detProcedimiento.url_archivo_acto_recepcion, 'ACTA_APERTURA_PROPUESTAS', 1)">
+                      <i class="bi bi-download"></i>
+                    </button>
+                  </td>
+                </tr>
+              </ng-container>
+              
+              <ng-container *ngIf="detProcedimiento.url_archivo_acta_fallo">
+                <tr>
+                  <td>ACTA FALLO</td>
+                  <td></td>
+                  <td>
+                    <button class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                      (click)="descargarActaProcedimiento(detProcedimiento.url_archivo_acta_fallo, 'ACTA_FALLO', 1)">
+                      <i class="bi bi-download"></i>
+                    </button>
+                  </td>
+                </tr>
+              </ng-container>
+            </tbody>
+          </table>
+          <ngb-alert *ngIf="datosParaMostrar">
+            Sin datos para mostrar
+        </ngb-alert>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mt-5">
+    <button
+      class="btn btn-sm btn-primary w-auto"
+      style="margin-right: 5px"
+      *ngIf="detProcedimiento?.id_estatus_procedimiento == 2 && detProcedimiento?.id_tipo_contratacion == 1"
+      (click)="open(participar)"
+    >
+      Participar
+    </button>
+    <button
+      class="btn btn-sm btn-outline-secondary w-auto"
+      routerLink="/inicio/portal-licitaciones"
+    >
+      Regresar
+    </button>
+  </div>
+</div>
+
+<app-footer></app-footer>
+
+
+<ng-template #participar let-c="close" let-d="dismiss">
+
+  <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">Será inscrito en el listado de participantes</h4>
+        <label class="mt-2 text-muted">Seleccione aceptar para continuar con el proceso de inscripción</label>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-outline-danger" (click)="c('Save click')">Cancelar</button>
+      <button type="button" class="btn btn-sm btn-success" (click)="redireccionarInscripcion()">Aceptar</button>
+  </div>
+</ng-template>

@@ -1,0 +1,17 @@
+.icon-notification {
+    font-size: 19px;
+    color: rgb(192, 148, 36);
+}
+
+.box-mensaje {
+    display: flex;
+    align-items: center;
+}
+
+.btn-outline-light{
+    --bs-btn-border-color: transparent !important;
+}
+
+.cursor-pointer {
+    cursor: pointer;
+}

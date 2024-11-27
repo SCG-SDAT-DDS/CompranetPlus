@@ -1,0 +1,322 @@
+<app-header-publico></app-header-publico>
+<div class="entrada" style="overflow-x: clip;">
+  <div class="row cls-titulo-portal">
+  <div class="col-12 d-flex justify-content-center">
+    <div class="d-grid text-center">
+      <h2>Bienvenido al portal público de CompraNet Plus Sonora</h2>
+      <h5>Consulte aquí la información de los anuncios de licitación del Gobierno del Estado de Sonora.</h5>
+    </div>
+  </div>
+</div>
+</div>
+
+  <!-- Area de filtros -->
+  <div class="container entrada">
+    <div class="card mt-3">
+      <div class="card card-body">
+        <div class="container mt-2">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="filtroUnidadResponsable" class="form-label">Unidades Responsables:</label>
+              <select id="filtroUnidadResponsable" class="form-select form-select-sm" [(ngModel)]="filtros.unidad_responsable">
+                <option [ngValue]="null">Seleccione...</option>
+                <option *ngFor="let uResponsable of lst_unidades_responsables" [value]="uResponsable.id_unidad_responsable">{{uResponsable.nombre_unidad_responsable | uppercase}}</option>
+              </select>
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="filtroTipo" class="form-label">Concepto de contratación:</label>
+              <input type="text"  class="form-control form-control-sm" placeholder="Escriba un texto para buscar" [(ngModel)]="filtros.concepto_contratacion" />
+            </div>
+            <div class="col-md-3 mb-3">
+              <label for="filtroPrecio" class="form-label">No.Licitación:</label>
+              <input type="text"  class="form-control form-control-sm" placeholder="Escriba un texto para buscar" [(ngModel)]="filtros.no_licitacion" />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4 mb-3">
+              <label for="filtroTipo" class="form-label">Tipo de Licitación:</label>
+              <select id="filtroTipoProcedimiento" class="form-select form-select-sm" [(ngModel)]="filtros.tipo_licitacion">
+                <option [ngValue]="null">Seleccione...</option>
+                <option [ngValue]="1">LICITACIONES PÚBLICAS</option>
+                <option [ngValue]="2">LICITACIONES SIMPLIFICADAS</option>
+                <option [ngValue]="3">ADJUDICACIONES DIRECTAS</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="filtroTipo" class="form-label">Tipo de procedimiento:</label>
+              <select id="filtroTipo" class="form-select form-select-sm" [(ngModel)]="filtros.tipo_procedimiento">
+                <option [ngValue]="null">Seleccione... </option>
+                <option [ngValue]="1">ADQUISICIONES</option>
+                <option [ngValue]="2">SERVICIOS</option>
+                <option [ngValue]="3">ARRENDAMIENTO</option>
+                <option [ngValue]="5">OBRA PUBLICA</option>
+                <option [ngValue]="6">SERVICIOS RELACIONADOS CON OBRA PUBLICA</option>
+                <option [ngValue]="4">SERVICIOS PROFESIONALES, ASESORIA, CAPACITACION Y OTROS</option>
+              </select>
+            </div>
+            <div class="col-md-4 mb-3">
+              <label for="filtroTalla" class="form-label">Estatus de procedimiento:</label>
+              <select id="filtroTalla" class="form-select form-select-sm" [(ngModel)]="filtros.estatus_procedimiento">
+                <option [ngValue]="null">Seleccione...</option>
+                <option [ngValue]="2">VIGENTE</option>
+                <option [ngValue]="3">SEGUIMIENTO</option>
+                <option [ngValue]="7">ADJUDICADA</option>
+                <option [ngValue]="6">DESIERTA</option>
+                <option [ngValue]="5">CANCELADA</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <label for="rangoFecha" class="form-label">Fecha de públicación:</label>
+          </div>
+
+          <div class="row mb-2">
+            <div class="col-12 col-sm-12 col-md-6 col-lg-4 d-flex">
+              <div class="dp-hidden position-absolute">
+                <div class="input-group">
+                  <input
+                    name="datepicker"
+                    class="form-control"
+                    ngbDatepicker
+                    #datepicker="ngbDatepicker"
+                    [autoClose]="'outside'"
+                    (dateSelect)="onDateSelection($event)"
+                    [displayMonths]="2"
+                    [dayTemplate]="t"
+                    outsideDays="hidden"
+                    [startDate]="fromDate!"
+                    tabindex="-1"
+                  />
+                  <ng-template #t let-date let-focused="focused">
+                    <span
+                      class="custom-day"
+                      [class.focused]="focused"
+                      [class.range]="isRange(date)"
+                      [class.faded]="isHovered(date) || isInside(date)"
+                      (mouseenter)="hoveredDate = date"
+                      (mouseleave)="hoveredDate = null"
+                    >
+                      {{ date.day }}
+                    </span>
+                  </ng-template>
+                </div>
+              </div>
+              <div class="input-group" style="width: 50%;">
+                <input
+                  #dpFromDate
+                  class="form-control cls-inputdate-rigth"
+                  placeholder="dd-mm-aaaa"
+                  name="dpFromDate"
+                  [value]="formatFecha(fromDate)"
+                  (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
+                />
+              </div>
+              <div class="input-group" style="width: 50%;">
+                <input
+                  #dpToDate
+                  class="form-control cls-inputdate-left"
+                  placeholder="dd-mm-aaaa"
+                  name="dpToDate"
+                  [value]="formatFecha(toDate)"
+                  (input)="toDate = validateInput(toDate, dpToDate.value)"
+                />
+                <button class="btn btn-outline-secondary bi bi-calendar3" (click)="datepicker.toggle()" type="button"></button>
+              </div>
+            </div>
+          </div>
+          <div class="d-flex">
+            <button type="button" class="btn btn-sm btn-primary" id="btnBuscar" (click)="filtrarDatos()">
+              Filtrar
+              <div *ngIf="loader" class="spinner-border spinner-border-sm" role="status"></div>
+            </button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" (click)="limpiarFiltros()" style="margin-left: 5px;">
+              Limpiar filtros
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-2 entrada d-flex justify-content-center">
+      <p style="display: contents; margin: 1px;">Visualizar información en: </p>
+      <div class="form-check" style="margin-left: 1%;">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" [checked]="vistaListado" (change)="cambiarVista()">
+        <label class="form-check-label" for="flexRadioDefault2">
+          <p>Tabla <i class="bi bi-table"></i></p>
+        </label>
+      </div>
+      <div class="form-check " style="margin-left: 1%;">
+        <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1" [checked]="!vistaListado" (change)="cambiarVista()" >
+        <label class="form-check-label" for="flexRadioDefault1">
+           <p>Cuadricula <i class="bi bi-microsoft"></i></p>
+        </label>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="container mt-2 entrada" *ngIf="!vistaListado">
+    <div class="mt-3">
+      <div class="row">
+        <div class="col-12 d-flex justify-content-between ordenamientoResponsive">
+          <div>
+            <p>{{mostrandoMsj}}</p>
+          </div>
+          <div class="d-flex ordenamientoResponsive">
+            <p>Ordenar por:</p>
+            <div class=" d-flex opcionesResponsive">
+              <p class="cls_ordenar">Estatus <span class="bi bi-arrow-down-up" (click)="ordenarEstatus()"></span> </p>
+              <p class="cls_ordenar">No.Licitación <span class="bi bi-arrow-down-up" (click)="ordenarNumLicitacion()"></span> </p>
+              <p class="cls_ordenar">Concepto <span class="bi bi-arrow-down-up" (click)="ordenarConcepto()"></span> </p>
+              <p class="cls_ordenar">Dependencia <span class="bi bi-arrow-down-up" (click)="ordenarDependencia()" ></span></p>
+              <p class="cls_ordenar">Fecha Publicacion <span class="bi bi-arrow-down-up" (click)="ordenarFecha()"></span> </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="contenedor">
+        <div class="card" *ngFor="let licitacion of list_licitaciones">
+          <div class="card-body">
+              <p class="card-text"><strong>No.Licitación:</strong> {{ licitacion.numero_procedimiento }}</p>
+              <p class="card-text"><strong>Estatus: </strong> <span class="{{licitacion.estilo}}" style="align-self: center"> {{ licitacion.nombre_estatus_procedimiento }}</span></p>
+              <p class="card-text"><strong>Publicacion:</strong> {{licitacion.fecha_publicacion | fechasPipe:'fecha' }} </p>
+              <p class="card-text" style="text-align: start;"><strong>Dependencia:</strong> {{ licitacion.nombre_unidad_responsable }}</p>
+              <p class="card-description">
+                <strong>Concepto:</strong> {{licitacion.descripcion_concepto_contratacion}}
+              </p>
+              <div style="display: grid; gap:3px">
+                <button class="btn btn-sm btn-primary" *ngIf="licitacion.id_estatus_procedimiento == 2 && licitacion.id_tipo_contratacion == 1" (click)="open(content, licitacion)">Participar</button>
+                <button class="btn btn-sm btn-outline-dark" (click)="mostrarDetalle('inicio/portal-licitaciones/detalle' , licitacion.id_procedimiento_administrativo)">
+                  Detalles
+                </button>
+              </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-center" *ngIf="!loader && list_licitaciones?.length == 0">
+        <ngb-alert class="w-100">
+          No hay datos para mostrar
+        </ngb-alert>
+        </div>
+    </div>
+  </div>
+
+
+  <div class="container entrada" *ngIf="vistaListado">
+    <div class="mt-3">
+      <div class="row">
+        <div class="col-12 d-flex justify-content-between">
+          <div>
+            <p>{{this.mostrandoMsj}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card" style="overflow-x: auto; padding: 1%;">
+    <table class="table table-responsive table-striped entrada" aria-describedby="listado_licitaciones">
+      <thead>
+        <tr>
+          <th scope="col" style="white-space: nowrap"> <p>Estatus <span class="bi bi-arrow-down-up" (click)="ordenarEstatus()"></span></p> </th>
+          <th scope="col" style="white-space: nowrap"> <p>No.Licitación <span class="bi bi-arrow-down-up" (click)="ordenarNumLicitacion()"></span></p> </th>
+          <th scope="col" style="white-space: nowrap"> <p>Concepto <span class="bi bi-arrow-down-up" (click)="ordenarConcepto()"></span></p> </th>
+          <th scope="col" style="white-space: nowrap"> <p>Dependencia <span class="bi bi-arrow-down-up" (click)="ordenarDependencia()"></span></p> </th>
+          <th scope="col" style="white-space: nowrap"> <p>Publicacion <span class="bi bi-arrow-down-up" (click)="ordenarFecha()"></span></p></th>
+        </tr>
+      </thead>
+      <tbody *ngIf="!loader">
+        <tr *ngFor="let licitacion of list_licitaciones; index as i">
+          <td> <p><span class="{{licitacion.estilo}}" style="align-self: center">{{ licitacion.nombre_estatus_procedimiento }}</span></p> </td>
+          <td> <p style="white-space: nowrap;" >{{ licitacion.numero_procedimiento }}</p>  </td>
+          <td> <p> {{ licitacion.descripcion_concepto_contratacion }}</p></td>
+          <td> <p> {{ licitacion.nombre_unidad_responsable}}</p></td>
+          <td> <p>{{licitacion.fecha_publicacion | fechasPipe:'fecha' }}</p> </td>
+          <td>
+            <div style="display: grid; gap:3px; width: fit-content;">
+              <button class="btn btn-sm btn-primary" *ngIf="licitacion.id_estatus_procedimiento == 2 && licitacion.id_tipo_contratacion == 1" (click)="open(content, licitacion)">Participar</button>
+              <button class="btn btn-sm btn-outline-dark" (click)="mostrarDetalle('inicio/portal-licitaciones/detalle', licitacion.id_procedimiento_administrativo)">Detalles</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="d-flex justify-content-center align-items-center pb-2" >
+      <div *ngIf="loader" class="spinner-border spinner-border-lg" role="status"></div>
+    </div>
+    <ngb-alert *ngIf="!loader && list_licitaciones.length == 0">
+      Sin datos para mostrar
+    </ngb-alert>
+  </div>
+  </div>
+
+  <div class="container mt-2">
+    <div class="row">
+      <div class="col-md-7 col-12 d-flex justify-content-start">
+        <div class="mt-1 table-responsive">
+          <ngb-pagination
+            size="sm"
+            [collectionSize]="collectionSize"
+            [(page)]="page"
+            [pageSize]="pageSize"
+            [maxSize]="5"
+            [rotate]="true"
+            [boundaryLinks]="true"
+            (pageChange)="onPageChange()"
+          ></ngb-pagination>
+        </div>
+      </div>
+      <div class="col-md-5 col-12 d-flex justify-content-end">
+        <div class="d-flex align-items-baseline">
+          <small class="me-2">Mostrando: </small>
+          <input
+                type="number"
+                class="form-control me-2"
+                style=" max-width: 4em;"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                [value]="pageSize"
+                [(ngModel)]="pageSize"
+                (change)=" obtenerProcedimientos(null,true)"
+              >
+          <small>registros por página</small>
+        </div>
+      </div>
+    </div>
+  </div>
+<app-footer></app-footer>
+
+
+<!-- modal -->
+<ng-template #content let-c="close" let-d="dismiss">
+
+  <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">Será inscrito en el listado de participantes</h4>
+        <label class="mt-2 text-muted">Seleccione aceptar para continuar con el proceso de inscripción</label>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-outline-danger" (click)="c('Save click')">Cancelar</button>
+      <button type="button" class="btn btn-sm btn-success" (click)="redireccionarInscripcion()">Aceptar</button>
+  </div>
+</ng-template>
+
+
+<!-- modal -->
+<ng-template #myModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">
+      <strong>Ingrese los datos de su e.firma para finalizar su proceso de Registro</strong>
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-e-firma [rfc_proveedor]="rfcProveedor" (efirmaValidacion)="efirmaResponse($event)"></app-e-firma>
+  </div>
+</ng-template>
+
+<app-boton-top></app-boton-top>

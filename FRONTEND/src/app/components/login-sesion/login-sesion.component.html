@@ -1,0 +1,514 @@
+<section id="sp-page-title">
+  <div class="row">
+    <div id="sp-title" class="col-lg-12">
+      <div class="sp-page-title">
+        <div
+          class="sp-page-title-image"
+          style="background-image: url(../../../assets/images/login-bg.jpg)"
+        ></div>
+        <div class="container-md">
+          <div class="row">
+            <!-- Informacion de CompraNet de lado izquierdo (Imagenes , textos, etc)  -->
+            <div
+              class="col-lg-7 col-md-12 col-sm-12 col-12 order-lg-1 order-md-2 order-sm-2 order-2 info-login"
+              style="border-right: 2px solid; border-color: white"
+            >
+              <div>
+                <div class="d-flex justify-content-around mt-5 mb-5">
+                  <img
+                    src="../../../assets/images/logo-sonora-w.svg"
+                    alt="CompranetV3.0 Sonora"
+                    class="img-fluid img-auth"
+                  />
+                  <img
+                    src="../../../assets/images/logo-CN-white.svg"
+                    alt="CompranetV3.0 Sonora"
+                    class="img-fluid"
+                    width="150px"
+                  />
+                  <img
+                    src="../../../assets/images/logo-scg.svg"
+                    style="filter: invert(1);"
+                    alt="CompranetV3.0 Sonora"
+                    class="img-fluid img-auth"
+                  />
+                </div>
+                <div class="mt-1 text-white" style="text-align: center">
+                  <h1 style="font-size: 1.8rem; font-weight: 800">COMPRANET PLUS</h1>
+                  <h2 style="font-size: 1.5rem; font-weight: 600">
+                    Sistema para las Contrataciones del Gobierno del Estado de
+                    Sonora
+                  </h2>
+                  <p style="font-size: 0.9rem">
+                    Plataforma web para la captura, seguimiento y publicación de
+                    las contrataciones con normatividad estatal, cuyo objetivo
+                    principal de establecer una herramienta tecnológica
+                    gubernamental que contenga la información precisa y
+                    transparente del gasto público a disposición de la
+                    ciudadanía, así como para los proveedores y contratistas
+                    interesados en participar en algún procedimiento.
+                  </p>
+                </div>
+                <div class="mt-2 mb-2 d-flex">
+                  <p class="cls-auth-secretaria">
+                    <strong
+                      >Secretaría de la Contraloría General del Estado de
+                      Sonora.</strong
+                    >
+                    Centro de Gobierno, Edificio Hermosillo 2do. piso. Blvd.
+                    Paseo Río Sonora y Comonfort. Col. Villa de Seris. C.P.
+                    83280, Hermosillo, Sonora, México.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              class="col-lg-5 col-md-12 col-sm-12 col-12 order-lg-2 order-md-1 order-sm-1 order-1 d-grid text-white"
+              style="place-content: center"
+            >
+              <div class="d-flex justify-content-around cls-auth-logos-movil">
+                <img
+                  src="../../../assets/images/logo-CN-white.svg"
+                  alt="CompranetV3.0 Sonora"
+                  class="img-fluid"
+                  width="120px"
+                />
+                <img
+                  src="../../../assets/images/logo-gobierno-digital-white.svg"
+                  alt="CompranetV3.0 Sonora"
+                  class="img-fluid"
+                  width="100px"
+                />
+              </div>
+              <div class="cls-info-movil">
+                <h1 style="font-size: 1.5rem; font-weight: 800">COMPRANET PLUS</h1>
+                <h2 style="font-size: 0.85rem; font-weight: 600">
+                  Sistema para las Contrataciones del Gobierno del Estado de
+                  Sonora
+                </h2>
+              </div>
+              <section class="cls-auth-movil" *ngIf="mostrarLogin">
+                <form
+                  style="width: 300px; display: grid"
+                  [formGroup]="formLogin"
+                >
+                  <div class="d-grid" style="place-content: center">
+
+                    <h1><strong>COMPRANET 2.0</strong></h1>
+                  </div>
+
+                  <div class="cls-input-group">
+                    <input
+                      class="form-control"
+                      type="text"
+                      placeholder="Ingrese su usuario"
+                      formControlName="usuario"
+                      data-lpignore="true"
+                      [class.is-invalid]="
+                        usuarioForm.invalid &&
+                        (usuarioForm.dirty || usuarioForm.touched)
+                      "
+                    />
+                    <label class="floating-label" [ngClass]="{ 'autocomplete-enabled': usuarioForm.get('usuario')?.touched && usuarioForm.get('usuario')?.invalid }"
+                      >Usuario: <app-campo-obligatorio
+                    /></label>
+                    <div
+                      *ngIf="
+                        usuarioForm.invalid &&
+                        (usuarioForm.dirty || usuarioForm.touched)
+                      "
+                      class="invalid-feedback cls-input-errors"
+                    >
+                      <div
+                        *ngIf="usuarioForm.errors?.['required']"
+                        class="cls-input-errors"
+                      >
+                        ¡El usuario es requerido!
+                      </div>
+                      <div
+                        *ngIf="usuarioForm.errors?.['minlength']"
+                        class="cls-input-errors"
+                      >
+                        ¡El usuario debe tener al menos 3 caracteres!
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="cls-input-group">
+                    <input
+                      class="form-control"
+                      type="password"
+                      placeholder="Ingrese su password"
+                      formControlName="password"
+                      data-lpignore="true"
+                      [class.is-invalid]="
+                        passwordForm.invalid &&
+                        (usuarioForm.dirty || usuarioForm.touched)
+                      "
+                    />
+                    <label>Contraseña: <app-campo-obligatorio /></label>
+
+                    <div
+                      *ngIf="
+                        passwordForm.invalid &&
+                        (passwordForm.dirty || passwordForm.touched)
+                      "
+                      class="invalid-feedback cls-input-errors"
+                    >
+                      <div
+                        *ngIf="passwordForm.errors?.['required']"
+                        class="cls-input-errors"
+                      >
+                        ¡La constraseña es requerido!
+                      </div>
+                      <div
+                        *ngIf="passwordForm.errors?.['minlength']"
+                        class="cls-input-errors"
+                      >
+                        ¡La contraseña debe tener al menos 3 caracteres!
+                      </div>
+                    </div>
+                  </div>
+
+
+                  <button
+                    type="button"
+                    class="btn btn-primary mt-3"
+                    (click)="login()"
+                    [disabled]="loader"
+                  >
+                    Acceder
+                    <div
+                      *ngIf="loader"
+                      class="spinner-border spinner-border-sm"
+                      role="status"
+                    ></div>
+                  </button>
+                </form>
+              </section>
+
+              <section *ngIf="mostrarFormulario">
+                <div class="container">
+                  <form
+                    style="width: 300px; display: grid; place-content: center;"
+                    [formGroup]="formRecuperarPass"
+                  >
+                    <h4>
+                      <strong
+                        >Recuperar Contraseña: Ingresa Usuario y Correo
+                        Electrónico</strong
+                      >
+                    </h4>
+
+                    <div class="cls-input-group">
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Ingrese su usuario"
+                        formControlName="usuario"
+                        data-lpignore="true"
+                        [class.is-invalid]="
+                          usuarioFormResetPass.invalid &&
+                          (usuarioFormResetPass.dirty ||
+                            usuarioFormResetPass.touched)
+                        "
+                      />
+                      <label>Usuario: <app-campo-obligatorio /></label>
+                      <div
+                        *ngIf="
+                          usuarioFormResetPass.invalid &&
+                          (usuarioFormResetPass.dirty ||
+                            usuarioFormResetPass.touched)
+                        "
+                        class="invalid-feedback cls-input-errors"
+                      >
+                        <div
+                          *ngIf="usuarioFormResetPass.errors?.['required']"
+                          class="cls-input-errors"
+                        >
+                          ¡El usuario es requerido!
+                        </div>
+                        <div
+                          *ngIf="usuarioFormResetPass.errors?.['minlength']"
+                          class="cls-input-errors"
+                        >
+                          ¡El usuario debe tener al menos 3 caracteres!
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="cls-input-group">
+                      <input
+                        class="form-control"
+                        type="email"
+                        placeholder="Ingrese su correo electrónico"
+                        formControlName="correo"
+                        data-lpignore="true"
+                        [class.is-invalid]="
+                          correoFormResetPass.invalid &&
+                          (correoFormResetPass.dirty ||
+                            correoFormResetPass.touched)
+                        "
+                      />
+                      <label>Email: <app-campo-obligatorio /></label>
+                      <div
+                        *ngIf="
+                          correoFormResetPass.invalid &&
+                          (correoFormResetPass.dirty ||
+                            correoFormResetPass.touched)
+                        "
+                        class="invalid-feedback cls-input-errors"
+                      >
+                        <div
+                          *ngIf="correoFormResetPass.errors?.['required']"
+                          class="cls-input-errors"
+                        >
+                          ¡El email es requerido!
+                        </div>
+                        <div
+                          *ngIf="correoFormResetPass.errors?.['minlength']"
+                          class="cls-input-errors"
+                        >
+                          ¡El email debe tener al menos 3 caracteres!
+                        </div>
+                        <div
+                          *ngIf="correoFormResetPass.errors?.['email']"
+                          class="cls-input-errors"
+                        >
+                          ¡El email debe tener el formato correcto!
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-end pt-4">
+                      <button
+                        class="btn btn-success me-2"
+                        (click)="solicitarRecuperarPassSubmit()"
+                        [disabled]="loader"
+                      >
+                        Recuperar contraseña
+                        <div
+                          *ngIf="loader"
+                          class="spinner-border spinner-border-sm"
+                          role="status"
+                        ></div>
+                      </button>
+                      <button
+                        class="btn btn-outline-dark"
+                        (click)="cancelarCambiarPass()"
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </section>
+
+              <section *ngIf="mostrarCodigoRecPass">
+                <div class="container">
+                  <form
+                    style="width: 300px; display: grid; place-content: center;"
+                    [formGroup]="formCodigoPass"
+                  >
+                    <h4>
+                      <strong
+                        >Recuperar Contraseña: Validación de código</strong
+                      >
+                    </h4>
+
+                    <div class="cls-input-group">
+                      <input
+                        class="form-control"
+                        type="text"
+                        placeholder="Ingrese el código de validación"
+                        formControlName="codigo"
+                        data-lpignore="true"
+                        [class.is-invalid]="
+                          codigoFormRestablecerPass.invalid &&
+                          (codigoFormRestablecerPass.dirty ||
+                            codigoFormRestablecerPass.touched)
+                        "
+                      />
+                      <label
+                        >Código de validación: <app-campo-obligatorio
+                      /></label>
+                      <div
+                        *ngIf="
+                          codigoFormRestablecerPass.invalid &&
+                          (codigoFormRestablecerPass.dirty ||
+                            codigoFormRestablecerPass.touched)
+                        "
+                        class="invalid-feedback cls-input-errors"
+                      >
+                        <div
+                          *ngIf="codigoFormRestablecerPass.errors?.['required']"
+                          class="cls-input-errors"
+                        >
+                          ¡El código de validación es requerido!
+                        </div>
+                        <div
+                          *ngIf="codigoFormRestablecerPass.errors?.['minlength']"
+                          class="cls-input-errors"
+                        >
+                          ¡El código debe tener al menos 6 caracteres!
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-end pt-4">
+                      <button
+                        class="btn btn-success me-2"
+                        (click)="validarRecuperarPassSubmit()"
+                        [disabled]="loader"
+                      >
+                        Validar código
+                        <div
+                          *ngIf="loader"
+                          class="spinner-border spinner-border-sm"
+                          role="status"
+                        ></div>
+                      </button>
+                      <button
+                        class="btn btn-outline-dark"
+                        (click)="cancelarCambiarPass()"
+                      >
+                        cancelar
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </section>
+
+              <section
+                *ngIf="
+                  mostrarLlenarNuevoPass &&
+                  formRestablecerPass != undefined &&
+                  formRestablecerPass != null
+                "
+              >
+                <div class="container">
+                  <form
+                    style="width: 300px; display: grid"
+                    [formGroup]="formRestablecerPass"
+                  >
+                    <h4>
+                      <strong
+                        >Recuperar Contraseña: Ingresar tu Nueva
+                        Contraseña</strong
+                      >
+                    </h4>
+
+                    <div class="cls-input-group">
+                      <input
+                        class="form-control"
+                        type="password"
+                        placeholder="Ingrese tu nueva contraseña"
+                        formControlName="nuevaContrasena"
+                        data-lpignore="true"
+                        [class.is-invalid]="
+                          nuevaContraFormRestablecerPass.invalid &&
+                          (nuevaContraFormRestablecerPass.dirty ||
+                            nuevaContraFormRestablecerPass.touched)
+                        "
+                      />
+                      <label>Nueva contraseña: <app-campo-obligatorio /></label>
+                      <div
+                        *ngIf="
+                          nuevaContraFormRestablecerPass.invalid &&
+                          (nuevaContraFormRestablecerPass.dirty ||
+                            nuevaContraFormRestablecerPass.touched)
+                        "
+                        class="invalid-feedback cls-input-errors"
+                      >
+                        <div
+                          *ngIf="nuevaContraFormRestablecerPass.errors?.['required']"
+                          class="cls-input-errors"
+                        >
+                          ¡La nueva contraseña es requerida!
+                        </div>
+                        <div
+                          *ngIf="nuevaContraFormRestablecerPass.errors?.['pattern']"
+                          class="cls-input-errors"
+                        >
+                          ¡La nueva constraseña debe tener al menos 8 caracteres,
+                          contemplando mayúsculas, minúsculas y números!
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="cls-input-group">
+                      <input
+                        class="form-control"
+                        type="password"
+                        placeholder="Ingrese nuevamente tu nueva contraseña"
+                        formControlName="repetirNuevaContrasena"
+                        data-lpignore="true"
+                        [class.is-invalid]="
+                          nuevaContraRepFormRestablecerPass.invalid &&
+                          (nuevaContraRepFormRestablecerPass.dirty ||
+                            nuevaContraRepFormRestablecerPass.touched)
+                        "
+                      /><label
+                        >Repite tu nueva contraseña: <app-campo-obligatorio
+                      /></label>
+                      <div
+                        *ngIf="
+                          nuevaContraRepFormRestablecerPass.invalid &&
+                          (nuevaContraRepFormRestablecerPass.dirty ||
+                            nuevaContraRepFormRestablecerPass.touched)
+                        "
+                        class="invalid-feedback cls-input-errors"
+                      >
+                        <div
+                          *ngIf="nuevaContraRepFormRestablecerPass.errors?.['required']" class="cls-input-errors"
+                        >
+                          ¡La contraseña es requerida!
+                        </div>
+                        <div
+                          *ngIf="nuevaContraRepFormRestablecerPass.errors?.['pattern']" class="cls-input-errors"
+                        >
+                          ¡La constraseña debe tener al menos 8 caracteres,
+                          contemplando mayúsculas, minúsculas y números!
+                        </div>
+                        <div
+                          *ngIf="nuevaContraRepFormRestablecerPass.errors?.['noMatch']" class="cls-input-errors"
+                        >
+                          ¡Las contraseñas no son iguales!
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-end pt-4">
+                      <button
+                        class="btn btn-success me-2"
+                        (click)="cambiarPassSubmit()"
+                        [disabled]="loader"
+                      >
+                        Recuperar contraseña
+                        <div
+                          *ngIf="loader"
+                          class="spinner-border spinner-border-sm"
+                          role="status"
+                        ></div>
+                      </button>
+                      <button
+                        class="btn btn-outline-dark"
+                        (click)="cancelarCambiarPass()"
+                      >
+                        cancelar
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </section>
+              <div class="cls-auth-footer-movil">
+                <img src="../../../assets/images/logo-sonora-w.svg" alt="CompranetV3.0 Sonora" class="img-fluid img-auth"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

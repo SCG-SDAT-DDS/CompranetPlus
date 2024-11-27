@@ -1,0 +1,162 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin id="sidebar" class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"></app-side-nav-admin>
+
+<div class="content-layout-admin">
+  <section>
+    <div class="container pt-5">
+      
+      <div class="row">
+        <div class="d-inline-block col-md-12">
+          <h2 class="d-inline-block me-2">Localidades</h2>
+          <h6 class="d-inline-block">Ver listado de localidades en el sistema</h6>
+        </div>
+      
+      </div>
+
+
+      <div class="card mt-2">
+        <div class="container ">
+          <form [formGroup]="formBusqueda" (ngSubmit)="buscarSubmit()">
+            <div class="row pt-3">
+              <div class="col-md-4 mb-3">
+                <input 
+                class="form-control"
+                placeholder="Escribe el nombre de la localidad ..."
+                name="nombreLocalidad"
+                formControlName="nombreLocalidad"
+                [class.is-invalid]="formBusqueda.get('nombreLocalidad')?.invalid &&
+                       (formBusqueda.get('nombreLocalidad')?.dirty || formBusqueda.get('nombreLocalidad')?.touched)"
+                />
+              </div>
+              <div class="col-md-4 mb-3">
+                <select 
+                  class="form-select" 
+                  id="idEstado"
+                  formControlName="idEstado"
+                >
+                  <option [ngValue]="null" >Todos los estados</option>
+                  <option   *ngFor="let estado of lstEstados; index as i" [ngValue]="estado.id">{{estado.estado}}</option>
+                </select>
+  
+              </div>
+              <div class="col-md-4 mb-3">
+                <select
+                  class="form-select" 
+                  id="idMunicipio"
+                  formControlName="idMunicipio"
+                >
+                  <option [ngValue]="null">Todos los municipios</option>
+                  <option   *ngFor="let mcpio of lstMunicipios; index as i" [ngValue]="mcpio.id">{{mcpio.municipio}}</option>
+                </select>
+               
+              </div>
+              
+            </div>
+                   
+            <div class="row">
+             
+              <div class="col-md-12 mb-3">
+                <div class="d-flex justify-content-end align-items-end">
+                  <button type="button" class="btn  btn-sm btn-outline-secondary me-2"
+                          (click)="reset()"
+                  >
+                    Restablecer
+                  </button>
+                  <button type="submit" class="btn  btn-sm btn-info" click="filtrar()"
+                          [disabled]="!formBusqueda.valid || loaderBusqueda">
+                    Filtrar
+                    <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-sm" role="status"></div>
+                  </button>
+  
+                </div>
+  
+              </div>
+            </div>
+          </form>
+        </div>
+
+      </div>
+
+
+      <div class="card mt-3">
+        <div class="container table-responsive">
+          
+          <table class="table table-striped" aria-describedby="table_localidades">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Localidad</th>
+                <th scope="col">Municipio</th>
+                <th scope="col">Estado</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="!loader">
+              <tr *ngFor="let localidad of lstTabla; index as i">
+                <td>
+                  {{ localidad.id}}
+                </td>
+                <td>
+                  {{ localidad.nombre}}
+                </td>
+                <td>
+                  {{ localidad.municipio}}
+                </td>
+                <td>
+                  {{ localidad.estado}}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="d-flex justify-content-center align-items-center pb-2" >
+            <div *ngIf="loader" class="spinner-border spinner-border-lg" role="status"></div>
+          </div>
+          <ngb-alert *ngIf="lstTabla != null && lstTabla.length == 0">
+            Sin datos para mostrar
+          </ngb-alert>
+        </div>
+
+      </div>
+
+      <div class="container mt-2" *ngIf="!loader">
+        <div class="row">
+          <div class="col-md-7 col-12 d-flex justify-content-start">
+            <div class="mt-1 table-responsive">
+              <ngb-pagination
+                size="sm"
+                [collectionSize]="collectionSize"
+                [(page)]="page"
+                [pageSize]="pageSize"
+                [maxSize]="5"
+                [rotate]="true"
+                [boundaryLinks]="true"
+                [disabled]="loaderBusqueda"
+                (pageChange)="buscarSubmit()"
+              ></ngb-pagination>
+            </div>
+          </div>
+          <div class="col-md-5 col-12 d-flex justify-content-end">
+            <div class="d-flex align-items-baseline">
+              <small class="me-2">Mostrando: </small>
+              <input 
+                type="number" 
+                class="form-control me-2" 
+                style=" max-width: 4em; "
+                inputmode="numeric" 
+                pattern="[0-9]*"
+                [value]="pageSize" 
+                [(ngModel)]="pageSize"
+                (change)="buscarSubmit(true)"
+              >
+              <small>registros por página</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+     
+     
+    </div>
+  </section>
+
+</div>

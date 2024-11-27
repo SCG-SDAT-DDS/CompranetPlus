@@ -1,0 +1,230 @@
+<div>
+  <main>
+    <div class="display-area">
+      <section>
+        <div class="container pt-5 pb-5">
+          <div class="row">
+            <div class="d-inline-block col-md-12">
+              <h2 class="d-inline-block me-2">Apertura de Proposiciones</h2>
+              <h6 class="d-inline-block">
+                Ver listado de propuestas de los participantes.
+              </h6>
+            </div>
+          </div>
+          <app-encabezado-procedimiento [__procedimientoElegido]="_procedimientoElegido"></app-encabezado-procedimiento>
+
+          <div class="card mt-3">
+            <div class="container table-responsive">
+
+              <table
+                class="table table-striped"
+                aria-describedby="listado_propuestas"
+              >
+                <thead>
+                  <tr>
+                    <th scope="col">Recibido</th>
+                    <th scope="col">RFC</th>
+                    <th scope="col">Nombre o Razón Social</th>
+                    <th scope="col">Estatus</th>
+                    <th scope="col">Fecha de inscripción</th>
+                    <th scope="col">Fecha de propuesta</th>
+                    <th scope="col">Descargas</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let propuesta of proposiciones; index as i">
+                    <td>
+                      <input
+                        class="form-check-input"
+                        type="checkbox"
+                        [ngModel]="propuesta.checkboxActivo"
+                        (ngModelChange)="manejarCambioCheckbox(propuesta)"
+                        style="opacity: 1;"
+                      />
+                    </td>
+                    <td>{{ propuesta.rfc_proveedor }}</td>
+                    <td>
+                      {{
+                        propuesta.razon_social != null
+                          ? propuesta.razon_social
+                          : propuesta?.nombre_proveedor +
+                            ' ' +
+                            propuesta?.primer_apellido_proveedor +
+                            ' ' +
+                            propuesta?.segundo_apellido_proveedor
+                      }}
+                    </td>
+                    <td>
+                      <span class="badge badge-success">{{ propuesta.nombre_estatus_participacion }}</span>
+                    </td>
+                    <td>{{ propuesta.fecha_inscripcion }}</td>
+                    <td>{{ propuesta.fecha_propuesta }}</td>
+                    <td>
+                      <div class="d-flex justify-content-center align-items-center">
+                        <button *ngIf="propuesta.archivos_propuesta && propuesta.archivos_propuesta.archivos_propuesta" class="btn btn-warning btn-sm btn-circle me-2" type="button" id="dropdownMenuButton1"
+                        (click)="descargarArchivosEnZip(propuesta.archivos_propuesta.archivos_propuesta, propuesta.archivos_propuesta.archivo_partida, propuesta.rfc_proveedor , propuesta ,i)" [disabled]="loaderDescargar || loaderDescargarTodos">
+                        <i class="bi bi-arrow-down-circle-fill" *ngIf="!(loaderDescargar && (loaderIndex === i || loaderDescargarTodos))"></i>
+                        <div *ngIf="loaderDescargar && (loaderIndex === i || loaderDescargarTodos)">
+                          <span class="spinner-border spinner-border-sm" role="status"></span>
+                        </div>
+                      </button>
+                      <div *ngIf="loaderDescargar && (loaderIndex === i || loaderDescargarTodos)">
+                        <span class="badge badge-success"> {{ porcentajeCarga === 100 ? 'Generando ZIP' + ' ' + progresoDescarga + '%' : porcentajeCarga + '%' }} </span>
+                      </div>
+                      </div>
+                      
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+              <ngb-alert *ngIf="proposiciones != null && proposiciones.length == 0">
+                Sin datos para mostrar
+              </ngb-alert>
+            </div>
+          </div>
+
+          <div class="row pt-2">
+            <div class="col-12 d-flex justify-content-end">
+              <button (click)="descargarTodasNew()" [disabled]="lstPropuestas.length == 0 || loaderDescargarTodos || loaderDescargar" class="btn btn-primary">
+                <ng-container *ngIf="loaderDescargarTodos; else defaultText">
+                  <span *ngIf="porcentajeCargaTodos < 100">
+                    Descargando todas las propuestas... {{ porcentajeCargaTodos }}%
+                  </span>
+                  <span *ngIf="porcentajeCargaTodos === 100">
+                    {{ 'Generando ZIP ' + ' ' + progresoDescargaTodos + '%' + ' ' }}
+                  </span> 
+                  <div class="spinner-border spinner-border-sm" role="status"></div>
+                </ng-container>
+                <ng-template #defaultText>
+                  Descargar todas las propuestas
+                </ng-template>
+              </button>
+              
+            </div>
+          </div>
+
+          <form [formGroup]="formRecepcion" (ngSubmit)="guardar()">
+            <div class="card mt-3">
+              <div class="container">
+                <div class="row pt-2 pb-2">
+                  <div class="col-md-6 col-sm-6 col-12" *ngIf="_procedimientoElegido?.url_archivo_acto_recepcion == null">
+                    <label for="acta_recepcion"
+                      >Acta de Recepcion y Apertura de propuestas:</label
+                    >
+                    <input type="file" formControlName="url_acta_recepcion" class="form-control" (change)="obtenerActaRecepcionBase64($event)"/>
+                    <div
+                      *ngIf="
+                        urlActaForm?.invalid &&
+                        urlActaForm?.errors &&
+                        (urlActaForm?.dirty || urlActaForm?.touched)
+                      "
+                    >
+                      <small
+                        class="text-danger"
+                        *ngIf="urlActaForm?.hasError('required')"
+                      >
+                        Este campo es requerido.
+                      </small>
+                    </div>
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-12" *ngIf="_procedimientoElegido?.url_archivo_acto_recepcion != null">
+                    <label for="acta_recepcion"
+                      >Acta de Recepcion y Apertura de propuestas:</label
+                    >
+                    <div class="div-archivo">
+                      <button class="btn btn-warning btn-sm btn-circle me-2" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"
+                      (click)="onClickDescargarPdf(_procedimientoElegido?.url_archivo_acto_recepcion, _procedimientoElegido?.numero_procedimiento)">
+                      <i class="bi bi-file-pdf"></i>
+                      </button>
+                      <button *ngIf="isAdmin()" class="btn btn-outline-danger btn-sm" style="border-radius: 40px;" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"
+                        (click)="_procedimientoElegido.url_archivo_acto_recepcion = null">
+                        Reemplazar Archivo
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div class="row pt-2 pb-2">
+                  <div class="col-6">
+                    <label for="fecha_fallo">Fecha de fallo:</label>
+                    <input
+                      type="date"
+                      (change)="validarFecha($event)"
+                      class="form-control"
+                      formControlName="fecha_fallo"
+                    />
+                    <div
+                      *ngIf="
+                        fechaFalloForm?.invalid &&
+                        fechaFalloForm?.errors &&
+                        (fechaFalloForm?.dirty || fechaFalloForm?.touched)
+                      "
+                    >
+                      <small
+                        class="text-danger"
+                        *ngIf="fechaFalloForm?.hasError('required')"
+                      >
+                        Este campo es requerido.
+                      </small>
+                      <small
+                        class="text-danger"
+                        *ngIf="fechaFalloForm?.hasError('dif20dias')"
+                      >
+                      La diferencia entre la fecha original del fallo y la ingresa es de más de 20 dias.
+                      </small>
+                      <small
+                        class="text-danger"
+                        *ngIf="fechaFalloForm?.hasError('dif30dias')"
+                      >
+                      La diferencia entre la fecha original del fallo y la ingresa es de más de 30 dias.
+                      </small>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <label for="hora_fallo">Hora de fallo:</label>
+                    <input type="time" class="form-control" formControlName="hora_fallo" />
+                    <div
+                      *ngIf="
+                        horaFalloForm?.invalid &&
+                        horaFalloForm?.errors &&
+                        (horaFalloForm?.dirty || horaFalloForm?.touched)
+                      "
+                    >
+                      <small
+                        class="text-danger"
+                        *ngIf="horaFalloForm?.hasError('required')"
+                      >
+                        Este campo es requerido.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mt-3">
+              <div class="col-md-12">
+                <div class="d-flex justify-content-end align-items-end">
+                  <button
+                    class="btn btn-sm btn-success"
+                    style="margin-right: 1%"
+                    [disabled]="formRecepcion.invalid"
+                  >
+                    Guardar
+                  </button>
+                  <button
+                    class="btn btn-sm btn-outline-secondary"
+                    type="button"
+                    (click)="cancelarRecepcionProcedimiento()"
+                  >
+                    Regresar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

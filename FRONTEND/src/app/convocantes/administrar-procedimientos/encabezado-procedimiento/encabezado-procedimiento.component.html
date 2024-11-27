@@ -1,0 +1,19 @@
+<div class="row lic_info">
+    <div class="d-inline-block col-md-12">
+        <h2 class="d-inline-block me-2">{{__procedimientoElegido?.numero_procedimiento}}</h2>
+        <h6 class="d-inline-block">
+            <span [ngClass]=__procedimientoElegido?.estilo >{{__procedimientoElegido?.nombre_estatus_procedimiento}}</span>
+        </h6>
+    </div>
+
+    <div class="col-md-6 col-sm-6 col-12">
+        <strong>Procedimiento:</strong>
+        {{ __procedimientoElegido?.nombre_procedimiento }}
+    </div>
+
+    <div class="col-md-6 col-sm-6 col-12">
+      <strong>Concepto:</strong>
+      {{ __procedimientoElegido?.descripcion_concepto_contratacion }}
+    </div>
+    
+</div>

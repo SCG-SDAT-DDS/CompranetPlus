@@ -1,0 +1,193 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin id="sidebar" class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"></app-side-nav-admin>
+
+
+<div class="content-layout-admin">
+  <section *ngIf="!blnEditar && !blnAgregar">
+    <div class="container pt-5">
+
+      <div class="row">
+        <div class="d-inline-block col-md-8">
+          <h2 class="d-inline-block me-2">Adjudicación Directa Extemporanea para la Unidad Compradora: </h2>
+          <h6 class="d-inline-block">{{catUnidadCompradora.clave_unidad_compradora}} / {{catUnidadCompradora.nombre_unidad_compradora}}</h6>
+        </div>
+
+        <div class="col-md-4">
+          <div class="d-flex justify-content-end align-items-end">
+          <button *ngIf="canActivate('ADMIN_CAT_UCADE_AGR')" class="btn  btn-sm btn-success" (click)="agregar()">
+            <i class="bi bi-plus-lg"></i> Agregar Periodo Extemporáneo
+          </button>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- apartado para el formulario de busqueda NO APLICA EN ESTE COMPONENTE-->
+
+      <!--apartado para el tablero de resultados-->
+      <div class="card mt-3">
+        <div class="card-body">
+          <div class="container table-responsive">
+            <table class="table table-striped " aria-describedby="table_usuarios">
+              <thead>
+              <tr>
+                <th scope="col">Otorgado</th>
+                <th scope="col">Inicio de Periodo</th>
+                <th scope="col">Fin de Periodo</th>
+                <th scope="col">Estatus</th>
+                <th scope="col" *ngIf="canActivate('ADMIN_CAT_UCADE_MOD') || canActivate('ADMIN_CAT_UCADE_ELM')">Acciones</th>
+              </tr>
+              </thead>
+              <tbody *ngIf="lstCatUnidadCompradoraADExtemporanea != null">
+                <tr *ngFor="let cucade of lstCatUnidadCompradoraADExtemporanea; index as i">
+                  <td>{{ cucade.fecha_otorgado | date: 'dd/MM/yyyy hh:mm a' }}</td>
+                  <td>{{ cucade.fecha_inicio_periodo | date: 'dd/MM/yyyy'}}</td>
+                  <td>{{ cucade.fecha_fin_periodo | date: 'dd/MM/yyyy'}} </td>
+                  <td>
+                    <span class="badge bg-success" *ngIf="cucade.estatus_periodo">Abierto</span>
+                    <span class="badge bg-danger" *ngIf="!cucade.estatus_periodo">Cerrado</span>
+                  </td>
+                  <td *ngIf="canActivate('ADMIN_CAT_UCADE_MOD') || canActivate('ADMIN_CAT_UCADE_ELM')" class="overflow-hidden text-center">
+                    <!-- <button *ngIf="canActivate('ADMIN_CAT_COSTPART_MOD') && !cucade.estatus_periodo" class="btn btn-warning btn-sm btn-circle me-2" (click)="editar(cucade)">
+                      <i class="bi bi-pencil-square"></i>
+                    </button> -->
+                    <button *ngIf="canActivate('ADMIN_CAT_COSTPART_ELM')" class="btn btn-danger btn-sm btn-circle me-2" (click)="eliminarModal(deleteUCADExt, cucade)">
+                      <i class="bi bi-trash3-fill"></i>
+                    </button>
+                    <button *ngIf="canActivate('ADMIN_CAT_COSTPART_MOD') && cucade.estatus_periodo" class="btn btn-warning btn-sm btn-circle me-2" (click)="cerrarPeriodoModal(cerrarUCADExt,cucade)">
+                      <i class="bi bi-x-circle"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <ngb-alert *ngIf="lstCatUnidadCompradoraADExtemporanea != null && lstCatUnidadCompradoraADExtemporanea.length == 0">
+                Sin datos para mostrar
+            </ngb-alert>
+            <div class="d-flex justify-content-between p-2">
+              <ngb-pagination *ngIf="lstCatUnidadCompradoraADExtemporanea != null && lstCatUnidadCompradoraADExtemporanea.length>pageSizeLstCatUnidadcompradoraADExtemporanea"
+                              [collectionSize]="lstCatUnidadCompradoraADExtemporanea.length"
+                              [(page)]="pageLstCatUnidadCompradoraADExtemporanea"
+                              [pageSize]="pageSizeLstCatUnidadcompradoraADExtemporanea">
+              </ngb-pagination>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer" >
+          <div class="container">
+            <div class="row">
+              <div class="text-rigth">
+                <button [routerLink]="['/admin/unidad-compradora/',id_unidad_responsable]" *ngIf="canActivate('ADMIN_CAT_UCOMPRA_MENU') && id_unidad_responsable != null" class="btn btn-outline-secondary btn-sm">Regresar a Unidades Compradoras</button>
+                <button [routerLink]="['/admin/unidad-compradora/','']" *ngIf="canActivate('ADMIN_CAT_UCOMPRA_MENU') && id_unidad_responsable == null" class="btn btn-outline-secondary btn-sm">Regresar a Unidades Compradoras</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!--end tablero de resultados-->
+
+    </div>
+  </section>
+
+  <section *ngIf="blnAgregar || blnEditar">
+    <div class="container pt-4">
+      <div class="d-inline-block col-md-8">
+        <h2 class="d-inline-block me-2">{{messageTitle}}</h2>
+        <h6 class="d-inline-block">{{messageSubTitle}}</h6>
+      </div>
+      <div class="card mt-3">
+        <div class="container ">
+          <form [formGroup]="formRegistro" (ngSubmit)="guardarSubmit()">
+            <div class="row pt-3">
+              <div class="col-md-4">
+                <label for="uc_nombre" class="form-label">Fecha de inicio de periodo <app-campo-obligatorio /></label>
+                <input class="form-control" placeholder="Clave de la Unidad Compradora" formControlName="fecha_inicio_periodo" type="date"
+                        id="fecha_inicio_periodo" name="fecha_inicio_periodo" [class.is-invalid]="formRegistro.get('fecha_inicio_periodo')?.invalid &&
+                        (formRegistro.get('fecha_inicio_periodo')?.dirty || formRegistro.get('fecha_inicio_periodo')?.touched)" />
+                <div *ngIf="formRegistro.get('nombre_unidad_cofecha_inicio_periodompradora')?.invalid && formRegistro.get('fecha_inicio_periodo')?.errors
+                    && (formRegistro.get('fecha_inicio_periodo')?.dirty || formRegistro.get('fecha_inicio_periodo')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('fecha_inicio_periodo')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="uc_nombre" class="form-label">Fecha de fin de periodo <app-campo-obligatorio /></label>
+                <input class="form-control" placeholder="Clave de la Unidad Compradora" formControlName="fecha_fin_periodo" type="date"
+                        id="fecha_fin_periodo" name="fecha_fin_periodo" [class.is-invalid]="formRegistro.get('fecha_fin_periodo')?.invalid &&
+                        (formRegistro.get('fecha_fin_periodo')?.dirty || formRegistro.get('fecha_fin_periodo')?.touched)" />
+                <div *ngIf="formRegistro.get('nombre_unidad_cofecha_fin_periodompradora')?.invalid && formRegistro.get('fecha_fin_periodo')?.errors
+                    && (formRegistro.get('fecha_fin_periodo')?.dirty || formRegistro.get('fecha_fin_periodo')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('fecha_fin_periodo')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                </div>
+              </div>
+
+
+              <div class="col-md-4" *ngIf="blnEditar">
+                <label class="form-label">Estatus</label>
+                <select class="form-select" formControlName="activo" id="activoRegistro" name="activo"
+                        [class.is-invalid]="formRegistro.get('activo')?.invalid &&
+                        (formRegistro.get('activo')?.dirty || formRegistro.get('activo')?.touched)">
+                  <option selected [ngValue]="null" [disabled]="false">Seleccione opción</option>
+                  <option [ngValue]="1">Activo</option>
+                  <option [ngValue]="0">Baja</option>
+                </select>
+                <div *ngIf="formRegistro.get('activo')?.invalid &&
+                    formRegistro.get('activo')?.errors &&
+                    (formRegistro.get('activo')?.dirty || formRegistro.get('activo')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('activo')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-end mt-2">
+              <button type="button" class="btn btn-sm btn-outline-dark me-2" (click)="cancelar()">
+                Regresar
+              </button>
+              <button type="submit" class="btn btn-sm btn-success" [disabled]="!formRegistro.valid || loaderGuardar">
+                {{messageButton}} <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- modal -->
+<ng-template #deleteUCADExt let-c="close" let-d="dismiss">
+
+  <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer eliminar el registro?</h4>
+        <label class="mt-2 text-muted">No será posible recuperar después</label>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-default" (click)="cancelar()">No, cancela!</button>
+    <button type="button" class="btn btn-sm btn-danger" (click)="eliminarSubmit()" [disabled]="loaderGuardar">
+      Sí, eliminalo!
+      <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #cerrarUCADExt let-c="close" let-d="dismiss">
+
+  <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer cerrar el periodo?</h4>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-default" (click)="cancelar()">No, cancela!</button>
+    <button type="button" class="btn btn-sm btn-danger" (click)="cerrarPeriodoSubmit()" [disabled]="loaderGuardar">
+      Sí, cierralo!
+      <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,13 @@
+.dropdown-toggle::after {
+    display:none;
+}
+
+.estatus-nuevo {
+   display: flex;
+}
+
+.estatus-nuevo select {
+    max-width: 250px; 
+    margin-left: 15px;
+}
+

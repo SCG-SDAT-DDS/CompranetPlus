@@ -1,0 +1,28 @@
+
+.lic_info{
+    background: rgb(243 246 252);
+    margin: 10px;
+    padding: 10px;
+    font-size: 13px;
+    border: none;
+    border-radius: 5px;
+    box-shadow: rgba(0,0,0,0.2) 5px 4px 5px;
+}
+
+.badge-success{
+    background-color: var(--success-color-hover) !important; 
+    border-radius: 20px !important;
+}
+
+.btn-file{
+    background-color: var(--success-color-hover);
+    color: white;
+}
+
+.div-archivo{
+    width: fit-content;
+    display: flex;
+    background: #e9f0f8;
+    padding: 8px 12px;
+    border-radius: 25px;
+}

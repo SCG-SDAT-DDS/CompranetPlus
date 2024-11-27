@@ -1,0 +1,754 @@
+<div
+  class="container mt-2 entrada"
+  style="
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 30px;
+    padding: 2%;
+    border-radius: 10px;
+  "
+>
+  <form
+    [formGroup]="formRegistroProveedorPersonaFisica"
+    (ngSubmit)="guardarSubmit()"
+  >
+    <div class="row cls-seccion-header">
+      <div class="col-12">
+        <h4>Datos generales</h4>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-4 col-12">
+        <label class="form-label"
+          >Nombre: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="nombre_proveedor"
+          type="text"
+          [class.is-invalid]="
+            nombreProveedorForm?.invalid &&
+            (nombreProveedorForm?.dirty || nombreProveedorForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            nombreProveedorForm?.invalid &&
+            nombreProveedorForm?.errors &&
+            (nombreProveedorForm?.dirty || nombreProveedorForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="nombreProveedorForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-4 col-12">
+        <label class="form-label"
+          >Primer Apellido : <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="primer_apellido_proveedor"
+          type="text"
+          [class.is-invalid]="
+            paternoProveedorForm?.invalid &&
+            (paternoProveedorForm?.dirty || paternoProveedorForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            paternoProveedorForm?.invalid &&
+            paternoProveedorForm?.errors &&
+            (paternoProveedorForm?.dirty || paternoProveedorForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="vialidadForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-4 col-12">
+        <label class="form-label"
+          >Segundo Apellido: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="segundo_apellido_proveedor"
+          type="text"
+          [class.is-invalid]="
+            maternoProveedorForm?.invalid &&
+            (maternoProveedorForm?.dirty || maternoProveedorForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            maternoProveedorForm?.invalid &&
+            maternoProveedorForm?.errors &&
+            (maternoProveedorForm?.dirty || maternoProveedorForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="maternoProveedorForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-6 mb-3 col-12">
+        <label class="form-label"
+          >CURP: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          style="text-transform: uppercase"
+          class="form-control"
+          formControlName="curp"
+          type="text"
+          [class.is-invalid]="
+            curpProveedorForm?.invalid &&
+            (curpProveedorForm?.dirty || curpProveedorForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            curpProveedorForm?.invalid &&
+            curpProveedorForm?.errors &&
+            (curpProveedorForm?.dirty || curpProveedorForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="curpProveedorForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+          <small
+            class="text-danger"
+            *ngIf="
+              curpProveedorForm?.hasError('minlength') ||
+              curpProveedorForm?.hasError('maxlength')
+            "
+          >
+            El CURP debe contener 18 caracteres.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-6 col-12">
+        <label class="form-label"
+          >RFC: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          style="text-transform: uppercase"
+          class="form-control"
+          formControlName="rfc_proveedor"
+          type="text"
+          [class.is-invalid]="
+            rfc_proveedorForm?.invalid &&
+            (rfc_proveedorForm?.dirty || rfc_proveedorForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            rfc_proveedorForm?.invalid &&
+            rfc_proveedorForm?.errors &&
+            (rfc_proveedorForm?.dirty || rfc_proveedorForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="rfc_proveedorForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+          <small
+            class="text-danger"
+            *ngIf="rfc_proveedorForm?.hasError('minlength')"
+          >
+            El RFC debe contener 13 caracteres.
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3" *ngIf="!formEditar">
+      <div class="col-md-6 col-12">
+        <label class="form-label"
+          >Contraseña <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="password"
+          type="password"
+          [class.is-invalid]="
+            passwordForm?.invalid &&
+            (passwordForm?.dirty || passwordForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            passwordForm?.invalid &&
+            passwordForm?.errors &&
+            (passwordForm?.dirty || passwordForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="passwordForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+          <small
+            *ngIf="
+              passwordForm?.hasError('pattern') ||
+              passwordForm?.hasError('minLength')
+            "
+          >
+            ¡La constraseña debe tener al menos 8 caracteres, contemplando
+            mayúsculas, minúsculas y números!
+          </small>
+        </div>
+      </div>
+      <div class="col-md-6 col-12">
+        <label class="form-label"
+          >Confirmar contraseña <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="passwordConfirm"
+          type="password"
+          (keyup)="onPasswordConfirmInput()"
+          [class.is-invalid]="
+            passwordConfirmForm?.invalid &&
+            (passwordConfirmForm?.dirty || passwordConfirmForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            passwordConfirmForm?.invalid &&
+            passwordConfirmForm?.errors &&
+            (passwordConfirmForm?.dirty || passwordConfirmForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="passwordConfirmForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+          <small
+            class="text-danger"
+            *ngIf="
+              passwordConfirmForm?.hasError('mismatchedPasswords') &&
+              passwordConfirmForm?.dirty
+            "
+          >
+            Las contraseñas no coinciden
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-6 mb-3 col-12">
+        <label class="form-label">Cédula Profesional:</label>
+        <input
+          *ngIf="!formEditar"
+          class="form-control"
+          formControlName="url_cedula_profesional"
+          type="file"
+          (change)="obtenerCedulaBase64($event)"
+          accept=".pdf"
+        />
+        <div *ngIf="formEditar" class="input-group">
+          <input
+            class="form-control"
+            formControlName="url_cedula_profesional"
+            type="file"
+            accept=".pdf"
+            (change)="obtenerCedulaBase64($event)"
+            [hidden]="!btnCancelCedulaP && archivoCedulaP != null"
+
+          />
+          <button *ngIf="btnCancelCedulaP" class="btn btn-sm btn-outline-secondary" type="button" (click)="cancelarArchivoCedula()">Cancelar</button>
+
+          <div *ngIf="!btnCancelCedulaP && archivoCedulaP != null" class="input-group">
+            <button class="btn btn-new-file" type="button" (click)="btnCancelCedulaP = true">Subir archivo nuevo</button>
+            <button class="btn btn-sm btn-new-file" type="button" (click)="obtenerArchivo(proveedorEdit?.url_cedula_profesional, archivoCedulaP)">
+              <i class="bi bi-download"></i>
+            </button>
+            <ul class="list-group">
+              <li class="list-group-item">{{archivoCedulaP}}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-12">
+        <label class="form-label">No. Cédula Profesional:</label>
+        <input
+          class="form-control"
+          formControlName="numero_cedula_profesional"
+          type="text"
+        />
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-6 col-12">
+        <label class="form-label">Registro patronal del IMSS:</label>
+        <input
+          class="form-control"
+          formControlName="numero_registro_imss"
+          type="text"
+        />
+      </div>
+      <div class="col-md-6 col-12">
+        <label class="form-label">Giro de la empresa:</label>
+        <input
+          class="form-control"
+          formControlName="descripcion_giro_empresa"
+          type="text"
+        />
+      </div>
+    </div>
+    <div class="row mt-2 mb-5">
+      <div class="col-md-12 col-12">
+        <label class="form-label"
+          >Constancia de Situación Fiscal:
+          <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          *ngIf="!formEditar"
+          class="form-control"
+          formControlName="url_constancia_situacion"
+          type="file"
+          (change)="obtenerSitFiscalBase64($event)"
+          accept=".pdf"
+          [class.is-invalid]="
+            sitFiscalForm?.invalid &&
+            (sitFiscalForm?.dirty || sitFiscalForm?.touched)
+          "
+        />
+        <div *ngIf="formEditar" class="input-group">
+          <input
+            class="form-control"
+            formControlName="url_constancia_situacion"
+            type="file"
+            accept=".pdf"
+            [required]="btnCancelCSF || archivoCSF == null ? true : false"
+            (change)="obtenerSitFiscalBase64($event)"
+            [hidden]="!btnCancelCSF && archivoCSF != null"
+            [class.is-invalid]="
+              sitFiscalForm?.invalid &&
+              (sitFiscalForm?.dirty || sitFiscalForm?.touched)
+            "
+          />
+          <button *ngIf="btnCancelCSF" class="btn btn-sm btn-outline-secondary" type="button" (click)="cancelarArchivoCSF()">Cancelar</button>
+
+          <div *ngIf="!btnCancelCSF && archivoCSF != null" class="input-group">
+            <button class="btn btn-new-file" type="button" (click)="btnCancelCSF = true">Subir archivo nuevo</button>
+            <button class="btn btn-sm btn-new-file" type="button" (click)="obtenerArchivo(proveedorEdit?.url_constancia_situacion, archivoCSF)">
+              <i class="bi bi-download"></i>
+            </button>
+            <ul class="list-group">
+              <li class="list-group-item">{{archivoCSF}}</li>
+            </ul>
+          </div>
+        </div>
+        <div
+          *ngIf="
+            sitFiscalForm?.invalid &&
+            sitFiscalForm?.errors &&
+            (sitFiscalForm?.dirty || sitFiscalForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="sitFiscalForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div class="row cls-seccion-form-header">
+      <div class="col-12">
+        <h4>Datos de Domicilio</h4>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-3 col-12">
+        <label class="form-label"
+          >Código postal: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <div class="d-flex input-group">
+          <input
+            class="form-control"
+            formControlName="codigo_postal"
+            type="text"
+            [class.is-invalid]="
+              codigoPostalForm?.invalid &&
+              (codigoPostalForm?.dirty || codigoPostalForm?.touched)
+            "
+          />
+          <span
+            class="input-group-text text-white"
+            style="background: var(--ternary-color); cursor:pointer;"
+            id="basic-addon2"
+            (click)="buscarPorCodigoPostal()"
+            ><i class="bi bi-search" *ngIf="!loaderBuscarCP"></i
+          >
+          <div
+            *ngIf="loaderBuscarCP"
+            class="spinner-border spinner-border-sm"
+            role="status"
+            ></div>
+        </span>
+        </div>
+
+        <div
+          *ngIf="
+            codigoPostalForm?.invalid &&
+            codigoPostalForm?.errors &&
+            (codigoPostalForm?.dirty || codigoPostalForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="codigoPostalForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+          <small
+            class="text-danger"
+            *ngIf="codigoPostalForm?.hasError('minLength')"
+          >
+            El CP debe ser de 5 caracteres.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-2 col-12">
+        <label class="form-label"
+          >No.Exterior: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="numero_exterior"
+          type="text"
+          [class.is-invalid]="
+            numExteriorForm?.invalid &&
+            (numExteriorForm?.dirty || numExteriorForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            numExteriorForm?.invalid &&
+            numExteriorForm?.errors &&
+            (numExteriorForm?.dirty || numExteriorForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="numExteriorForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-2 col-12">
+        <label class="form-label">No.Interior:</label>
+        <input
+          class="form-control"
+          formControlName="numero_interior"
+          type="text"
+        />
+      </div>
+      <div class="col-md-5 col-12">
+        <label class="form-label"
+          >Domicilio: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="nombre_vialidad"
+          type="text"
+          [class.is-invalid]="
+            vialidadForm?.invalid &&
+            (vialidadForm?.dirty || vialidadForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            vialidadForm?.invalid &&
+            vialidadForm?.errors &&
+            (vialidadForm?.dirty || vialidadForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="vialidadForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-3 col-12">
+        <label class="form-label"
+          >Estado: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="id_estado"
+          readonly
+          required
+          [class.is-invalid]="
+            estadoForm?.invalid && (estadoForm?.dirty || estadoForm?.touched)
+          "
+          [ngModel]="estado_selected.nombre_estado"
+        />
+        <div
+          *ngIf="
+            estadoForm?.invalid &&
+            estadoForm?.errors &&
+            (estadoForm?.dirty || estadoForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="estadoForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+        <label class="form-label"
+          >Municipio: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="id_municipio"
+          required
+          readonly
+          [class.is-invalid]="
+            municipioForm?.invalid &&
+            (municipioForm?.dirty || municipioForm?.touched)
+          "
+          [ngModel]="municipio_selected.nombre_municipio"
+        />
+        <div
+          *ngIf="
+            municipioForm?.invalid &&
+            municipioForm?.errors &&
+            (municipioForm?.dirty || municipioForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="municipioForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+        <label class="form-label"
+          >Localidad: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="id_localidad"
+          required
+          readonly
+          [class.is-invalid]="
+            localidadForm?.invalid &&
+            (localidadForm?.dirty || localidadForm?.touched)
+          "
+          [ngModel]="municipio_selected.nombre_municipio"
+        />
+        <div
+          *ngIf="
+            localidadForm?.invalid &&
+            localidadForm?.errors &&
+            (localidadForm?.dirty || localidadForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="localidadForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+        <!-- <select
+          class="form-select"
+          formControlName="id_localidad"
+          required
+          [class.is-invalid]="
+            localidadForm?.invalid &&
+            (localidadForm?.dirty || localidadForm?.touched)
+          "
+        >
+          <option>Seleccione....</option>
+          <option
+            *ngFor="let localidad of lst_cat_localidad"
+            [value]="localidad.id"
+          >
+            {{ localidad.localidad }}
+          </option>
+        </select>
+        <div
+          *ngIf="
+            localidadForm?.invalid &&
+            localidadForm?.errors &&
+            (localidadForm?.dirty || localidadForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="localidadForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div> -->
+      </div>
+      <div class="col-md-3 col-12">
+        <label class="form-label"
+          >Colonia: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <select
+          class="form-select"
+          formControlName="nombre_colonia"
+          required
+          [class.is-invalid]="
+            coloniaForm?.invalid && (coloniaForm?.dirty || coloniaForm?.touched)
+          "
+        >
+          <option
+            *ngFor="let colonia of lst_cat_asentamientos"
+            [value]="colonia.nombre_asentamiento"
+          >
+            {{ colonia.nombre_asentamiento }}
+          </option>
+        </select>
+        <div
+          *ngIf="
+            coloniaForm?.invalid &&
+            coloniaForm?.errors &&
+            (coloniaForm?.dirty || coloniaForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="coloniaForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-12">
+        <label class="form-label">Referencia: </label>
+        <input
+          class="form-control"
+          formControlName="referencia"
+          type="referencia"
+          placeholder="Escribe referencia cerca de tu domicilio (Ejemplo: a un lado de la gasolinera, frente a la tienda de abarrotes, etc.)"
+        />
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-4 col-12">
+        <label class="form-label"
+          >Correo electronico: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="correo_electronico"
+          type="email"
+          [class.is-invalid]="
+            correoForm?.invalid && (correoForm?.dirty || correoForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            correoForm?.invalid &&
+            correoForm?.errors &&
+            (correoForm?.dirty || correoForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="correoForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+          <small class="text-danger" *ngIf="correoForm?.hasError('email')">
+            Ingrese un correo valido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-4 col-12">
+        <label class="form-label"
+          >Teléfono: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="telefono"
+          type="tel"
+          pattern="[0-9]*"
+          [class.is-invalid]="
+            telefonoForm?.invalid &&
+            (telefonoForm?.dirty || telefonoForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            telefonoForm?.invalid &&
+            telefonoForm?.errors &&
+            (telefonoForm?.dirty || telefonoForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="telefonoForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+          <small class="text-danger" *ngIf="telefonoForm?.hasError('nonNumeric')">
+            Este campo solo admite valores numéricos.
+          </small>
+          <small
+            class="text-danger"
+            *ngIf="
+              telefonoForm?.hasError('minlength') ||
+              telefonoForm?.hasError('maxlength')
+            "
+          >
+            El telefono debe ser de 10 caracteres.
+          </small>
+        </div>
+      </div>
+
+      <div class="col-md-4 col-12" *ngIf="formEditar">
+        <label for="estatus-proveedor" class="form-label">Estatus</label>
+        <select class="form-select" formControlName="activo" name="activo">
+          <option [ngValue]="1">Activo</option>
+          <option [ngValue]="0">Inactivo</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row mt-2 mb-3" *ngIf="!formEditar">
+      <div class="col-md-6 col-12" style="display: contents">
+        <app-captcha
+          (captchaValidacion)="captchaResponse($event)"
+          [captchaFormRegistro]="true"
+        ></app-captcha>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3" style="display: contents">
+      <button class="btn btn-sm btn-success" style="width: fit-content">
+        <span *ngIf="!formEditar">Finalizar registro</span>
+        <span *ngIf="formEditar">Modificar</span>
+        <div
+          *ngIf="loaderGuardar"
+          class="spinner-border spinner-border-sm"
+          role="status"
+        ></div>
+      </button>
+      <button
+        class="btn btn-sm btn-outline-secondary"
+        style="width: fit-content; margin-left: 1%"
+        (click)="cancelar()"
+      >
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>

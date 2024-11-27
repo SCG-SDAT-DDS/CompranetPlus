@@ -1,0 +1,197 @@
+<app-header-admin></app-header-admin>
+<app-side-nav-admin
+        id="sidebar"
+        class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"
+></app-side-nav-admin>
+
+<div class="content-layout-admin">
+
+    <main>
+        <div class="display-area">
+            <section>
+                <div class="container pt-5">
+                    <div class="row">
+                        <div class="d-inline-block col-md-8">
+                            <h2 class="d-inline-block me-2">Preguntas del procedimiento</h2>
+                            <h6 class="d-inline-block">Ver y realizar preguntas</h6>
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <div class="d-flex justify-content-end align-items-end">
+                                <button class="btn btn-sm btn-success" type="button" (click)="openSelect()"
+                                        *ngIf="editar"
+                                        [disabled]="!permitirCargarPreguntasValFechas"
+                                        title="Agregar archivo de preguntas para el procedimiento">
+                                    <i class="bi bi-upload"></i>
+                                    Agregar PDF de preguntas
+                                </button>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="container pb-3">
+                        <app-encabezado-procedimiento
+                                [__procedimientoElegido]="_procedimientoElegido"></app-encabezado-procedimiento>
+                    </div>
+
+                    <div class="row lic_info">
+
+                        <div class="col-md-6 col-sm-6 col-12">
+                            <strong>Fecha programada de la junta de aclaraciones:</strong>
+                            {{ datosUlimtaJuntaAclaraciones?.fecha_junta_aclaraciones | fechasPipe }}
+                        </div>
+
+                        <div class="col-md-6 col-sm-6 col-12">
+                            <strong>Fecha del acta de la junta de aclaraciones:</strong>
+                            {{ datosUlimtaJuntaAclaraciones?.fecha_carga_acta | fechasPipe }}
+                        </div>
+
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="container ">
+                            <input id="subirArchivoInput" #subirArchivoInput
+                                   class="form-control"
+                                   [hidden]="true"
+                                   type="file" accept=".pdf"
+                                   (change)="cargarPreguntas($event)" *ngIf="editar"
+                            />
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="container table-responsive">
+                                        <table class="table table-striped " aria-describedby="table_participantes">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Preguntas</th>
+                                                <th scope="col">Fecha de carga</th>
+                                                <th scope="col">Fecha de descarga convocante</th>
+                                                <th scope="col">Estatus</th>
+                                                <th scope="col">Acciones</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <tr *ngFor="let pregunta of lstPreguntas; index as i">
+
+                                                <td>
+                                                    {{pregunta.url_archivo | nombreArchivoPipe}}
+                                                </td>
+                                                <td>
+                                                    {{ pregunta.fecha_ultima_mod | date:'dd/MM/yyyy HH:mm'}}
+                                                </td>
+                                                <td>
+                                                    <span *ngIf="pregunta.fecha_descarga_conv !== undefined && pregunta.fecha_descarga_conv !== null"> {{ pregunta.fecha_descarga_conv | date:'dd/MM/yyyy HH:mm'}} </span>
+                                                    <span *ngIf="pregunta.fecha_descarga_conv == undefined || pregunta.fecha_descarga_conv == null"> - </span>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-info" *ngIf="pregunta.id_participante_procedimiento == undefined || pregunta.id_participante_procedimiento == null;">Por almacenar</span>
+                                                    <span class="badge bg-warning" *ngIf="pregunta.id_participante_procedimiento !== undefined && pregunta.id_participante_procedimiento !== null && (pregunta.fecha_descarga_conv == undefined || pregunta.fecha_descarga_conv == null)">Almacenado</span>
+                                                    <span class="badge bg-success" *ngIf="pregunta.id_participante_procedimiento !== undefined && pregunta.id_participante_procedimiento !== null && (pregunta.fecha_descarga_conv !== undefined && pregunta.fecha_descarga_conv !== null)">Leido convocante</span>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-warning btn-sm btn-circle" type="button"
+                                                            (click)="descargar(pregunta)"
+                                                            [disabled]="loaderDescargarPregunta">
+                                                        <i *ngIf="!loaderDescargarPregunta" class="bi bi-download"></i>
+                                                        <div *ngIf="loaderDescargarPregunta" class="spinner-border spinner-border-sm" role="status"></div>
+                                                    </button>
+                                                    <button class="btn btn-danger btn-sm btn-circle me-2"
+                                                            style="margin-left: 5px;"
+                                                            *ngIf="editar"
+                                                            [disabled]="!permitirCargarPreguntasValFechas || (pregunta.fecha_descarga_conv !== undefined && pregunta.fecha_descarga_conv !== null)"
+                                                            (click)="eliminar(pregunta)">
+                                                        <i class="bi bi-trash3-fill"></i>
+                                                    </button>
+                                                </td>
+
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                        <div class="d-flex justify-content-center align-items-center pb-2">
+                                            <div *ngIf="loaderPreguntas" class="spinner-border spinner-border-lg"
+                                                 role="status"></div>
+                                        </div>
+                                        <ngb-alert
+                                                *ngIf="lstParticipantes != null && lstParticipantes.length == 0 && !loaderPreguntas">
+                                            Sin datos para mostrar
+                                        </ngb-alert>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="card-footer d-flex justify-content-end pt-3">
+
+                            <button *ngIf="(lstArchivoCarga == undefined || lstArchivoCarga?.length==0)
+                                    && (lstPreguntasEliminar == undefined || lstPreguntasEliminar?.length==0)"
+                                    class="btn  btn-sm btn-outline-dark me-2"
+                                    (click)="preguntarCancelar()">
+                                Regresar
+                            </button>
+
+                            <button *ngIf="(lstArchivoCarga !== undefined && lstArchivoCarga.length>0)
+                                    || (lstPreguntasEliminar !== undefined && lstPreguntasEliminar.length>0)"
+                                    class="btn  btn-sm btn-danger me-2"
+                                    (click)="preguntarCancelar()">
+                                Cancelar
+                            </button>
+                            <button class="btn  btn-sm btn-success me-2"
+                                    *ngIf="editar"
+                                    [disabled]="(lstArchivoCarga == undefined || lstArchivoCarga?.length==0)
+                                    && (lstPreguntasEliminar == undefined || lstPreguntasEliminar?.length==0)"
+                                    (click)="validarGuardar()">
+                                Guardar
+                                <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<!-- modal -->
+<ng-template #modalCancelar let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer cancelar y regresar?</h4>
+        <label class="mt-2 text-muted">No será posible recuperar después</label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default" (click)="abrirCerrarModal(false)">No,
+            continua!
+        </button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="cancelar()">
+            Sí, cancela!
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #modalValidarRFC let-c="close" let-d="dismiss">
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-sm-6 mt-2 mb-2">
+                <div>
+                    <h3 style="text-align: center;" >Registrar sus preguntas para el procedimiento.: {{_procedimientoElegido?.numero_procedimiento}}</h3>
+                    <hr>
+                </div>
+                <div>
+                    <h6 style="text-align: center;"><strong>Ingrese los datos de su e.firma</strong> </h6>
+                    <app-e-firma
+                            [rfc_proveedor]="rfcProveedor"
+                            (efirmaValidacion)="guardarPreguntas($event)"
+                    ></app-e-firma>
+                </div>
+            </div>
+            <div class="col-sm-6 mt-2 mb-2" style="display: grid; place-content: center; background: #960E53; padding: 50px;">
+                <img src="../../../../../assets/images/logo-CN-white.svg" alt="Compranet Logo" class="img-fluid" style="margin-left: 1%; width: 300px;">
+            </div>
+        </div>
+    </div>
+</ng-template>

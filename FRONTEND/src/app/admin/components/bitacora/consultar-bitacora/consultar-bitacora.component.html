@@ -1,0 +1,162 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin  id="sidebar"
+  class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1">
+</app-side-nav-admin>
+
+<div class="content-layout-admin">
+  <main>
+    <div class="display-area">
+      <section>
+        <div class="container pt-5">
+          <div class="row">
+            <div class="d-inline-block col-md-8">
+              <h2 class="d-inline-block me-2">
+                Bitacora
+              </h2>
+              <h6 class="d-inline-block">
+                Listado de movimientos
+              </h6>
+            </div>
+
+         
+          </div>
+
+          <form [formGroup]="formBusqueda" (ngSubmit)="buscarBitacora()">
+              <div class="card mt-2">
+                <div class="container">
+                  <div class="row pt-3">
+
+
+                    <div class="col-md-4">
+                        <select class="form-select" aria-label="Default select example" id="rol"
+                        formControlName="id_rol" name="rol">
+                            <option selected [ngValue]="null" [disabled]="false">Todos los roles</option>
+                            <option *ngFor="let r of lstTablaRoles" [value]="r.id">{{r.nombre}}</option>
+  
+                        </select>
+    
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <input class="form-control" list="datalistOptions" placeholder="Escribe para buscar un usuario..." id="usuario"
+                        formControlName="id_usuario"  name="usuario" (change)="actualizarNombreUsuario()">
+                        <datalist id="datalistOptions">
+                            <option *ngFor="let u of lstTablaUsuarios" [value]="u.id">{{u.nombre}} {{u.aPaterno}} {{u.aMaterno}}</option>
+                            
+                        </datalist>
+                      
+                    </div>
+
+                    
+
+                    <div class="col-md-4">
+                      
+                        <input class="form-control" type="text" id="nombre_usuario"
+                            formControlName="nombre_usuario" name="nombre_usuario"/>
+                      
+                    </div>
+                  </div>
+
+                  <div class="row pt-3">
+                    <div class="col-md-4">
+                        <input class="form-control" type="date" id="fechaaccioninicio"
+                        formControlName="fecha_accion_inicio" name="fechaaccioninicio"/>
+
+                    </div>
+
+                    <div class="col-md-4">
+                        <input class="form-control" type="date" id="fechaaccionfin"
+                        formControlName="fecha_accion_fin" name="fechaaccionfin"/>
+
+                    </div>
+
+                    <div class="col-md-4">
+                      
+                    </div>
+                  </div>
+
+                  <div class="row pt-3 pb-3">
+                    <div class="col-md-12">
+                      <div class="d-flex justify-content-end align-items-end">
+                        <button class="btn btn-sm btn-outline-secondary me-2" type="button" (click)="formBusqueda.reset()">
+                          Restablecer
+                        </button>
+                        <button class="btn btn-sm btn-info" type="submit" class="btn btn-sm btn-info"
+                          [disabled]="!formBusqueda.valid || loaderBusqueda">Filtrar
+
+                          <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-sm" role="status"></div>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </form>
+
+          <div class="card mt-3">
+            <div class="container table-responsive">
+              <table class="table table-striped"
+                aria-describedby="tabla_bitacora">
+                <thead>
+                  <tr>
+                    <th scope="col">Tipo de usuario</th>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Fecha y hora</th>
+                    <th scope="col">Apartado</th>
+                    <th scope="col">Accion</th>
+                    <th scope="col">Valor Nuevo</th>
+                    <th scope="col">Valor Anterior</th>
+                    
+                  </tr>
+                </thead>
+                <tbody *ngIf="lstTablaBitacora != null && !loaderBusqueda">
+                  <tr *ngFor="let bitacora of lstTablaBitacora; index as i">
+                    <td>
+                      {{ bitacora.nombre_rol}}
+                    </td>
+                    <td>
+                      {{ bitacora.nombre_usuario}} {{bitacora.primer_apellido_usuario}} {{bitacora.segundo_apellido_usuario}}
+                    </td>
+                    <td>
+                       {{ bitacora.fecha_accion}}
+                    </td>
+                    <td>
+                        {{ bitacora.seccion_accion}}
+                     </td>
+                     <td>
+                        {{ bitacora.descripcion_accion}}
+                     </td>
+                
+                     <td>
+                        {{ bitacora.valor_nuevo}}
+                     </td>
+                
+                     <td>
+                        {{ bitacora.valor_anterior}}
+                     </td>
+                
+                    
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="d-flex justify-content-center align-items-center pb-2" >
+                <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-lg" role="status"></div>
+              </div>
+              <ngb-alert *ngIf="lstTablaBitacora != null && lstTablaBitacora.length == 0">
+                Sin datos para mostrar
+              </ngb-alert>
+
+            </div>
+          </div>
+
+          
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+

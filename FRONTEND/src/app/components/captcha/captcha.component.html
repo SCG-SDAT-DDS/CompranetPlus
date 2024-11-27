@@ -1,0 +1,33 @@
+<div class="container  " >
+    <p class="font-weight-bold text-center m-0" [ngClass]="{'text-white': !captchaFormRegistro}"> <strong>CAPTCHA</strong> </p>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <div class="captcha-image mr-2">
+          <img [src]="imageDataUrl" alt="Texto convertido en imagen" style="width: 100%; height: 100%; background: var(--blanco-color);" />
+        </div>
+        <button type="button" class="btn btn-default" (click)="refreshCaptcha()" style="height: 100%;">
+          <i class="bi bi-arrow-clockwise"></i>
+        </button>
+    </div>
+    <div class="pt-1">
+        <div class="col-md-12">
+            <div class="form-group">
+                <label for="captcha" class="label-captcha"><small>Ingrese el texto de la imagen:</small></label>
+                <div class="input-group">
+
+                    <input *ngIf="!captchaFormRegistro" type="text" class="form-control captcha-input" id="captcha"  name="captcha" required [(ngModel)]="inputText"  [ngClass]="{ 'is-invalid': captchaIncorrecto, 'is-valid': captchaCorrecto }"/>
+                    <input *ngIf="captchaFormRegistro" type="text" class="form-control captcha-input-registro" id="captcha_registro"  name="captcha" required [(ngModel)]="inputText"  [ngClass]="{ 'is-invalid': captchaIncorrecto, 'is-valid': captchaCorrecto }"/>
+
+                    <div class="input-group-append">
+                        <button type="button" class="btn btn-success" (click)="validarCaptcha()">Validar</button>
+                    </div>
+                </div>
+                <div *ngIf="captchaIncorrecto"  class="btn-danger mt-1"><small>CAPTCHA incorrecto</small></div>
+                <div *ngIf="captchaCorrecto"  class="btn-success mt-1"><small>CAPTCHA correcto</small></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+

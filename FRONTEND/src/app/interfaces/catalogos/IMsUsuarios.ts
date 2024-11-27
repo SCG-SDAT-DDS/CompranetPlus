@@ -1,0 +1,17 @@
+export interface IMsUsuarios{
+  id_usuario: number | null,
+  nombre_usuario: string | '',
+  primer_apellido_usuario: string | null,
+  segundo_apellido_usuario: string | null,
+  usuario: string | null,
+  contrasenia: string | null,
+  fecha_alta: Date | null,
+  activo: boolean | '',
+  id_rol: number | null,
+  contrasenia_temp: string | null,
+  fecha_ultima_mod: Date | null,
+  usuario_ultima_mod: number | null,
+  correo: string | null,
+  contrasenia_tem_limite: string | null,
+  activo_usuario: boolean | null,
+}

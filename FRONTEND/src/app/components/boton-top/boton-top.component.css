@@ -1,0 +1,51 @@
+.flotante {
+    text-align: center;
+    position: fixed;
+    bottom: 5em;
+    right: -400px;
+    color: black;
+    font-size: 14px;
+    height: 40px;
+    width: 40px;
+    border-radius: 100%;
+    box-shadow: rgba(0,0,0,0.2) 0px 0px 10px;
+    background: var(--ternary-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+  }
+  
+  @media (max-width: 992px) {
+    .flotante {
+      bottom: 8em;
+    }
+  }
+  
+  .flotante > p {
+    margin-top: auto;
+    margin-bottom: auto;
+    font-size: 24px;
+    color: white !important;
+  }
+  
+  .mostrar .flotante {
+    right: .25em !important;
+  }
+  
+  .flotante:hover {
+    background: var(--ternary-color-hover);
+    transform: scale(1.1);
+  }
+  .flotante:active {
+    transform: scale(1.2);
+  }
+  
+  .boton-index{
+    position: relative;
+    z-index: 200 !important;
+  }

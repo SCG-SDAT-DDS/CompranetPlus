@@ -1,0 +1,335 @@
+<div *ngIf="!blnActivarEstatus">
+    <div class="d-flex justify-content-center align-items-center mt-5" >
+        <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-lg" role="status"></div>
+    </div>
+
+    <main *ngIf="!loaderBusqueda">
+        <div class="display-area">
+            <section>
+                <div class="container pt-4">
+                    <div class="d-inline-block col-md-8">
+                        <h2 class="d-inline-block me-2">{{datosProcedimientoAdministrativo?.procedimiento?.numero_procedimiento}}</h2>
+                        <h6 class="d-inline-block">
+                            <span [ngClass]=datosProcedimientoAdministrativo?.procedimiento?.estilo >{{datosProcedimientoAdministrativo?.procedimiento?.nombre_estatus_procedimiento}}</span>
+                        </h6>
+                    </div>
+                </div>
+            </section>
+
+            <div class="col-md-12" *ngIf="canActivate('ADMIN_CAT_ESTATUS_PRO')">
+                <div class="d-flex justify-content-end align-items-end">
+                    <button class="btn  btn-sm btn-success" (click)="estatusProcedimiento()" [disabled]="datosProcedimientoAdministrativo?.procedimiento?.id_estatus_procedimiento != 1 && datosProcedimientoAdministrativo?.procedimiento?.id_estatus_procedimiento != 2 && datosProcedimientoAdministrativo?.procedimiento?.id_estatus_procedimiento != 3 ">
+                        <i ></i>
+                        Cambiar estatus
+                    </button>
+                    <button class="btn  btn-sm btn-outline-danger" (click)="estatusProcedimiento()" *ngIf="datosProcedimientoAdministrativo?.procedimiento?.id_estatus_procedimiento == 6 && !visibleAdmin() ">
+                        <i ></i>
+                        Revertir estatus
+                    </button>
+                </div>
+            </div>
+
+            <section>
+                <div class="container pt-2">
+                    <h3>Datos Generales</h3>
+                    <hr>
+                    <div class="row">
+                        <div class="col-4"><p><strong>Tipo de procedimiento:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.nombre_procedimiento}}</p></div>
+                        <div class="col-4"><p><strong>Caracter:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.nombre_caracter_licitacion}}</p></div>
+                        <div class="col-4"><p><strong>Modalidad:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.nombre_modalidad}}</p></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4"><p><strong>Tiempos recortados:</strong>
+                            {{datosProcedimientoAdministrativo?.procedimiento?.licitacion_recortada ? 'Si' : 'No' }}
+                        </p></div>
+
+                        <div class="col-4"><p><strong>Licitación de tecnología:</strong>
+                            {{datosProcedimientoAdministrativo?.procedimiento?.licitacion_tecnologia ? 'Si' : 'No' }}
+                        </p></div>
+
+                        <div class="col-4"><p><strong>Concepto de contratación:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.descripcion_concepto_contratacion}}</p></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4"><p><strong>Numero oficio autorización:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.numero_oficio_autorizacion}}</p></div>
+                        <div *ngIf="visibleProveedor()" class="col-4"><p><strong>Importe autorizado sin IVA:</strong> $ {{datosProcedimientoAdministrativo?.procedimiento?.importe_autorizado}}</p></div>
+                        <div class="col-4"><p><strong>Capítulo:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.capitulo}}</p></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4"><p><strong>Proyecto:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.proyecto}}</p></div>
+                        <div class="col-4"><p><strong>Partida:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.partida}}</p></div>
+                        <div class="col-4"><p><strong>Num. en Licitanet:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.numero_licitanet}}</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="container pt-4">
+
+                    <h3>Detalle del procedimiento</h3>
+                    <hr>
+                    <div class="row">
+                        <div class="col-4"><p><strong>Fecha de publicación:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_publicacion | fechahoraPipe:'fecha'}}</p></div>
+                        <div class="col-4"><p><strong>Fecha de límite inscripción:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_limite_inscripcion | fechahoraPipe:'fecha'}}</p></div>
+                        <div class="col-4"> </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4"><p><strong>Fecha de visita:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_visita_lugar | fechahoraPipe:'fecha'}}</p></div>
+                        <div class="col-4"><p><strong>Hora de visita:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_visita_lugar | fechahoraPipe:'hora'}}</p></div>
+                        <div class="col-4"><p><strong>Visitas adicionales:</strong> No</p></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4"><p><strong>Ubicación del lugar:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.descripcion_lugar}}</p></div>
+                        <div class="col-4"> </div>
+                        <div class="col-4"> </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4"><p><strong>Fecha de junta aclaraciones:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_junta_aclaraciones | fechahoraPipe:'fecha'}}</p></div>
+                        <div class="col-4"><p><strong>Hora de junta aclaraciones:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_junta_aclaraciones | fechahoraPipe:'hora'}}</p></div>
+                        <div class="col-4"><p><strong>Juntas de aclaración adicionales:</strong> No</p></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4"><p><strong>Fecha de apertura de propuestas:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_apertura | fechahoraPipe:'fecha'}}</p></div>
+                        <div class="col-4"><p><strong>Hora de apertura de propuestas:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_apertura | fechahoraPipe:'hora'}}</p></div>
+                        <div class="col-4"> </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4"><p><strong>Fecha de fallo:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_fallo | fechahoraPipe:'fecha'}}</p></div>
+                        <div class="col-4"><p><strong>Hora de fallo:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_fallo | fechahoraPipe:'hora'}}</p></div>
+                        <div class="col-4"></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4" *ngIf="datosProcedimientoAdministrativo?.procedimiento?.id_tipo_unidad_responsable !== 3 || datosProcedimientoAdministrativo?.procedimiento?.id_tipo_unidad_responsable !== 4"><p><strong>Costo de las bases:</strong> $ {{datosProcedimientoAdministrativo?.procedimiento?.costo_inscripcion}}</p></div>
+                        <div class="col-4" *ngIf="datosProcedimientoAdministrativo?.procedimiento?.id_tipo_unidad_responsable === 3 || datosProcedimientoAdministrativo?.procedimiento?.id_tipo_unidad_responsable === 4"><p><strong>Costo de las bases:</strong> $ {{datosProcedimientoAdministrativo?.procedimiento?.costo_inscripcion_aut}}</p></div>
+                        <div class="col-4"></div>
+                    </div>
+                </div>
+            </section>
+
+            <section *ngIf="fechasNuevasExist()">
+                <div class="container pt-4">
+
+                    <h3>Nuevas fechas</h3>
+                    <hr>
+                    <div class="row">
+                        <div class="col-4" *ngIf="datosProcedimientoAdministrativo?.procedimiento?.fecha_limite_inscripcion_nueva !== null"><p><strong>Fecha de límite inscripción:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_limite_inscripcion_nueva | fechahoraPipe:'fecha'}}</p></div>
+                        <div class="col-4" *ngIf="datosProcedimientoAdministrativo?.procedimiento?.fecha_inicio_obra_nueva !== null"><p><strong>Fecha Estimada de Inicio de la Obra:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_inicio_obra_nueva | fechahoraPipe:'fecha'}}</p></div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4" *ngIf="datosProcedimientoAdministrativo?.procedimiento?.fecha_junta_aclaraciones_nueva !==null"><p><strong>Fecha de junta aclaraciones:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_junta_aclaraciones_nueva | fechahoraPipe:'fecha'}}</p></div>
+                        <div class="col-4" *ngIf="datosProcedimientoAdministrativo?.procedimiento?.fecha_junta_aclaraciones_nueva !==null"><p><strong>Hora de junta aclaraciones:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_junta_aclaraciones_nueva | fechahoraPipe:'hora'}}</p></div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-4" *ngIf="datosProcedimientoAdministrativo?.procedimiento?.fecha_apertura_nueva !==null"><p><strong>Fecha de apertura de propuestas:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_apertura_nueva | fechahoraPipe:'fecha'}}</p></div>
+                        <div class="col-4" *ngIf="datosProcedimientoAdministrativo?.procedimiento?.fecha_apertura_nueva !==null"><p><strong>Hora de apertura de propuestas:</strong> {{datosProcedimientoAdministrativo?.procedimiento?.fecha_apertura_nueva | fechahoraPipe:'hora'}}</p></div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="container pt-4">
+                    <h3>Anexos de la convocatoria</h3>
+                    <hr>
+                    <div class="row">
+                        <div class="col-3"><p><strong>Convocatoria:</strong>
+                            <button class="btn btn-warning btn-sm btn-circle ms-2"  type="button"
+                            (click)="descargarConvocatoriaPdf()">
+                                <i class="bi bi-download"></i>
+                            </button>
+                        </p></div>
+                        <div class="col-3"><p><strong>Bases:</strong>
+                            <button class="btn btn-warning btn-sm btn-circle ms-2" type="button"
+                            (click)="descargarBasesPdf()">
+                                <i class="bi bi-download"></i>
+                            </button>
+                        </p></div>
+                        <div class="col-3" *ngIf="visibleProveedor()"><p><strong>Oficio de Autorización:</strong>
+                            <button class="btn btn-warning btn-sm btn-circle ms-2" type="button"
+                            (click)="descargarOficioAutorizacionPdf()">
+                                <i class="bi bi-download"></i>
+                            </button>
+                        </p></div>
+                        <div class="col-3"><p><strong>Partidas:</strong>
+                            <button class="btn btn-warning btn-sm btn-circle ms-2" type="button"
+                                    (click)="descargarPartidasExcel()">
+                                <i class="bi bi-download"></i>
+                            </button>
+                        </p></div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="container pt-4">
+                <h3>Anexos del procedimiento</h3>
+                <hr>
+                    <div class="card mt-3">
+                        <div class="container table-responsive">
+
+                        <table class="table table-striped" aria-describedby="table_anexos">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Tipo de archivo</th>
+                                    <th scope="col">Comentarios</th>
+                                    <th scope="col">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let anexo of datosProcedimientoAdministrativo?.anexos; index as i">
+                                  <ng-container *ngIf="caracter(anexo)">
+                                    <td>
+                                        {{ anexo.nombre_tipo_archivo }}
+                                    </td>
+                                    <td>
+                                        {{ anexo.comentarios }}
+                                    </td>
+                                    <td>
+                                        <button class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                                                (click)="descargarAnexoProcedimiento(anexo)">
+                                            <i class="bi bi-download"></i>
+                                        </button>
+                                    </td>
+                                </ng-container>
+                                </tr>
+
+                                <ng-container *ngIf="datosProcedimientoAdministrativo?.procedimiento?.url_archivo_aviso_diferendo">
+                                    <tr>
+                                      <td>ACTA DIFERIMIENTO APERTURA</td>
+                                      <td></td>
+                                      <td>
+                                        <button class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                                          (click)="descargarActaProcedimiento(datosProcedimientoAdministrativo?.procedimiento?.url_archivo_aviso_diferendo, 'ACTA_DIFERIMIENTO_APERTURA', 1)">
+                                          <i class="bi bi-download"></i>
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  </ng-container>
+
+                                  <ng-container *ngIf="datosProcedimientoAdministrativo?.procedimiento?.url_archivo_acto_recepcion">
+                                    <tr>
+                                      <td>ACTA APERTURA DE PROPUESTAS</td>
+                                      <td></td>
+                                      <td>
+                                        <button class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                                          (click)="descargarActaProcedimiento(datosProcedimientoAdministrativo?.procedimiento?.url_archivo_acto_recepcion, 'ACTA_APERTURA_PROPUESTAS', 1)">
+                                          <i class="bi bi-download"></i>
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  </ng-container>
+
+                                  <ng-container *ngIf="datosProcedimientoAdministrativo?.procedimiento?.url_archivo_acta_fallo">
+                                    <tr>
+                                      <td>ACTA FALLO</td>
+                                      <td></td>
+                                      <td>
+                                        <button class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                                          (click)="descargarActaProcedimiento(datosProcedimientoAdministrativo?.procedimiento?.url_archivo_acta_fallo, 'ACTA_FALLO', 1)">
+                                          <i class="bi bi-download"></i>
+                                        </button>
+                                      </td>
+                                    </tr>
+                                  </ng-container>
+                            </tbody>
+                        </table>
+                        <ngb-alert *ngIf="datosParaMostrar">
+                            Sin datos para mostrar
+                        </ngb-alert>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section *ngIf="canActivate('ADMIN_CAT_ESTATUS_PRO')">
+                <div class="container pt-4">
+                <h3>Participantes</h3>
+                <hr>
+                    <div class="card mt-3">
+                        <div class="container table-responsive">
+                        <table class="table table-striped" aria-describedby="table_participantes">
+                            <thead>
+                                <tr>
+                                    <th scope="col">RFC</th>
+                                    <th scope="col">Nombre o Razón Social</th>
+                                    <th scope="col">Giro</th>
+                                    <th scope="col">Estatus</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr *ngFor="let participante of datosProcedimientoAdministrativo?.participantes; index as i">
+                                    <td>
+                                        {{ participante.rfc_proveedor}}
+                                    </td>
+                                    <td>
+                                        {{ participante.nombre_proveedor}} {{ participante.primer_apellido_proveedor}} {{ participante.segundo_apellido_proveedor}} {{ participante.razon_social}}
+                                    </td>
+                                    <td>
+                                        {{ participante.descripcion_giro_empresa}}
+                                    </td>
+                                    <td>
+                                        <span  [ngClass]=participante.estilo *ngIf="participante.id_estatus_participacion">{{ participante.nombre_estatus_participacion}}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <div class="container pt-4">
+                    <h3>Partidas</h3>
+                    <hr>
+                    <table class="table table-striped " aria-describedby="table_usuarios">
+                        <thead>
+                            <tr>
+                                <th scope="col">Consecutivo</th>
+                                <th scope="col">Partida</th>
+                                <th scope="col">Código</th>
+                                <th scope="col">Descripción</th>
+                                <th scope="col">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="lstDatosPartidaPresupuestal != null">
+                            <tr *ngFor="let partida of lstDatosPartidaPresupuestal; index as i">
+                                <td>{{ partida.numero_partida }}</td>
+                                <td>{{ partida.nombre_partida }}</td>
+                                <td>{{ partida.codigo_partida }}</td>
+                                <td>{{ partida.descripcion_partida }}</td>
+                                <td>{{ partida.cantidad_partida }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <br>
+
+            <div class="card-footer d-flex justify-content-end">
+                <button class="btn  btn-sm btn-outline-dark me-2" (click)="cancelarDetalleProcedimiento()">
+                    Regresar
+                </button>
+            </div>
+        </div>
+    </main>
+</div>
+
+
+<div *ngIf="blnActivarEstatus">
+    <app-cambiar-estatus [_id_procedimiento_administrativo]="_procedimientoElegido?.id_procedimiento_administrativo" [_datosProcedimientoAdministrativo]="datosProcedimientoAdministrativo" (_cancelarEstatusProcedimiento)="cancelarEstatusProcedimiento()">
+
+    </app-cambiar-estatus>
+</div>
+

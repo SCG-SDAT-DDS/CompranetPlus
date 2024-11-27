@@ -1,0 +1,140 @@
+<div class="w-100">
+	<nav class="navbar navbar-expand-lg fixed-top">
+		<div class="container-fluid">
+			<i data-bs-target="#sidebar" data-bs-toggle="collapse" aria-controls="sidebar" class="bi bi-list nav-icon-menu"></i>
+			<ul class="navbar-nav ms-auto list-group-horizontal">
+				<i class="bi bi-three-dots-vertical navbar-toggler nav-icon-menu-2"
+					(click)="open(content)" *ngIf="unidadesResponsables.length > 0 || unidadesCompradoras.length > 0">
+				</i>
+
+				<div class="collapse navbar-collapse" id="navbarUC">
+					<ul class="navbar-nav justify-content-end flex-grow-1 pe-4">
+						<span
+							class="badge text-bg-light badge-ur text-ur" placement="bottom"
+							*ngIf="unidadesResponsables.length == 1"
+							[ngbTooltip]="unidadesResponsables[0].nombreUR"
+						>
+							Unidad Responsable
+							<i class="bi bi-eye"></i>
+						</span>
+
+						<li *ngIf="unidadesResponsables.length > 1" class="nav-item dropdown ">
+							<a class="nav-link dropdown-toggle badge text-bg-light dropdown-ur" role="button" data-bs-toggle="dropdown"
+							   data-bs-auto-close="false" aria-haspopup="true" aria-expanded="false"
+							>
+								<span class="nav-uc-1">Unidades Responsables</span>
+							</a>
+							<ul class="dropdown-menu menu-ur">
+								<li *ngFor="let item of unidadesResponsables">
+									<span class="dropdown-item-text item-text-dropdown">{{item.nombreUR}}</span>
+								</li>
+							</ul>
+						</li>
+
+						<span class="badge text-bg-light badge-uc text-uc" placement="bottom"
+							*ngIf="unidadesCompradoras.length == 1"
+							[ngbTooltip]="unidadesCompradoras[0].nombreU"
+						>
+							Unidad Compradora
+							<i class="bi bi-eye"></i>
+						</span>
+
+						<li *ngIf="unidadesCompradoras.length > 1" class="nav-item dropdown dropdown-uc ">
+							<a class="nav-link dropdown-toggle badge text-bg-light badge-uc"
+							   role="button" data-bs-toggle="dropdown" data-bs-auto-close="false"
+							   aria-haspopup="true" aria-expanded="false"
+							>
+								<span class="nav-uc-1">Unidades Compradoras</span>
+							</a>
+							<ul class="dropdown-menu menu-uc">
+								<li *ngFor="let item of unidadesCompradoras">
+									<span class="dropdown-item-text item-text-dropdown">{{item.nombreU}}</span>
+								</li>
+							</ul>
+						</li>
+				  	</ul>
+				</div>
+
+				<li class="nav-item-notifications">
+					<app-notificaciones></app-notificaciones>
+				</li>
+
+				<li class="menu-item-perfil dropdown ">
+					<a href="#" data-bs-toggle="dropdown" title=" Usuario Verificado " data-bs-display="static" class="menu-link">
+					  <div class="menu-img">
+						<i class="bi bi-person-circle avatar"></i>
+					  </div>
+
+					  <div class="menu-text lh-1">
+						<div class="name-chevron">
+							<div class="name-user">{{getName()}}</div>
+							<i class="bi bi-chevron-down ms-1"></i>
+						</div>
+						<small class="d-block fw-normal rol-user">{{rolUser}}</small>
+					  </div>
+					</a>
+					<div class="dropdown-menu dropdown-menu-end me-lg-3 py-0 border">
+					  <a class="dropdown-item d-flex align-items-center dropdown-item-perfil" href="#">
+						<i class="bi bi-person-workspace"></i> Portal público
+					  </a>
+					  <div class="dropdown-divider my-0"></div>
+
+					  <a class="dropdown-item d-flex align-items-center dropdown-item-perfil" (click)="logout()">
+						<i class="bi bi-box-arrow-right"></i> Cerrar sesión
+					  </a>
+					</div>
+				</li>
+			</ul>
+		</div>
+	</nav>
+</div>
+
+<!-- Offcanvas-end unidades compradoras y responsables-->
+
+<ng-template #content let-offcanvas>
+	<div class="offcanvas-header">
+		<img
+			src="../../../assets/images/logo-compranet.png"
+			width="150px"
+			alt="CompraNet Plus Sonora"
+		/>
+		<button type="button" class="btn-close" aria-label="Close" (click)="offcanvas.dismiss('Cross click')"></button>
+	</div>
+	<div class="offcanvas-body">
+
+		<div *ngIf="unidadesResponsables.length > 0" class="pb-4">
+			<a class="nav-link dropdown-toggle" role="button" data-bs-toggle="collapse" href="#collapseUR" role="button" aria-controls="collapseUR" aria-expanded="false">
+				<span class="nav-uc-1">Unidades Responsables</span>
+			</a>
+			<div class="collapse show" id="collapseUR">
+				<div class="card card-body">
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item item-uc-offcanvas" *ngFor="let item of unidadesResponsables">
+							{{item.nombreU}}
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+
+		<div *ngIf="unidadesCompradoras.length > 0" class="pb-4">
+			<a class="nav-link dropdown-toggle"
+				role="button" data-bs-toggle="collapse"
+				href="#collapseUC" role="button"
+				aria-controls="collapseUC"
+				aria-expanded="false"
+			>
+				<span class="nav-uc-1">Unidades Compradoras</span>
+			</a>
+			<div class="collapse show" id="collapseUC">
+				<div class="card card-body">
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item item-uc-offcanvas" *ngFor="let item of unidadesCompradoras">
+							{{item.nombreU}}
+						</li>
+					</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</ng-template>

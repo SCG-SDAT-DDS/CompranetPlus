@@ -1,0 +1,222 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin id="sidebar" class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"></app-side-nav-admin>
+
+<!--START CONTENT LAYOUT-->
+<div class="content-layout-admin">
+  <!--STAR section filtro tablero-->
+  <section *ngIf="!blnEditar && !blnAgregar">
+    <div class="container pt-5">
+      <!-- row del titulo y funcion de agregar -->
+      <div class="row">
+        <div class="d-inline-block col-md-8">
+            <h2 class="d-inline-block me-2">Unidades Responsables</h2>
+            <h6 class="d-inline-block">Ver listado de Unidades Responsables</h6>
+        </div>
+        <div class="col-md-4">
+          <div class="d-flex justify-content-end align-items-end">
+            <button class="btn  btn-sm btn-success" (click)="agregar()" *ngIf="canActivate('ADMIN_CAT_URESP_AGR')">
+              <i class="bi bi-plus-lg"></i>Agregar Unidad Responsable
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- apartado para el formulario de busqueda-->
+      <div class="card mt-2">
+        <div class="container">
+          <form [formGroup]="formBusqueda" (ngSubmit)="buscarCatUnidadResponsable">
+            <div class="row pt-3 pb-3">
+              <div class="col-md-4">
+                <input class="form-control" placeholder="Escriba el nombre o clave de la unidad responsable....." formControlName="descripcion_cur" id="descripcion_cur" name="descripcion_cur"/>
+              </div>
+              <div class="col-md-4">
+                <select class="form-select" formControlName="id_tipo_unidad_responsable" id="id_tipo_unidad_responsable" name="id_tipo_unidad_responsable">
+                  <option selected [ngValue]="null" [disabled]="false">Todos los tipos de unidad</option>
+                  <option *ngFor="let ctur of lstCatTipoUnidadResponsable; index as ictp" [ngValue]="ctur.id_tipo_unidad_responsable" >{{ctur.tipo_unidad_responsable}}</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <div class="d-flex justify-content-end align-items-end">
+                  <button class="btn  btn-sm btn-outline-secondary me-2" type="button"
+                          (click)="formBusqueda.reset()">
+                      Restablecer
+                  </button>
+                  <button type="submit" class="btn btn-sm btn-info" (click)="buscarCatUnidadResponsable()"
+                          [disabled]="!formBusqueda.valid || loaderBusqueda">
+                      Filtrar
+                      <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-sm" role="status"></div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div><!--end formulario de busqueda-->
+
+      <!--apartado para el tablero de resultados-->
+      <div class="card mt-3">
+        <div class="container table-responsive">
+            <table class="table table-striped " aria-describedby="table_usuarios">
+                <thead>
+                <tr>
+                    <th scope="col">ID</th>
+                    <th scope="col">Unidad Responsable</th>
+                    <th scope="col">Siglas</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Estatus</th>
+                    <th scope="col" *ngIf="canActivate('ADMIN_CAT_URESP_MOD') || canActivate('ADMIN_CAT_URESP_ELM')">Acciones</th>
+                </tr>
+                </thead>
+                <tbody *ngIf="lstCatUnidadResponsable != null">
+                  <tr *ngFor="let item of lstCatUnidadResponsable; index as i">
+                      <td> {{ item.id_unidad_responsable }} </td>
+                      <td> {{ item.nombre_unidad_responsable }} </td>
+                      <td> {{ item.siglas}} </td>
+                      <td> {{ item.cat_tipo_unidades_responsables != null ? item.cat_tipo_unidades_responsables.tipo_unidad_responsable : '' }} </td>
+                      <td>
+                          <span class="badge bg-success" *ngIf="item.activo">Activo</span>
+                          <span class="badge bg-danger" *ngIf="!item.activo">Baja</span>
+                      </td>
+                      <td class="overflow-hidden"  *ngIf="canActivate('ADMIN_CAT_URESP_MOD') || canActivate('ADMIN_CAT_URESP_ELM')">
+                        <div ngbDropdown container="body">
+                          <button type="button" class="btn btn-warning btn-sm btn-circle  me-2" ngbDropdownToggle><i class="bi bi-three-dots-vertical"></i></button>
+                          <div ngbDropdownMenu>
+                            <button *ngIf="canActivate('ADMIN_CAT_URESP_MOD')" (click)="editar(item)" ngbDropdownItem>Modificar</button>
+                            <button *ngIf="canActivate('ADMIN_CAT_URESP_ELM')" (click)="eliminarModal(modalEliminar, item)" ngbDropdownItem>Eliminar</button>
+                            <button *ngIf="canActivate('ADMIN_CAT_URESP_MENU')" [routerLink]="['/admin/unidad-compradora/',item.id_unidad_responsable]" ngbDropdownItem>Ver Unidades Compradoras</button>
+                            <button *ngIf="canActivate('ADMIN_CAT_URESP_MENU')" [routerLink]="['/admin/unidad-responsable/supervisores/',item.id_unidad_responsable]" ngbDropdownItem>Ver  Agregar/Supervisor</button>
+                          </div>
+                        </div>
+                      </td>
+                  </tr>
+                </tbody>
+            </table>
+            <ngb-alert *ngIf="lstCatUnidadResponsable != null && lstCatUnidadResponsable.length == 0">
+                Sin datos para mostrar
+            </ngb-alert>
+            <div class="d-flex justify-content-between p-2">
+                <ngb-pagination *ngIf="lstCatUnidadResponsable != null && lstCatUnidadResponsable.length>pageSizeLstCatUnidadResponsable"
+                                [collectionSize]="lstCatUnidadResponsable.length"
+                                [(page)]="pageLstCatUnidadResponsable"
+                                [pageSize]="pageSizeLstCatUnidadResponsable"
+                >
+                </ngb-pagination>
+            </div>
+        </div>
+      </div><!--end tablero de resultados-->
+
+    </div> <!--end container filtro tablero-->
+  </section><!--END seccion filtro tablero-->
+
+  <!--START formulario registro-->
+
+  <section *ngIf="blnAgregar || blnEditar">
+    <div class="container pt-4">
+      <div class="d-inline-block col-md-8">
+        <h2 class="d-inline-block me-2">{{messageTitle}}</h2>
+        <h6 class="d-inline-block">{{messageSubTitle}}</h6>
+      </div>
+      <div class="card mt-3">
+        <div class="container ">
+          <form [formGroup]="formRegistro" (ngSubmit)="guardarSubmit()">
+            <div class="row pt-3 pb-3">
+              <div class="col-md-4">
+                <label class="form-label">Unidad Responsable: <app-campo-obligatorio /></label>
+                <input class="form-control" placeholder="Nombre de la Unidad Responsable" formControlName="nombre_unidad_responsable"
+                        id="nombre_unidad_responsable" name="nombre_unidad_responsable" [class.is-invalid]="formRegistro.get('nombre_unidad_responsable')?.invalid &&
+                        (formRegistro.get('nombre_unidad_responsable')?.dirty || formRegistro.get('nombre_unidad_responsable')?.touched)" />
+                <div *ngIf="formRegistro.get('nombre_unidad_responsable')?.invalid && formRegistro.get('nombre_unidad_responsable')?.errors
+                    && (formRegistro.get('nombre_unidad_responsable')?.dirty || formRegistro.get('nombre_unidad_responsable')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('nombre_unidad_responsable')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                  <small class="text-danger" *ngIf="formRegistro.get('nombre_unidad_responsable')?.hasError('minlength')">
+                    El valor mínimo es 5 characters.
+                  </small>
+                </div>
+
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Siglas: <app-campo-obligatorio /></label>
+                <input class="form-control" placeholder="Siglas de la Unidad Responsable" formControlName="siglas"
+                        id="siglas" name="siglas" [class.is-invalid]="formRegistro.get('siglas')?.invalid &&
+                        (formRegistro.get('siglas')?.dirty || formRegistro.get('siglas')?.touched)" />
+                <div *ngIf="formRegistro.get('siglas')?.invalid && formRegistro.get('siglas')?.errors
+                    && (formRegistro.get('siglas')?.dirty || formRegistro.get('siglas')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('siglas')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                  <small class="text-danger" *ngIf="formRegistro.get('siglas')?.hasError('minlength')">
+                    El valor mínimo es 3 characters.
+                  </small>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Tipo <app-campo-obligatorio /></label>
+                <select class="form-select" formControlName="id_tipo_unidad_responsable" id="id_tipo_unidad_responsable" name="id_tipo_unidad_responsable"
+                        [class.is-invalid]="formRegistro.get('id_tipo_unidad_responsable')?.invalid &&
+                        (formRegistro.get('id_tipo_unidad_responsable')?.dirty || formRegistro.get('id_tipo_unidad_responsable')?.touched)">
+                  <option selected [ngValue]="null" [disabled]="false">Seleccione opción</option>
+                  <option *ngFor="let ctur of lstCatTipoUnidadResponsable; index as ictp" [ngValue]="ctur.id_tipo_unidad_responsable" >{{ctur.tipo_unidad_responsable}}</option>
+                </select>
+                <div *ngIf="formRegistro.get('id_tipo_unidad_responsable')?.invalid && formRegistro.get('id_tipo_unidad_responsable')?.errors
+                    && (formRegistro.get('id_tipo_unidad_responsable')?.dirty || formRegistro.get('id_tipo_unidad_responsable')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('id_tipo_unidad_responsable')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                </div>
+              </div>
+
+              <div class="col-md-4" *ngIf="blnEditar">
+                <label class="form-label">Estatus</label>
+                <select class="form-select" formControlName="activo" id="activoRegistro" name="activo"
+                        [class.is-invalid]="formRegistro.get('activo')?.invalid &&
+                        (formRegistro.get('activo')?.dirty || formRegistro.get('activo')?.touched)">
+                  <option selected [ngValue]="null" [disabled]="false">Seleccione opción</option>
+                  <option [ngValue]="1">Activo</option>
+                  <option [ngValue]="0">Baja</option>
+                </select>
+                <div *ngIf="formRegistro.get('activo')?.invalid &&
+                formRegistro.get('activo')?.errors &&
+                (formRegistro.get('activo')?.dirty || formRegistro.get('activo')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('activo')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-end">
+              <button type="button" class="btn btn-sm btn-outline-dark me-2" (click)="cancelar()">
+                Regresar
+              </button>
+              <button type="submit" class="btn btn-sm btn-success" [disabled]="!formRegistro.valid || loaderGuardar">
+                {{messageButton}} <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section><!--END formulario registro-->
+
+
+</div><!--END CONTENT LAYOUT-->
+
+<!-- modal -->
+<ng-template #modalEliminar let-c="close" let-d="dismiss">
+  <div class="modal-body d-flex flex-column align-items-center">
+      <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+      <h4 class="mt-2 text-center">¿Estás seguro de querer eliminar el registro?</h4>
+      <label class="mt-2 text-muted">No será posible recuperar después</label>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-default" (click)="cancelar()">No, cancela!</button>
+      <button type="button" class="btn btn-sm btn-danger" (click)="eliminarSubmit()" [disabled]="loaderGuardar">
+          Sí, eliminalo!
+          <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+      </button>
+  </div>
+</ng-template>

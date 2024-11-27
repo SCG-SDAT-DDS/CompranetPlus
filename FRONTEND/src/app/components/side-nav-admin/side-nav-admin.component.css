@@ -1,0 +1,163 @@
+.side-bar-content {
+    width: 18rem;
+    height: 100%;
+    overflow-y: auto;
+    background-color: #960E53;
+    background-attachment: inherit;
+    background-position: top right;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-blend-mode: multiply;
+    background-image: url(../../../assets/images/login-bg.jpg);
+}
+
+.app-sidebar .brand .brand-logo {
+    font-weight: bold;
+    color: white;
+    font-size: 1rem;
+    text-transform: uppercase;
+    text-decoration: none;
+    height: 5rem;
+    width: 100%;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.app-sidebar .brand .brand-logo .logo {
+    display: block;
+    height: 2.5rem;
+    width: 85%;
+    position: relative;
+    margin-right: 0.75rem;
+}
+
+.app-sidebar .brand .brand-logo h1,
+.app-sidebar .brand .brand-logo .h1 {
+    font-size: 1.25rem;
+    font-weight: 800;
+    width: 100%;
+    display: block;
+    letter-spacing: 1px;
+    margin-bottom: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.sidebar-toggle {
+    cursor: pointer;
+}
+
+.app-sidebar .app-sidebar-content {
+    padding: 0 10px;
+    position: relative;
+
+}
+
+@media (max-width: 991.98px) {
+    .app-sidebar .app-sidebar-content {
+        background: transparent;
+        position: relative;
+        z-index: 1010;
+        padding-right: 40px;
+        width: 18rem;
+    }
+}
+
+.app-sidebar .menu {
+    min-height: 80%;
+    display: flex;
+    flex-direction: column;
+}
+
+.app-sidebar .menu .menu-item {
+    padding: 0 0;
+    cursor: pointer;
+    margin-bottom: 6px;
+}
+
+.app-sidebar .menu .menu-item .menu-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 1.5rem;
+    color: white;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.app-sidebar .menu .menu-item .menu-icon+.menu-text {
+    margin-left: 0.625rem;
+}
+
+.app-sidebar .menu .menu-item .menu-caret {
+    opacity: 0.75;
+}
+
+.app-sidebar .menu .menu-item .menu-text {
+    flex: 1;
+}
+
+.app-sidebar .menu .menu-item .menu-link {
+    padding: 6px 6px;
+    line-height: 20px;
+    text-decoration: none;
+    color: white;
+    display: flex;
+    align-items: center;
+}
+
+.app-sidebar .menu .menu-item .menu-link:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.app-sidebar .menu .menu-item .menu-submenu .card-body {
+    background-color: rgba(0, 0, 0, 0.25);
+}
+
+.app-sidebar .menu .menu-item .menu-submenu .card-body .menu-sub-items li {
+    color: white;
+    cursor: pointer;
+    list-style: none;
+}
+
+.app-sidebar .menu .menu-item .menu-submenu .card-body .menu-sub-items li::before {
+    content: "•";
+    color: rgba(255, 255, 255, 0.5);
+    display: inline-block;
+    width: 1em;
+    font-size: 20px;
+    margin-left: -2em;
+    margin-bottom: 5px;
+}
+
+.app-sidebar .menu .menu-item .menu-submenu .card-body .menu-sub-items li:hover {
+    background-color: transparent;
+    color: rgba(245, 144, 67, 0.75);
+    transition: 0.3s ease-in-out all;
+}
+
+.app-sidebar .menu .menu-item .menu-submenu .card-body .menu-sub-items li:hover::before {
+    color: rgba(220, 127, 55, 0.5);
+}
+
+.app-sidebar .menu .menu-divider {
+    margin: 5px 0;
+    height: 1px;
+}
+
+.app-sidebar .menu .menu-header {
+    margin: 12px 0;
+    font-size: 0.83125rem;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.app-sidebar .menu .menu-super-header {
+    margin: 12px 0;
+    font-size: 0.83125rem;
+    font-weight: 600;
+    color: #4d4d4d;
+}

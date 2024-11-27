@@ -1,0 +1,110 @@
+<app-header-admin></app-header-admin>
+<app-side-nav-admin
+  id="sidebar"
+  class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"
+></app-side-nav-admin>
+
+<div class="content-layout-admin">
+  <main>
+    <div class="display-area">
+      <section>
+        <div class="container pt-2 pb-2">
+          <div class="row">
+            <div class="d-inline-block col-md-12">
+              <h2 class="d-inline-block me-2">Pase a caja</h2>
+              <h6 class="d-inline-block">
+                Generar pase a caja para costo de bases.
+              </h6>
+            </div>
+          </div>
+
+          <app-encabezado-procedimiento [__procedimientoElegido]="_procedimientoElegido"></app-encabezado-procedimiento>
+
+        <div class="card mt-3">
+          <div class="container table-responsive">
+
+              <table class="table table-striped" aria-describedby="table_pase_caja">
+
+              <thead>
+                  <tr>
+                  <th scope="col">RFC</th>
+                  <th scope="col">Nombre o Razon Social</th>
+                  <th scope="col">Fecha Inscripción</th>
+                  <th scope="col">Hora Inscripción</th>
+                  <th scope="col">Estatus (Pase a Caja)</th>
+                  </tr>
+              </thead>
+              <tbody *ngIf="!loader">
+                  <tr>
+                  <td>{{ _detallePaseCaja.rfc_proveedor }}</td>
+                  <td>
+                      {{ _detallePaseCaja.razon_social ? _detallePaseCaja.razon_social : _detallePaseCaja.nombre_proveedor + _detallePaseCaja.primer_apellido_proveedor + _detallePaseCaja.segundo_apellido_proveedor}}
+                  </td>
+                  <td>
+                      {{ _detallePaseCaja.fecha_inscripcion | date:'dd/MM/yyyy'}}
+                  </td>
+                  <td>
+                      {{ _detallePaseCaja.fecha_inscripcion | date:'shortTime'}}
+                  </td>
+                  <td>
+                    <span class="badge bg-default" *ngIf="_detallePaseCaja.folio_pase_caja == null && _detallePaseCaja.pase_caja == null" >Pendiente por generar Pase</span>
+                    <span class="badge bg-success" *ngIf="_detallePaseCaja.folio_pase_caja !== null && _detallePaseCaja.pase_caja == 1" >Pase de caja pagado</span>
+                    <span class="badge bg-warning" *ngIf="_detallePaseCaja.folio_pase_caja !== null && _detallePaseCaja.pase_caja !== 1 " >En proceso de pago</span>
+                  </td>
+
+
+                  </tr>
+              </tbody>
+          </table>
+          <div class="d-flex justify-content-center align-items-center pb-2" >
+              <div *ngIf="loader" class="spinner-border spinner-border-lg" role="status"></div>
+          </div>
+          <ngb-alert *ngIf="!loader && _detallePaseCaja == null">
+              Sin datos para mostrar
+          </ngb-alert>
+          </div>
+
+          </div>
+
+        <div class="row mt-3">
+          <div class="col-md-12">
+            <div class="d-flex justify-content-end align-items-end">
+              <button
+              *ngIf="_detallePaseCaja && _detallePaseCaja.folio_pase_caja == null"
+                class="btn btn-sm btn-success"
+                style="margin-right: 1%"
+                (click)="generar_pase()"
+              >
+                Generar Pase a Caja
+              </button>
+              <button
+              *ngIf=" _detallePaseCaja && _detallePaseCaja.folio_pase_caja !== null"
+                class="btn btn-sm btn-warning"
+                style="margin-right: 1%"
+                (click)="consultar_pase()"
+              >
+                Imprimir Pase a Caja
+              </button>
+              <button
+              *ngIf="_detallePaseCaja && _detallePaseCaja.folio_pase_caja !== null"
+                class="btn btn-sm btn-primary"
+                style="margin-right: 1%"
+                (click)="consultar_recibo()"
+              >
+                Consultar Recibo
+              </button>
+              <button
+                class="btn btn-sm btn-outline-secondary"
+                type="button"
+                (click)="cancelarPaseCaja()"
+              >
+                Regresar
+              </button>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

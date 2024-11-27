@@ -1,0 +1,305 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin  id="sidebar"
+  class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1">
+</app-side-nav-admin>
+
+<div class="content-layout-admin" *ngIf="blnActivarAdministrar">
+  <main>
+    <div class="display-area">
+      <section>
+        <div class="container pt-5">
+          <div class="row">
+
+            <ngb-alert type="danger" *ngIf="lstTablaUnidadesCompradoras != null && lstTablaUnidadesCompradoras.length == 0">
+              El usuario no tiene relacionadas unidades compradoras
+            </ngb-alert>
+
+
+            <div class="d-inline-block col-md-8">
+              <h2 class="d-inline-block me-2">
+                Adjudicaciones directas
+              </h2>
+              <h6 class="d-inline-block">
+                Listado de adjudicaciones directas
+              </h6>
+            </div>
+
+            <div class="col-md-4">
+              <div class="d-flex justify-content-end align-items-end">
+                <button [disabled]="!formBusqueda.valid || loaderBusqueda"
+                  *ngIf="canActivate('ADMIN_LICDIR_AGR')"
+                  class="btn btn-sm btn-success"
+                  (click)="agregarProcedimiento()"
+                >
+                  <i class="bi bi-plus-lg"></i>
+                  Nueva adjudicación directa
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <form [formGroup]="formBusqueda" (ngSubmit)="buscarProcedimientosAdministrativos()">
+              <div class="card mt-2">
+                <div class="container">
+                  <div class="row pt-3">
+                    <div class="col-md-4">
+
+                      <!-- <select class="form-select" aria-label="Default select example" id="unidadcompradora"
+                      formControlName="id_unidad_compradora"  name="unidadcompradora">
+                        <option *ngFor="let uc of lstTablaUnidadesCompradoras" [value]="uc.id_unidad_compradora">{{uc.nombre_unidad_compradora}}</option>
+
+                      </select> -->
+
+                      <input class="form-control" list="datalistOptions"
+                      placeholder="Escribe la clave de UC para buscar..." formControlName="nombre_unidad_compradora"
+                      id="nombre_unidad_compradora" name="nombre_unidad_compradora"
+                      (change)="actualizarNombreUsuario($event)" autocomplete="off" />
+
+                    <datalist id="datalistOptions">
+                      <option *ngFor="let uc of lstTablaUnidadesCompradoras; index as ictp"
+                        [value]="uc.clave_unidad_compradora">
+                        {{
+                        uc.nombre_unidad_compradora 
+                        }}
+                      </option>
+                    </datalist>
+
+                    </div>
+
+                    <div class="col-md-4">
+                      <input class="form-control" placeholder="Numero de licitacion" id="numeroprocedimiento"
+                      formControlName="numero_procedimiento"  name="numeroprocedimiento" />
+
+                    </div>
+
+                    <div class="col-md-4">
+                      <select class="form-select" aria-label="Default select example" id="tipoprocedimiento"
+                        formControlName="id_tipo_procedimiento"  name="tipoprocedimiento">
+                        <option value="" selected>Todos</option>
+                        <option *ngFor="let tp of lstTablaTiposProcedimientos" [value]="tp.id_tipo_procedimiento">{{tp.nombre_procedimiento}}</option>
+
+                      </select>
+
+                    </div>
+                  </div>
+
+                  <div class="row pt-3">
+                    <div class="col-md-4">
+                      <input class="form-control" placeholder="Concepto de Contratación" id="conceptocontratacion"
+                      formControlName="concepto_contratacion"  name="conceptocontratacion"/>
+                    </div>
+
+                    <div class="col-md-4">
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                    </div>
+                  </div>
+
+                  <div class="row pt-3 pb-3">
+                    <div class="col-md-12">
+                      <div class="d-flex justify-content-end align-items-end">
+                        <button class="btn btn-sm btn-outline-secondary me-2" type="button" (click)="formBusqueda.reset()">
+                          Restablecer
+                        </button>
+                        <button class="btn btn-sm btn-info" type="submit" class="btn btn-sm btn-info"
+                          [disabled]="!formBusqueda.valid || loaderBusqueda">Filtrar
+
+                          <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-sm" role="status"></div>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </form>
+
+          <div class="card mt-3">
+            <div class="container table-responsive">
+              <table
+                class="table table-striped"
+                aria-describedby="tabla_administrar_adjudicaciones"
+              >
+                <thead>
+                  <tr>
+                    <th scope="col">No. de Licitación</th>
+                    <th scope="col" *ngIf="visualizarAdmin()">Unidad Responsable</th>
+                    <th scope="col">Tipo de procedimiento</th>
+                    <th scope="col">Concepto de contratación</th>
+                    <th scope="col">Estatus</th>
+                    <th scope="col" *ngIf="canActivate('ADMIN_LICDIR_OFICIOS')">
+                      Oficio
+                    </th>
+                    <th scope="col">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="lstTablaProcedimientos != null && !loaderBusqueda">
+                  <tr *ngFor="let procedimiento of lstTablaProcedimientos; index as i">
+                    <td>
+                      {{ procedimiento.numero_procedimiento}}
+                    </td>
+                    <td *ngIf="visualizarAdmin()">
+                      {{ procedimiento.nombre_unidad_responsable}}
+                    </td>
+                    <td>
+                      {{ procedimiento.nombre_procedimiento}}
+                    </td>
+                    <td>
+                        {{ procedimiento.descripcion_concepto_contratacion}}
+                    </td>
+
+
+                    <td>
+                      <span [ngClass]=procedimiento.estilo >{{procedimiento.nombre_estatus_procedimiento}}</span>
+
+                    </td>
+
+
+                    <td *ngIf="canActivate('ADMIN_LICDIR_OFICIOS')">
+                      <button class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                        id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"
+                        (click)="onClickDescargarPdf(procedimiento.url_archivo_oficio_autorizacion, 'oficio')">
+                        <i class="bi bi-download"></i>
+                      </button>
+                    </td>
+
+                    <td>
+                      <button
+                        class="btn btn-warning btn-sm btn-circle me-2"
+                        type="button"
+                        id="dropdownMenuButton1"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                      >
+                        <i class="bi bi-three-dots-vertical"></i>
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+
+                        <li>
+                          <a class="dropdown-item btn_menu" (click)="detalleProcedimiento(procedimiento)" *ngIf="canActivate('ADMIN_LICDIR_CONSULTA')">
+                            Detalle
+                            <i class="bi bi-unlock"></i>
+                          </a>
+                        </li>
+
+
+                        <li *ngIf="permiteModificar(procedimiento)">
+                          <a class="dropdown-item btn_menu" (click)="editarProcedimiento(procedimiento)" *ngIf="canActivate('ADMIN_LICDIR_AGR')">
+                            Modificar
+                            <i class="bi bi-unlock"></i>
+                          </a>
+                        </li>
+                        <li *ngIf="!permiteModificar(procedimiento)">
+                          <a class="dropdown-item btn_menu" *ngIf="canActivate('ADMIN_LICDIR_AGR')"
+                          [class.disabled]="true">
+                            Modificar
+                            <i class="bi bi-lock"></i>
+                          </a>
+                        </li>
+
+
+                        <li *ngIf="permiteAnexos(procedimiento)">
+                          <a class="dropdown-item btn_menu" (click)="anexosProcedimiento(procedimiento)" *ngIf="canActivate('ADMIN_LICDIR_ANEXOS')">
+                            Anexos / Actas
+                            <i class="bi bi-unlock"></i>
+                          </a>
+                        </li>
+                        <li *ngIf="!permiteAnexos(procedimiento)">
+                          <a class="dropdown-item btn_menu" *ngIf="canActivate('ADMIN_LICDIR_ANEXOS')"
+                          [class.disabled]="true">
+                            Anexos / Actas
+                            <i class="bi bi-lock"></i>
+                          </a>
+                        </li>
+
+
+                      </ul>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+
+
+              <div class="d-flex justify-content-center align-items-center pb-2" >
+                <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-lg" role="status"></div>
+              </div>
+              <ngb-alert *ngIf="lstTablaProcedimientos != null && lstTablaProcedimientos.length == 0">
+                Sin datos para mostrar
+              </ngb-alert>
+
+            </div>
+          </div>
+
+
+
+          <div class="container mt-2" *ngIf="lstTablaProcedimientos != null && lstTablaProcedimientos.length > 0">
+            <div class="row">
+              <div class="col-md-7 col-12 d-flex justify-content-start">
+                <div class="mt-1 table-responsive">
+                  <ngb-pagination
+                    size="sm"
+                    [collectionSize]="collectionSize"
+                    [(page)]="page"
+                    [pageSize]="pageSize"
+                    [maxSize]="5"
+                    [rotate]="true"
+                    [boundaryLinks]="true"
+                    [disabled]="loaderBusqueda"
+                    (pageChange)="onPageChange()"
+                  ></ngb-pagination>
+                </div>
+              </div>
+              <div class="col-md-5 col-12 d-flex justify-content-end">
+                <div class="d-flex align-items-baseline">
+                  <small class="me-2">Mostrando: </small>
+                  <input
+                    type="number"
+                    class="form-control me-2"
+                    style=" max-width: 4em;"
+                    inputmode="numeric"
+                    pattern="[0-9]*"
+                    [value]="pageSize"
+                    [(ngModel)]="pageSize"
+                    readonly
+                  >
+                  <small>registros por página</small>
+                </div>
+              </div>
+            </div>
+          </div>
+
+
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+
+<div class="content-layout-admin" *ngIf="blnActivarAgregar">
+  <app-agregar-procedimiento-adjudicacion [_messageTitle] = messageTitle [_messageSubTitle] = messageSubTitle [_messageButton] = messageButton
+  [_procedimientoElegido]="procedimientoElegido" [_lstTablaUnidadesCompradoras]="lstTablaUnidadesCompradoras"
+  [_blnActivarEditar] = "blnActivarEditar" (_cancelarAgregarProcedimiento)="cancelarAgregarProcedimiento()">
+
+  </app-agregar-procedimiento-adjudicacion>
+</div>
+
+
+<div class="content-layout-admin" *ngIf="blnActivarDetalle">
+  <app-detalle-procedimiento-adjudicacion [_procedimientoElegido]="procedimientoElegido" (_cancelarDetalleProcedimiento)="cancelarDetalleProcedimiento()">
+
+  </app-detalle-procedimiento-adjudicacion>
+</div>
+
+
+<div class="content-layout-admin" *ngIf="blnActivarAnexosProcedimientos">
+  <app-anexos-procedimientos [_procedimientoElegido]="procedimientoElegido" (_cancelarAnexosProcedimiento)="cancelarAnexosProcedimiento()">
+
+  </app-anexos-procedimientos>
+</div>
+
+
+

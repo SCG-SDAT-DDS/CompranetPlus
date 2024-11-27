@@ -1,0 +1,54 @@
+<app-header-publico></app-header-publico>
+
+<div style="overflow-x: clip">
+  <div class="row cls-titulo-portal">
+    <div class="col-12 d-flex justify-content-center">
+      <div class="d-grid text-center">
+        <h2>Registro de Proveedores</h2>
+        <h5>
+          Campos obligatorios <app-campo-obligatorio></app-campo-obligatorio>
+        </h5>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div
+  class="container mt-3"
+  style="
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 30px;
+    padding: 2%;
+    border-radius: 10px;
+  "
+>
+  <div class="row cls-persona-header">
+    <div class="col-12">
+      <h4>Seleccione el Tipo de Persona que se esta registrando:</h4>
+    </div>
+  </div>
+  <div class="row ">
+    <div class="col-sm-6 col-6 d-flex justify-content-center" *ngFor="let persona of lst_tipos_personeria_juridica">
+      <input type="radio" name="id_tipo_personeria_juridica" class="cls-radio-button form-check-input"  (click)="tipoPersonaJuridica(persona)"/>
+      <span class="cls-span-persona"> {{persona?.nombre_personeria_juridica}}</span>
+    </div>
+    <div class="col-12 d-flex justify-content-center">
+      <div *ngIf="lst_tipos_personeria_juridica == undefined" class="spinner-border spinner-border-lg" role="status"></div>
+    </div>
+  </div>
+</div>
+
+<div *ngIf="personaJuridicaSeleccionada === 'Persona Moral'" class="mt-5">
+  <app-form-persona-moral [idPersonaJuridica]="tipoPersona"></app-form-persona-moral>
+</div>
+
+<div *ngIf="personaJuridicaSeleccionada === 'Persona Física'" class="mt-5">
+  <app-form-persona-fisica [idPersonaJuridica]="tipoPersona"></app-form-persona-fisica>
+</div>
+
+
+
+<app-footer></app-footer>
+
+
+
+<app-boton-top></app-boton-top>

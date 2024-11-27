@@ -1,0 +1,93 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin id="sidebar" class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"></app-side-nav-admin>
+
+<div class="content-layout-admin">
+
+    <main>
+        <div class="display-area">
+
+          <section >
+            <div class="container pt-5">
+
+              <div class="row">
+                <div class="d-inline-block col-md-8">
+                  <h2 class="d-inline-block me-2">Reportes</h2>
+                  <h6 class="d-inline-block">Lista de reporte guardados</h6>
+                </div>
+
+               
+              </div>
+
+
+
+
+              <div class="card mt-3">
+                <div class="container ">
+
+                  <table class="table table-striped" aria-describedby="table_reportes">
+                    <thead>
+                      <tr>
+                        <th scope="col">Nombre</th>
+                        <th scope="col">Descripcion</th>
+                        <th scope="col">Fecha de creacion</th>
+                        <th scope="col">Generar</th>
+                        <th scope="col">Eliminar</th>
+                        
+
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let reporte of reportes; index as i">
+
+                        <td>
+                          {{ reporte.nombre}}
+                        </td>
+                        <td>
+                          {{ reporte.descripcion}}
+                        </td>
+                        <td>
+                            {{ reporte.fecha}}
+                          </td>
+                        
+                        <td>
+                            <button class="btn btn-warning btn-sm btn-circle me-2"  >
+                              <i class="bi bi-file-excel"></i>
+                            </button>
+
+                        </td>
+                        <td>
+                            <button class="btn btn-warning btn-sm btn-circle me-2"  >
+                              <i class="bi bi-trash"></i>
+                            </button>
+
+                        </td>
+                        
+                        
+                        
+
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </div>
+
+              </div>
+
+           
+            </div>
+          </section>
+
+
+          <br>
+          <div class="card-footer d-flex justify-content-end">
+            <button class="btn  btn-sm btn-outline-dark me-2" routerLink="/admin/reportes/crear-reportes">
+                Regresar
+            </button>
+            
+          </div>
+
+
+        </div>
+    </main>
+  </div>

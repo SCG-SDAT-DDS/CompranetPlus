@@ -1,0 +1,303 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin
+  id="sidebar"
+  class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"
+></app-side-nav-admin>
+
+<div class="content-layout-admin">
+  <section *ngIf="!agregarConcepto && !editarConcepto">
+    <div class="container pt-5">
+      <div class="row">
+        <div class="d-inline-block col-md-8">
+          <h2 class="d-inline-block me-2">Tipos de Archivo</h2>
+          <h6 class="d-inline-block">
+            Ver listado de tipos de archivo en el sistema
+          </h6>
+        </div>
+
+        <div class="col-md-4" *ngIf="canActivate('ADMIN_CAT_TIPOARCH_AGR')">
+          <div class="d-flex justify-content-end align-items-end">
+            <button class="btn btn-sm btn-success" (click)="addConcepto()">
+              <i class="bi bi-plus-lg"></i>
+              Agregar Tipo de Archivo
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-2">
+        <div class="container">
+          <form [formGroup]="formBusqueda" (ngSubmit)="buscarSubmit()">
+            <div class="row pt-3 pb-3">
+              <div class="col-md-4">
+                <input
+                  class="form-control"
+                  placeholder="Escriba el tipo de archivo..."
+                  name="estado"
+                  formControlName="nombre_tipo_archivo"
+                />
+              </div>
+              <div class="col-md-4">
+                <select
+                  class="form-select"
+                  formControlName="caracter"
+                  aria-label="Default select example"
+                >
+                  <option [ngValue]="null">Seleccione caracter</option>
+                  <option [ngValue]="1">PÚBLICO</option>
+                  <option [ngValue]="0">PRIVADO</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <select
+                  class="form-select"
+                  formControlName="activo"
+                  aria-label="Default select example"
+                >
+                  <option [ngValue]="null">Seleccione estatus</option>
+                  <option [ngValue]="1">ACTIVO</option>
+                  <option [ngValue]="0">BAJA</option>
+                </select>
+              </div>
+              <div class="col-md-12 pt-3">
+                <div class="d-flex justify-content-end align-items-end">
+                  <button
+                    class="btn btn-sm btn-outline-secondary me-2"
+                    type="button"
+                    (click)="borrarFiltros()"
+                  >
+                    Restablecer
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn btn-sm btn-info"
+                    [disabled]="!formBusqueda.valid || loaderBusqueda"
+                  >
+                    Filtrar
+                    <div
+                      *ngIf="loaderBusqueda"
+                      class="spinner-border spinner-border-sm"
+                      role="status"
+                    ></div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <div class="container table-responsive">
+          <table
+            class="table table-striped"
+            aria-describedby="table_tipoArchivo"
+          >
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Tipo de Archivo</th>
+                <th scope="col">Carácter</th>
+                <th scope="col">Estatus</th>
+                <th
+                  scope="col"
+                  *ngIf="
+                    canActivate('ADMIN_CAT_TIPOARCH_MOD') ||
+                    canActivate('ADMIN_CAT_TIPOARCH_ELM')
+                  "
+                >
+                  Acciones
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let concepto of list_conceptos; index as i">
+                <td>
+                  {{ concepto.id_tipo_archivo }}
+                </td>
+                <td>
+                  {{ concepto.nombre_tipo_archivo }}
+                </td>
+                <td>
+                  <span class="badge bg-success" *ngIf="concepto.caracter"
+                    >PÚBLICO</span
+                  >
+                  <span class="badge bg-danger" *ngIf="!concepto.caracter"
+                    >PRIVADO</span
+                  >
+                </td>
+                <td>
+                  <span class="badge bg-success" *ngIf="concepto.activo"
+                    >Activo</span
+                  >
+                  <span class="badge bg-danger" *ngIf="!concepto.activo"
+                    >Baja</span
+                  >
+                </td>
+                <td>
+                  <button
+                    *ngIf="canActivate('ADMIN_CAT_TIPOARCH_MOD')"
+                    class="btn btn-warning btn-sm btn-circle me-2"
+                    (click)="editConcepto(concepto)"
+                  >
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button
+                    *ngIf="canActivate('ADMIN_CAT_TIPOARCH_ELM')"
+                    class="btn btn-danger btn-sm btn-circle"
+                    (click)="deleteConcepto(content, concepto)"
+                  >
+                    <i class="bi bi-trash3-fill"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div class="d-flex justify-content-center align-items-center pb-2" >
+            <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-lg" role="status"></div>
+          </div>
+          <ngb-alert *ngIf="!loaderBusqueda && list_conceptos.length == 0  ">
+            Sin datos para mostrar
+          </ngb-alert>
+        </div>
+      </div>
+
+      <!-- modal -->
+      <ng-template #content let-c="close" let-d="dismiss">
+        <div class="modal-body d-flex flex-column align-items-center">
+          <i
+            class="bi bi-exclamation-circle icono-grande"
+            style="color: var(--warning-color-hover)"
+          ></i>
+          <h4 class="mt-2 text-center">
+            ¿Estás seguro de querer eliminar este tipo de archivo?
+          </h4>
+          <label class="mt-2 text-muted"
+            >No será posible recuperar después</label
+          >
+          <h3 class="mt-2 text-center text-bg-danger" *ngIf="blnMsgRed">
+            Este Tipo de Archivo se encuentra en uso
+          </h3>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-sm btn-default"
+            (click)="c('Save click')"
+          >
+            No, cancela!
+          </button>
+          <button
+            type="button"
+            class="btn btn-sm btn-danger"
+            (click)="deleteConfirm()"
+          >
+            Sí, eliminalo!
+          </button>
+        </div>
+      </ng-template>
+    </div>
+  </section>
+
+  <section *ngIf="agregarConcepto || editarConcepto">
+    <div class="container pt-4">
+      <div class="d-inline-block col-md-8">
+        <h2 class="d-inline-block me-2">{{ messageTitle }}</h2>
+        <h6 class="d-inline-block">{{ messageSubTitle }}</h6>
+      </div>
+      <div class="card mt-3">
+        <div class="container">
+          <form [formGroup]="formRegistro" (ngSubmit)="guardarSubmit()">
+            <div class="row pt-3 pb-3">
+              <div class="col-md-4">
+                <label for="concepto" class="form-label">Concepto:</label
+                ><app-campo-obligatorio></app-campo-obligatorio>
+                <input
+                  id="concepto"
+                  class="form-control"
+                  placeholder="Escriba el concepto..."
+                  formControlName="nombre_tipo_archivo"
+                  name="concepto"
+                />
+                <div
+                  *ngIf="
+                  nombreTipoArchivoForm?.invalid &&
+                  nombreTipoArchivoForm?.errors &&
+                    (nombreTipoArchivoForm?.dirty || nombreTipoArchivoForm?.touched)
+                  "
+                >
+                  <small
+                    class="text-danger"
+                    *ngIf="nombreTipoArchivoForm?.hasError('required')"
+                  >
+                    Este campo es requerido.
+                  </small>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label for="concepto" class="form-label">Caracter:</label
+                ><app-campo-obligatorio></app-campo-obligatorio>
+                <select
+                  formControlName="caracter"
+                  class="form-select"
+                  aria-label="Default select example"
+                >
+                  <option [ngValue]="null">Seleccione opción</option>
+                  <option [ngValue]="1">PÚBLICO</option>
+                  <option [ngValue]="0">PRIVADO</option>
+                </select>
+                <div
+                  *ngIf="
+                    caracterForm?.invalid &&
+                    caracterForm?.errors &&
+                    (caracterForm?.dirty || caracterForm?.touched)
+                  "
+                >
+                  <small
+                    class="text-danger"
+                    *ngIf="caracterForm?.hasError('required')"
+                  >
+                    Este campo es requerido.
+                  </small>
+                </div>
+              </div>
+
+              <div class="col-md-4" *ngIf="editarConcepto">
+                <label for="estatus" class="form-label">Estatus:</label>
+                <select
+                  formControlName="activo"
+                  class="form-select"
+                  aria-label="Default select example"
+                >
+                  <option [ngValue]="null" selected>Seleccione opción</option>
+                  <option [ngValue]="1">Activo</option>
+                  <option [ngValue]="0">Baja</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-end">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-dark me-2"
+                (click)="redireccionar()"
+              >
+                Regresar
+              </button>
+              <button type="submit" class="btn btn-sm btn-success">
+                {{ messageButton }}
+                <div
+                  *ngIf="loaderGuardar"
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                ></div>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>

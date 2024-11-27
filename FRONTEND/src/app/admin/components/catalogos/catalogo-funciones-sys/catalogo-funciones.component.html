@@ -1,0 +1,229 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin id="sidebar"
+                    class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"></app-side-nav-admin>
+
+<div class="content-layout-admin">
+    <section *ngIf="!blnEditar && !blnAgregar">
+        <div class="container pt-5">
+            <div class="row">
+                <div class="d-inline-block col-md-8">
+                    <h2 class="d-inline-block me-2">Funciones sistema</h2>
+                    <h6 class="d-inline-block">Ver listado de funciones en el sistema</h6>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex justify-content-end align-items-end">
+                        <button class="btn  btn-sm btn-success" (click)="agregar()"
+                                *ngIf="canActivate('ADMIN_CAT_FUNCIONES_AGR')">
+                            <i class="bi bi-plus-lg"></i>
+                            Agregar función
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card mt-2">
+                <div class="container ">
+                    <form [formGroup]="formBusqueda" (ngSubmit)="buscarSubmit()" >
+                        <div class="row pt-3 pb-3">
+                            <div class="col-md-4">
+                                <input class="form-control" placeholder="Escriba el nombre de la función....."
+                                       formControlName="nombre" id="nombreBusqueda" name="nombreBusqueda"
+                                       [class.is-invalid]="formBusqueda.get('nombre')?.invalid &&
+                       (formBusqueda.get('nombre')?.dirty || formBusqueda.get('nombre')?.touched)"/>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" formControlName="estatus" id="estatusBusqueda"
+                                        name="estatusBusqueda">
+                                    <option selected [ngValue]="null" [disabled]="false">Seleccione opción</option>
+                                    <option [ngValue]="true">Activo</option>
+                                    <option [ngValue]="false">Baja</option>
+                                </select>
+
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="d-flex justify-content-end align-items-end">
+                                    <button type="button" class="btn  btn-sm btn-outline-secondary me-2"
+                                        (click)="reset()">
+                                        Restablecer
+                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-info" (click)="filtrar()"
+                                            [disabled]="!formBusqueda.valid || loaderBusqueda">
+                                        Filtrar
+                                        <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-sm" role="status"></div>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="container table-responsive">
+                    <table class="table table-striped " aria-describedby="table_usuarios">
+                        <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Función</th>
+                            <th scope="col">Estatus</th>
+                            <th scope="col" *ngIf="canActivate('ADMIN_CAT_FUNCIONES_MOD') || canActivate('ADMIN_CAT_FUNCIONES_ELM')">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody *ngIf="lstTabla != null && !loaderBusqueda">
+                        <tr *ngFor="let item of lstTabla; index as i">
+                            <td> {{ item.id }} </td>
+                            <td> {{ item.nombre}} </td>
+                            <td>
+                                <span class="badge bg-success" *ngIf="item.estatus">Activo</span>
+                                <span class="badge bg-danger" *ngIf="!item.estatus">Baja</span>
+                            </td>
+                            <td>
+                                <button class="btn btn-warning btn-sm btn-circle me-2" (click)="editar(item)"
+                                        *ngIf="canActivate('ADMIN_CAT_FUNCIONES_MOD')">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="btn btn-danger btn-sm btn-circle"
+                                        *ngIf="item.estatus && canActivate('ADMIN_CAT_FUNCIONES_ELM')"
+                                        (click)="eliminarModal(modalEliminar, item)">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-center align-items-center pb-2" >
+                        <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-lg" role="status"></div>
+                      </div>
+                    <ngb-alert *ngIf="lstTabla != null && lstTabla.length == 0">
+                        Sin datos para mostrar
+                    </ngb-alert>
+
+                    <div class="container mt-2 p-2" *ngIf="!loaderBusqueda">
+                        <div class="row ">
+                            <div class="col-md-6 col-12 d-flex justify-content-start">
+                                <div class="mt-1 table-responsive">
+                                    <ngb-pagination
+                                    size="sm"
+                                    [collectionSize]="collectionSize"
+                                    [(page)]="page"
+                                    [pageSize]="pageSize"
+                                    [maxSize]="5"
+                                    [rotate]="true"
+                                    [boundaryLinks]="true"
+                                    (pageChange)="buscarSubmit()"
+                                    ></ngb-pagination>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-12 d-flex justify-content-end">
+                                <div class="d-flex align-items-baseline">
+                                    <small class="me-2">Mostrando: </small>
+                                    <input 
+                                        type="number"  
+                                        class="form-control me-2" 
+                                        style=" max-width: 4em; " 
+                                        inputmode="numeric" 
+                                        pattern="[0-9]*"
+                                        [value]="pageSize" 
+                                        [(ngModel)]="pageSize"
+                                        (change)="buscarSubmit(true)"
+                                        
+                                    >
+                                    <small>registros por página</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section *ngIf="blnAgregar || blnEditar">
+        <div class="container pt-4">
+            <div class="d-inline-block col-md-8">
+                <h2 class="d-inline-block me-2">{{messageTitle}}</h2>
+                <h6 class="d-inline-block">{{messageSubTitle}}</h6>
+            </div>
+            <div class="card mt-3">
+                <div class="container ">
+                    <form [formGroup]="formRegistro" (ngSubmit)="guardarSubmit()">
+                        <div class="row pt-3 pb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">Función: <app-campo-obligatorio/></label>
+                                <input class="form-control" placeholder="Escriba el nombre de la función....."
+                                       formControlName="nombre" id="nombreRegistro" name="nombreRegistro"
+                                       [class.is-invalid]="formRegistro.get('nombre')?.invalid &&
+                       (formRegistro.get('nombre')?.dirty || formRegistro.get('nombre')?.touched)"/>
+                                <div *ngIf="formRegistro.get('nombre')?.invalid &&
+                  formRegistro.get('nombre')?.errors &&
+                  (formRegistro.get('nombre')?.dirty || formRegistro.get('nombre')?.touched)">
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('nombre')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('nombre')?.hasError('minlength')">
+                                        El valor mínimo es 3 characters.
+                                    </small>
+                                </div>
+
+                            </div>
+                            <div class="col-md-4" *ngIf="blnEditar">
+                                <label class="form-label">Estatus</label>
+                                <select class="form-select" formControlName="estatus" id="estatusRegistro"
+                                        name="estatusRegistro"
+                                        [class.is-invalid]="formRegistro.get('estatus')?.invalid &&
+                       (formRegistro.get('estatus')?.dirty || formRegistro.get('estatus')?.touched)">
+                                    <option selected [ngValue]="null" [disabled]="false">Seleccione opción</option>
+                                    <option [ngValue]="true">Activo</option>
+                                    <option [ngValue]="false">Baja</option>
+                                </select>
+                                <div *ngIf="formRegistro.get('estatus')?.invalid &&
+                  formRegistro.get('estatus')?.errors &&
+                  (formRegistro.get('estatus')?.dirty || formRegistro.get('estatus')?.touched)">
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('estatus')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card-footer d-flex justify-content-end">
+                            <button type="button" class="btn btn-sm btn-outline-dark me-2" (click)="cancelar()">
+                                Regresar
+                            </button>
+                            <button type="submit" class="btn btn-sm btn-success"
+                                    [disabled]="!formRegistro.valid || loaderGuardar">
+                                {{messageButton}} <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+
+<!-- modal -->
+<ng-template #modalEliminar let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer eliminar ésta función?</h4>
+        <label class="mt-2 text-muted">No será posible recuperar después</label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default" (click)="cancelar()">No, cancela!</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="eliminarSubmit()" [disabled]="loaderGuardar">
+            Sí, eliminalo!
+            <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+        </button>
+    </div>
+</ng-template>
+
+

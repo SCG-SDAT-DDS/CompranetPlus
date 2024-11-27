@@ -1,0 +1,260 @@
+<div>
+  <main>
+    <div class="display-area">
+      <section>
+        <div class="container pt-4">
+          <div class="d-inline-block col-md-8">
+            <h2 class="d-inline-block me-2">Diferendo del Acto de Apertura</h2>
+            <h6 class="d-inline-block">
+              Detallar diferendo del acto de apertura del procedimiento
+            </h6>
+          </div>
+
+          <app-encabezado-procedimiento [__procedimientoElegido]="_procedimientoElegido"></app-encabezado-procedimiento>
+          <div class="card lic_info">
+            <div class="container">
+              <div class="row">
+                <h4>Detalle de fechas y horarios
+                  <span *ngIf="datosFechasPrevias?.diferendo_acto_apertura == 1"> del deferimiento</span>
+                  <span *ngIf="datosFechasPrevias?.diferendo_acto_apertura == 0"> originales</span>
+                  :
+                </h4>
+                <div class="col-md-4 col-sm-6 col-12">
+                  <strong>Fecha junta de aclaraciones:</strong>
+                  {{
+                  datosFechasPrevias?.fecha_junta_aclaraciones_nueva
+                  ? (datosFechasPrevias?.fecha_junta_aclaraciones_nueva
+                  | date : "yyyy-MM-dd")
+                  : (datosFechasPrevias?.fecha_junta_aclaraciones
+                  | date : "yyyy-MM-dd")
+                  }}
+                </div>
+                <div class="col-md-4 col-sm-6 col-12">
+                  <strong>Hora junta de aclaraciones:</strong>
+                  {{
+                  datosFechasPrevias?.fecha_junta_aclaraciones_nueva
+                  ? (datosFechasPrevias?.fecha_junta_aclaraciones_nueva
+                  | date : "shortTime")
+                  : (datosFechasPrevias?.fecha_junta_aclaraciones
+                  | date : "shortTime")
+                  }}
+                </div>
+                <div class="col-md-4 col-sm-6 col-12">
+                  <strong>Fecha limite de inscripción:</strong>
+                  {{
+                  datosFechasPrevias?.fecha_limite_inscripcion_nueva
+                  ? (datosFechasPrevias?.fecha_limite_inscripcion_nueva
+                  | date : "yyyy-MM-dd")
+                  : (datosFechasPrevias?.fecha_limite_inscripcion
+                  | date : "yyyy-MM-dd")
+                  }}
+                </div>
+                <div class="col-md-4 col-sm-6 col-12">
+                  <strong>Fecha apertura:</strong>
+                  {{
+                  datosFechasPrevias?.fecha_apertura_nueva
+                  ? (datosFechasPrevias?.fecha_apertura_nueva
+                  | date : "yyyy-MM-dd")
+                  : (datosFechasPrevias?.fecha_apertura
+                  | date : "yyyy-MM-dd")
+                  }}
+                </div>
+                <div class="col-md-4 col-sm-6 col-12">
+                  <strong>Hora apertura:</strong>
+                  {{
+                  datosFechasPrevias?.fecha_apertura_nueva
+                  ? (datosFechasPrevias?.fecha_apertura_nueva
+                  | date : "shortTime")
+                  : (datosFechasPrevias?.fecha_apertura
+                  | date : "shortTime")
+                  }}
+                </div>
+                <div class="col-md-4 col-sm-6 col-12">
+                  <strong>Diferimiento Apertura:</strong>
+                  <span class="badge bg-success" *ngIf="datosFechasPrevias?.diferendo_acto_apertura == 1">Con
+                    Diferimiento</span>
+                  <span class="badge bg-danger" *ngIf="datosFechasPrevias?.diferendo_acto_apertura == 0">Sin
+                    Diferimiento</span>
+                </div>
+              </div>
+              <div class="row pt-3 pb-3">
+                <div class="d-flex justify-content-end">
+                  <div class="col-4">
+                    <button class="btn btn-sm btn-primary" (click)="establecerNuevas()"
+                      [disabled]="blnDesabilitarBtn || datosFechasPrevias?.diferendo_acto_apertura == 1">
+                      Establecer nuevas fechas y horarios
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card mt-3">
+            <form [formGroup]="formDiferendo" (ngSubmit)="alertGuardar()">
+              <div class="container" [ngClass]="{ 'disabled-card': !blnFechasNuevas }">
+                <div class="row pt-3">
+                  <div class="col-md-4">
+                    <label for="fechajuntaaclaraciones" class="form-label">Fecha de ultima junta de aclaraciones:
+                      <app-campo-obligatorio></app-campo-obligatorio></label>
+
+                    <div class="input-group">
+                      <input id="fechajuntaaclaraciones" name="fechajuntaaclaraciones" ngbDatepicker
+                             placeholder="Fecha de junta de aclaraciones" class="form-control"
+                             #fechajuntaaclaraciones="ngbDatepicker" formControlName="fecha_junta_aclaraciones_nueva"
+                             [markDisabled]="isDisabled" [minDate]="minPickerFechaJuntaAclaraciones"
+                             [class.is-invalid]="fechaJuntaForm?.invalid && (fechaJuntaForm?.dirty || fechaJuntaForm?.touched)"
+                             (ngModelChange)="cambiarFechaJuntaAclaraciones()" />
+                      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="fechajuntaaclaraciones.toggle()" type="button"></button>
+                    </div>
+
+
+
+                    <div *ngIf="fechaJuntaForm?.invalid
+                        && fechaJuntaForm?.errors
+                        && (fechaJuntaForm?.dirty || fechaJuntaForm?.touched)">
+                      <small class="text-danger" *ngIf="fechaJuntaForm?.hasError('required')">
+                        Este campo es requerido.
+                      </small>
+                    </div>
+
+                  </div>
+
+                  <div class="col-md-4">
+                    <label for="fechainscripcion" class="form-label">Fecha de límite inscripción:
+                      <app-campo-obligatorio></app-campo-obligatorio></label>
+
+                    <div class="input-group">
+                      <input id="fechainscripcion" name="fechainscripcion" ngbDatepicker
+                        placeholder="Fecha de límite de inscripción" class="form-control"
+                        #fechainscripcion="ngbDatepicker" formControlName="fecha_limite_inscripcion_nueva"
+                        [markDisabled]="isDisabled" [minDate]="minPickerFechaInscripcion"
+                        (ngModelChange)="cambiarFechaInscripcion()" [class.is-invalid]="fechaLimiteForm?.invalid &&
+                                        (fechaLimiteForm?.dirty || fechaLimiteForm?.touched)" />
+                      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="fechainscripcion.toggle()"
+                        type="button"></button>
+                    </div>
+
+                    <div *ngIf="fechaLimiteForm?.invalid
+                                    && fechaLimiteForm?.errors
+                                    && (fechaLimiteForm?.dirty || fechaLimiteForm?.touched)">
+                      <small class="text-danger" *ngIf="fechaLimiteForm?.hasError('required')">
+                        Este campo es requerido.
+                      </small>
+                    </div>
+                  </div>
+                  <div class="col-md-4">
+                    <label for="fechaapertura" class="form-label">Fecha de apertura de propuestas nueva:
+                      <app-campo-obligatorio></app-campo-obligatorio></label>
+
+                    <div class="input-group">
+                      <input id="fechaapertura" name="fechaapertura" ngbDatepicker
+                        placeholder="Fecha de apertura de propuestas" class="form-control"
+                        #fechaapertura="ngbDatepicker" formControlName="fecha_apertura_nueva" [markDisabled]="isDisabled"
+                        [minDate]="minPickerFechaAperturaPropuestas" [maxDate]="maxPickerFechaApertura" (ngModelChange)="cambiarFechaApertura()"
+                        [class.is-invalid]="fechaAperturaForm?.invalid &&
+                                        (fechaAperturaForm?.dirty ||fechaAperturaForm?.touched)" />
+                      <button class="btn btn-outline-secondary bi bi-calendar3" (click)="fechaapertura.toggle()"
+                        type="button"></button>
+                    </div>
+
+
+                    <div *ngIf="fechaAperturaForm?.invalid
+                                    && fechaAperturaForm?.errors
+                                    && (fechaAperturaForm?.dirty || fechaAperturaForm?.touched)">
+                      <small class="text-danger" *ngIf="fechaAperturaForm?.hasError('required')">
+                        Este campo es requerido.
+                      </small>
+                    </div>
+                  </div>
+                </div>
+
+                  <div class="row pt-3">
+                    <div class="col-md-4">
+                      <label for="fechaobra" class="form-label">Fecha de inicio de la obra nueva</label>
+                      <div class="input-group">
+                        <input id="fechaobra" name="fechaobra" ngbDatepicker
+                          placeholder="Fecha de apertura de propuestas" class="form-control"
+                          #fechaobra="ngbDatepicker" formControlName="fecha_inicio_obra_nueva" [markDisabled]="isDisabled"
+                          [minDate]="minPickerFechaInicioObra"
+                          [class.is-invalid]="fechaObraForm?.invalid &&
+                                          (fechaObraForm?.dirty ||fechaObraForm?.touched)" />
+                        <button class="btn btn-outline-secondary bi bi-calendar3" (click)="fechaobra.toggle()"
+                          type="button"></button>
+                      </div>
+
+                      <div *ngIf="
+                        fechaObraForm?.invalid &&
+                        fechaObraForm?.errors &&
+                        (fechaObraForm?.dirty || fechaObraForm?.touched)
+                      ">
+                        <small class="text-danger" *ngIf="fechaObraForm?.hasError('required')">
+                          Este campo es requerido.
+                        </small>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="tiemposRecortados" class="form-label">Aviso de diferendo</label>
+                      <input class="form-control" type="file" (change)="obtenerAvisoDiferendoBase64($event)"
+                        formControlName="url_archivo_aviso_diferendo" />
+                      <div *ngIf="
+                        urlDiferendoForm?.invalid &&
+                        urlDiferendoForm?.errors &&
+                        (urlDiferendoForm?.dirty || urlDiferendoForm?.touched)
+                      ">
+                        <small class="text-danger" *ngIf="urlDiferendoForm?.hasError('required')">
+                          Este campo es requerido.
+                        </small>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+                      <label for="tiemposRecortados" class="form-label">Hora de ultima junta de aclaraciones</label>
+                      <input type="time" class="form-control" value="10:05 AM"
+                        formControlName="hora_junta_aclaraciones_nueva" />
+                      <div *ngIf="
+                        horaJuntaForm?.invalid &&
+                        horaJuntaForm?.errors &&
+                        (horaJuntaForm?.dirty || horaJuntaForm?.touched)
+                      ">
+                        <small class="text-danger" *ngIf="horaJuntaForm?.hasError('required')">
+                          Este campo es requerido.
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row pt-3 pb-3">
+                    <div class="col-md-4">
+                      <label for="tiemposRecortados" class="form-label">Hora de apertura de propuestas nueva</label>
+                      <input type="time" class="form-control" value="10:05 AM" formControlName="hora_apertura_nueva" />
+                      <div *ngIf="
+                        horaAperturaForm?.invalid &&
+                        horaAperturaForm?.errors &&
+                        (horaAperturaForm?.dirty || horaAperturaForm?.touched)
+                      ">
+                        <small class="text-danger" *ngIf="horaAperturaForm?.hasError('required')">
+                          Este campo es requerido.
+                        </small>
+                      </div>
+                    </div>
+                    <div class="col-md-4"></div>
+                    <div class="col-md-4"></div>
+                  </div>
+                </div>
+                <div class="card-footer d-flex justify-content-end">
+                  <button type="button" class="btn btn-sm btn-outline-dark me-2"
+                    (click)="cancelarDiferendoProcedimiento()">
+                    Regresar
+                  </button>
+                  <button class="btn btn-sm btn-success" [disabled]="!blnFechasNuevas">
+                    Guardar
+                    <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+                  </button>
+                </div>
+            </form>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>

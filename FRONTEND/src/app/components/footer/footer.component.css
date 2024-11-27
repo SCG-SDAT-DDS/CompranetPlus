@@ -1,0 +1,66 @@
+.cls_logoFooter{
+  width: 160px;
+  object-fit: contain;
+}
+
+.cls_pattern{
+  padding: 5%;
+}
+
+footer{
+  background-color: var(--ternary-color);
+  opacity: 1;
+  height: 100%;
+  overflow-x: hidden;
+}
+
+.redes{
+  object-fit: contain;
+  filter: invert(1);
+  font-size: 1.5rem;
+  width: 70px;
+  display: flex;
+  justify-content: center;
+  text-decoration: none;
+  color: black;
+}
+
+.footer-left{
+  padding-left: 2%; 
+  border-left: 2px solid; 
+  text-align: left;
+}
+
+.sociales {
+  transition: transform 0.3s ease-in-out; 
+}
+.sociales:hover{
+  transform: scale(1.2);
+}
+
+.cls_emergencias{
+  align-self: center;
+}
+
+#sp-footer{   
+  background-image: url(../../../assets/images/pattern-white.svg);
+  background-size: auto 6rem;
+  background-position: left 36% top 50%;
+  background-repeat: no-repeat;
+}
+
+@media (max-width: 575.98px){
+#sp-footer {
+    background-position: left 50% bottom -8%;
+    padding-bottom: 64px;
+  }
+
+  .footer-left{
+    border: none;
+    text-align: center;
+  }
+
+  .text-responsive{
+    font-size: 13px;
+  }
+}

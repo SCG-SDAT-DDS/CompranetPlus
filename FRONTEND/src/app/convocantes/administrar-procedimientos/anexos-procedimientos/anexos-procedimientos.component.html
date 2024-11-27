@@ -1,0 +1,231 @@
+
+<div>
+
+    <main>
+
+      <div class="display-area">
+
+
+
+        <form [formGroup]="formRegistro" (ngSubmit)="confirmarGuardarSubmitModal(modalConfirmar)">
+
+
+          <section>
+              <div class="container pt-4">
+              <div class="d-inline-block col-md-8">
+                  <h2 class="d-inline-block me-2">Anexos del procedimiento</h2>
+                  <h6 class="d-inline-block">anexos del procedimiento</h6>
+              </div>
+
+
+              <app-encabezado-procedimiento [__procedimientoElegido]="_procedimientoElegido"></app-encabezado-procedimiento>
+
+
+              <div class="card mt-3">
+                  <div class="container ">
+
+                  <div class="row pt-3">
+                      <div class="col-md-4">
+                          <label class="form-label">Tipo de archivo: <app-campo-obligatorio></app-campo-obligatorio></label>
+                          <select class="form-select" aria-label="Default select example" id="tipoarchivo"
+                          formControlName="id_tipo_archivo"  name="tipoarchivo" (change)="resetArchivoAnexo()">
+                              <option selected>Seleccione opción</option>
+                              <option *ngFor="let tp of lstTablaTiposArchivos" [value]="tp.id_tipo_archivo"
+                              >{{tp.nombre_tipo_archivo}}</option>
+
+                          </select>
+                      </div>
+                      <div class="col-md-4">
+                          <label class="form-label">Archivo: <app-campo-obligatorio></app-campo-obligatorio></label>
+                          <input class="form-control" formControlName="archivo_anexo" type="file"
+                              (change)="obtenerArchivoAnexoBase64($event)"
+
+                          />
+                          <!-- accept="application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" -->
+                      </div>
+                      <div class="col-md-4">
+                          <label class="form-label">Comentarios: </label>
+                          <input class="form-control" placeholder="Comentarios" id="comentarios"
+                          formControlName="comentarios"  name="comentarios"/>
+                      </div>
+
+
+
+
+                  </div>
+
+
+          <br>
+
+                  <div class="col-md-12">
+                      <div class="d-flex justify-content-end align-items-end">
+                          <button class="btn  btn-sm btn-success" type="button" (click)="guardarAnexosSubmit()"
+                          [disabled]="formRegistro.get('id_tipo_archivo')?.value == '' || formRegistro.get('id_tipo_archivo')?.value == null
+                            || formRegistro.get('archivo_anexo')?.value == '' || formRegistro.get('archivo_anexo')?.value == null">
+                              <i class="bi bi-arrow-down-circle-fill"></i>
+                              Agregar archivo
+                          </button>
+
+                      </div>
+                  </div>
+
+                  <div class="card mt-3">
+                      <div class="container ">
+
+                      <table class="table table-striped" aria-describedby="table_anexos_procedimientos">
+                          <thead>
+                          <tr>
+                              <th scope="col">Archivo</th>
+                              <th scope="col">Comentarios</th>
+                              <th scope="col">Consultar</th>
+                              <th scope="col" *ngIf="_procedimientoElegido?.id_estatus_procedimiento == 1">Acciones</th>
+                          </tr>
+                          </thead>
+                          <tbody *ngIf="lstAnexosProcedimientos != null && !loaderBusqueda">
+                          <tr *ngFor="let anexo of lstAnexosProcedimientos; index as i">
+
+                              <td>
+                                  {{ anexo.nombre_tipo_archivo}}
+                                  </td>
+                                  <td>
+                                  {{ anexo.comentarios}}
+                                  </td>
+
+
+                                  <td>
+                                    <button class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                                    (click)="descargarAnexoProcedimiento(anexo)">
+                                    <i class="bi bi-download"></i>
+                                    </button>
+                                  </td>
+
+                                  <td *ngIf="_procedimientoElegido?.id_estatus_procedimiento == 1">
+
+                                      <button class="btn btn-danger btn-sm btn-circle" type="button"
+                                              (click)="eliminarAnexosModal(eliminarAnexo, anexo)">
+                                          <i class="bi bi-trash3-fill"></i>
+                                      </button>
+
+                                  </td>
+
+
+
+
+                          </tr>
+                          </tbody>
+                      </table>
+
+                      <div class="d-flex justify-content-center align-items-center pb-2" >
+                        <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-lg" role="status"></div>
+                      </div>
+                      <ngb-alert *ngIf="lstAnexosProcedimientos != null && lstAnexosProcedimientos.length == 0 && !loaderBusqueda">
+                        Sin datos para mostrar
+                      </ngb-alert>
+
+                      </div>
+
+                  </div>
+
+
+                  </div>
+
+
+                  <br>
+
+              </div>
+
+              <br>
+
+              <div class="card-footer d-flex justify-content-end">
+
+
+                  <button class="btn  btn-sm btn-danger me-2" (click)="cancelarAnexosProcedimientoModal(modalCancelar)" type="button">
+                      Cancelar
+                  </button>
+
+                  <button class="btn  btn-sm btn-success" type="submit" [disabled]="loaderBusqueda">
+                      Actualizar
+
+                      <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-sm" role="status"></div>
+                  </button>
+
+
+
+              </div>
+
+              </div>
+          </section>
+
+
+
+
+
+
+      </form>
+
+
+
+      </div>
+    </main>
+  </div>
+
+
+
+
+
+     <!-- modal cancelar -->
+<ng-template #modalCancelar let-c="close" let-d="dismiss">
+  <div class="modal-body d-flex flex-column align-items-center">
+      <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+      <h4 class="mt-2 text-center">¿Estás seguro de querer cancelar y regresar?</h4>
+      <label class="mt-2 text-muted">No será posible recuperar después</label>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-default" (click)="cancelarCancelarAnexosProcedimientoModal()">No, continua!</button>
+      <button type="button" class="btn btn-sm btn-danger" (click)="cancelarAnexosProcedimiento()" [disabled]="loaderGuardar">
+          Sí, cancela!
+          <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+      </button>
+  </div>
+</ng-template>
+
+
+
+<!-- modal confirmar -->
+<ng-template #modalConfirmar let-c="close" let-d="dismiss">
+  <div class="modal-body d-flex flex-column align-items-center">
+      <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+      <h4 class="mt-2 text-center">¿Estás seguro de querer guardar los anexos del procedimiento?</h4>
+      <label class="mt-2 text-muted">Se guardarán los anexos del procedimiento</label>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-default" (click)="cancelarConfirmarGuardarSubmitModal()">No, cancela!</button>
+      <button type="button" class="btn btn-sm btn-danger" (click)="guardarSubmit()" [disabled]="loaderGuardar">
+          Sí, guarda!
+          <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+      </button>
+  </div>
+</ng-template>
+
+
+<!-- Modal para eliminar un anexo de la lista -->
+<ng-template #eliminarAnexo let-c="close" let-d="dismiss">
+  <div class="modal-body d-flex flex-column align-items-center">
+    <i
+      class="bi bi-exclamation-circle icono-grande"
+      style="color: var(--warning-color-hover)"
+    ></i>
+    <h4 class="mt-2 text-center">
+      ¿Estás seguro de querer eliminar el anexo del procedimiento?
+    </h4>
+    <label class="mt-2 text-muted">No será posible recuperar después</label>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-default" (click)="cerrarModalEliminar()">
+      No, cancela!
+    </button>
+    <button type="button" class="btn btn-sm btn-danger" (click)="eliminarAnexoConfirm()">
+      Sí, eliminalo!
+    </button>
+  </div>
+</ng-template>

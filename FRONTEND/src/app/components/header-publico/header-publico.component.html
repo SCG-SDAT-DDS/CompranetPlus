@@ -1,0 +1,244 @@
+<header id="header-nav" [ngClass]="{ 'sticky': isSticky, 'initial-header': !isSticky }">
+  <div class="container">
+    <div class="row" [ngClass]="{ 'py-1': isSticky, 'py-3': !isSticky }">
+      <div class="col-3">
+        <a href="https://www.sonora.gob.mx/" target="_blank">
+          <img *ngIf="!isSticky"
+          loading="lazy"
+          class="cls_logoSonora"
+          src="../../../assets/images/logo-escudo.svg"
+          alt="Compranet Plus Sonora"
+        />
+        </a>
+
+        <div class="header-scroll" *ngIf="isSticky">
+          <a href="https://www.sonora.gob.mx/" target="_blank">
+            <img *ngIf="isSticky"
+            loading="lazy"
+            class="cls_logoSonora"
+            style="filter: invert(0);"
+            src="../../../assets/images/logo-escudo.svg"
+            alt="Compranet Plus Sonora"
+          />
+          </a>
+        </div>
+
+      </div>
+      <div class="col-8 d-flex justify-content-end">
+        <ul class="cls_mostrarMenuWeb">
+          <li class="nav-item-header">
+            <a
+              class="nav-item-header link_menu"
+              href="https://www.sonora.gob.mx/servicios-y-tramites"
+              target="_blank"
+              >SERVICIOS Y TRÁMITES</a
+            >
+          </li>
+          <li class="nav-item-header">
+            <a
+              class="nav-item-header link_menu"
+              href="https://www.sonora.gob.mx/gobierno"
+              target="_blank"
+              >GOBIERNO</a
+            >
+          </li>
+          <li class="nav-item-header">
+            <a
+              class="nav-item-header link_menu"
+              href="https://datos.sonora.gob.mx/"
+              target="_blank"
+              >DATOS ABIERTOS</a
+            >
+          </li>
+          <li class="nav-item-header">
+            <a
+              class="nav-item-header link_menu"
+              href="https://www.visitsonora.mx/"
+              target="_blank"
+              >VISITANTES</a
+            >
+          </li>
+        </ul>
+        <div
+          class="cls_mostrarMenuMovil"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#offcanvasRight"
+          aria-controls="offcanvasRight"
+        >
+          <i class="bi bi-list cls_menuIcon"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="sp-page-title">
+  <div class="row">
+    <div id="sp-title" class="col-lg-12">
+      <div class="sp-page-title">
+        <div
+          class="sp-page-title-image"
+          style="background-image: url(../../../assets/images/login-bg.jpg)"
+        ></div>
+        <div class="container pt-1 pb-1">
+          <div style="margin-bottom: 50px">
+            <div class="row">
+              <div class="col-12 d-flex justify-content-center">
+                <img
+                  class="img-fluid cls_logoCompraNet"
+                  src="../../../assets/images/logo-CN-white.svg"
+                  alt="Compranet Plus Sonora"
+                  width="450px"
+                />
+              </div>
+            </div>
+            <div class="row pt-3">
+              <div
+                class="col-12 d-flex justify-content-center text-center text-white"
+              >
+                <h1>PORTAL PÚBLICO</h1>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 10px;" class="mb-3">
+  <div class="col-9 d-flex justify-content-end">
+    <ul class="cls_mostrarMenuWeb" style="margin: 0px;">
+      <li class="nav-item-header-user">
+        <a
+          class="nav-item-header-user link_canvas"
+          (click)="rutaLink('/inicio/portal-licitaciones')"
+          >INICIO</a
+        >
+      </li>
+      <li class="nav-item-header-user" *ngIf="!usuarioLogueado">
+        <a
+          class="nav-item-header-user link_canvas"
+          href="https://rup.sonora.gob.mx/Registros/Formulario.aspx"
+          >REGISTRO DE PROVEEDORES</a
+        >
+      </li>
+      <li class="nav-item-header-user" *ngIf="usuarioLogueado">
+        <a
+          class="nav-item-header-user link_canvas"
+          (click)="rutaLink('/admin/tablero')"
+          >MI ESPACIO</a
+        >
+      </li>
+      <li class="nav-item-header-user" style="margin: 0px 10px 0px -10px;" *ngIf="usuarioLogueado">
+        <app-notificaciones></app-notificaciones>
+      </li>
+      <li class="nav-item-header-user" *ngIf="!usuarioLogueado">
+        <i class="bi bi-person-circle cls_userIcon"></i
+        ><a
+          class="nav-item-header-user link_canvas"
+          (click)="rutaLink('/inicio-sesion')"
+          >ACCESO A USUARIOS</a
+        >
+      </li>
+      <li *ngIf="usuarioLogueado" style="display: inline-block" ngbDropdown>
+        <a
+          class="nav-link-header"
+          ngbDropdownToggle
+          id="navbarDropdown1"
+          role="button"
+          style="
+            line-height: 0;
+            vertical-align: middle;
+            display: flex;
+            color: rgb(0, 0, 0);
+            text-decoration: none;
+          "
+        >
+          <i class="bi bi-person-circle cls_userIcon me-1"></i>
+          <div class="d-grid">
+            <h6 style="font-size: 0.8rem">{{ getName() }}</h6>
+            <small style="font-size: 0.6rem">{{ rolUser }}</small>
+          </div>
+        </a>
+        <div
+          ngbDropdownMenu
+          aria-labelledby="navbarDropdown1"
+          class="dropdown-menu"
+        >
+          <a ngbDropdownItem (click)="rutaLink('/admin/tablero')"
+            >Mi espacio</a
+          >
+          <a ngbDropdownItem (click)="logout()">Cerrar sesión</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- Menu lateral (Offcanvas para version movil) -->
+<div
+  class="offcanvas offcanvas-end"
+  tabindex="-1"
+  id="offcanvasRight"
+  aria-labelledby="offcanvasRightLabel"
+>
+  <div class="offcanvas-header">
+    <img
+      src="../../../assets/images/logo-compranet.png"
+      width="150px"
+      alt="CompraNet Plus Sonora"
+    />
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="offcanvas"
+      aria-label="Close"
+    ></button>
+  </div>
+  <div class="offcanvas-body">
+    <ul class="d-grid">
+      <li class="nav-item-header-offcanvas">
+        <a class="nav-item-header-offcanvas link_canvas" (click)="rutaLink('/inicio/portal-licitaciones')">INICIO</a>
+      </li>
+      <li class="nav-item-header-offcanvas" *ngIf="!usuarioLogueado">
+        <a class="nav-item-header-offcanvas link_canvas" href="https://rup.sonora.gob.mx/Registros/Formulario.aspx"
+          >REGISTRO DE PROVEEDORES</a
+        >
+      </li>
+      <li class="nav-item-header-offcanvas" *ngIf="usuarioLogueado">
+        <a class="nav-item-header-offcanvas link_canvas" (click)="rutaLink('/admin/tablero')"
+          >MI ESPACIO</a
+        >
+      </li>
+      <li class="nav-item-header-offcanvas" *ngIf="!usuarioLogueado">
+        <i class="bi bi-person-circle cls_userIcon me-2"></i
+        ><a class="nav-item-header-offcanvas link_canvas" (click)="rutaLink('/inicio-sesion')"
+          >ACCESO A USUARIOS</a
+        >
+      </li>
+      <li class="nav-item-header-offcanvas" *ngIf="usuarioLogueado">
+        NOTIFICACIONES <app-notificaciones></app-notificaciones>
+      </li>
+      <div ngbAccordion *ngIf="usuarioLogueado">
+        <div ngbAccordionItem>
+          <h2 ngbAccordionHeader>
+            <button style="background: transparent;" ngbAccordionButton>
+              <i class="bi bi-person-circle cls_userIcon me-1"></i>
+              <div class="d-grid">
+                <h6 style="font-size: 0.8rem">{{ getName() }}</h6>
+                <small style="font-size: 0.6rem">{{ rolUser }}</small>
+              </div></button>
+          </h2>
+          <div ngbAccordionCollapse>
+            <div ngbAccordionBody>
+              <a (click)="rutaLink('/admin/tablero')"
+                >Mi espacio</a>
+              <a (click)="logout()">Cerrar sesión</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ul>
+  </div>
+</div>

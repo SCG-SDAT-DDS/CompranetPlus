@@ -1,0 +1,240 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin id="sidebar" class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"></app-side-nav-admin>
+
+<div class="content-layout-admin">
+  <section *ngIf="!blnEditar && !blnAgregar">
+    <div class="container pt-5">
+
+      <div class="row">
+        <div class="d-inline-block col-md-8">
+          <h2 class="d-inline-block me-2">Costos de participación</h2>
+          <h6 class="d-inline-block">Ver listado de costos de participación</h6>
+        </div>
+
+        <div class="col-md-4">
+          <div class="d-flex justify-content-end align-items-end">
+          <button *ngIf="canActivate('ADMIN_CAT_COSTPART_AGR')" class="btn  btn-sm btn-success" (click)="agregar()">
+            <i class="bi bi-plus-lg"></i> Agregar Costo Participación
+          </button>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- apartado para el formulario de busqueda-->
+      <div class="card mt-2">
+        <div class="container">
+          <form [formGroup]="formBusqueda" (ngSubmit)="buscarCatCostoParticipacion">
+            <div class="row pt-3 pb-3">
+              <div class="col-md-4">
+                <input id="descripcion" type="text" class="form-control" formControlName="descripcion" placeholder="Presupuesto autorizado/Importe o año fiscal" name="descripcion"/>
+              </div>
+              <div class="col-md-4">
+                <select class="form-select" formControlName="id_tipo_procedimiento" id="id_tipo_procedimiento" name="id_tipo_procedimiento">
+                    <option [ngValue]="null">Todos los procedimientos</option>
+                    <option *ngFor="let ctp of lstCatTipoProcedimiento; index as ictp" [ngValue]="ctp.id_tipo_procedimiento"  >{{ctp.nombre_procedimiento}}</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <div class="d-flex justify-content-end align-items-end">
+                  <button class="btn  btn-sm btn-outline-secondary me-2" type="button"
+                          (click)="formBusqueda.reset()">
+                      Restablecer
+                  </button>
+                  <button type="submit" class="btn btn-sm btn-info" (click)="buscarCatCostoParticipacion()"
+                          [disabled]="!formBusqueda.valid || loaderBusqueda">
+                      Filtrar
+                      <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-sm" role="status"></div>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+
+          </form>
+        </div>
+      </div>
+
+
+
+      <!-- seccion para el tablero de resultados -->
+      <div class="card mt-3">
+        <div class="container ">
+
+          <table class="table table-striped" aria-describedby="table_catalogo_costo_participacion">
+            <thead>
+              <tr>
+                <th scope="col">Año Fiscal</th>
+                <th scope="col">Tipo de procedimiento</th>
+                <th scope="col">Presupuesto Autorizado</th>
+                <th scope="col">Importe</th>
+                <th scope="col">Estatus</th>
+                <th scope="col" *ngIf="canActivate('ADMIN_CAT_COSTPART_MOD') || canActivate('ADMIN_CAT_COSTPART_ELM')">Acciones</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="lstCatCostosParticipacion != null">
+              <tr *ngFor="let ccp of lstCatCostosParticipacion; index as i">
+
+                <td>{{ ccp.anio}}</td>
+                <td> {{ ccp.cat_tipos_procedimientos != null ? ccp.cat_tipos_procedimientos.nombre_procedimiento : '' }} </td>
+                <td>{{ ccp.presupuesto_autorizado }}</td>
+                <td>{{ ccp.costo_inscripcion | currency }}</td>
+                <td>
+                  <span class="badge bg-success" *ngIf="ccp.activo">Activo</span>
+                  <span class="badge bg-danger" *ngIf="!ccp.activo">Baja</span>
+                </td>
+                <td>
+                  <button *ngIf="canActivate('ADMIN_CAT_COSTPART_MOD')" class="btn btn-warning btn-sm btn-circle me-2" (click)="editar(ccp)">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button *ngIf="canActivate('ADMIN_CAT_COSTPART_ELM')" class="btn btn-danger btn-sm btn-circle" (click)="eliminarModal(modalEliminar, ccp)">
+                    <i class="bi bi-trash3-fill"></i>
+                  </button>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+
+          <ngb-alert *ngIf="lstCatCostosParticipacion != null && lstCatCostosParticipacion.length == 0">
+            Sin datos para mostrar
+          </ngb-alert>
+          <div class="d-flex justify-content-between p-2">
+              <ngb-pagination *ngIf="lstCatCostosParticipacion != null && lstCatCostosParticipacion.length>pageSizeLstCatCostoParticipacion"
+                              [collectionSize]="lstCatCostosParticipacion.length"
+                              [(page)]="pageLstCatCostoParticipacion"
+                              [pageSize]="pageSizeLstCatCostoParticipacion"
+              >
+              </ngb-pagination>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <section *ngIf="blnAgregar || blnEditar">
+    <div class="container pt-4">
+      <div class="d-inline-block col-md-8">
+        <h2 class="d-inline-block me-2">{{messageTitle}}</h2>
+        <h6 class="d-inline-block">{{messageSubTitle}}</h6>
+      </div>
+      <div class="card mt-3">
+        <div class="container ">
+          <form [formGroup]="formRegistro" (ngSubmit)="guardarSubmit()">
+            <div class="row pt-3">
+              <div class="col-md-6">
+                <label for="cp_anio_fiscal" class="form-label">Año Fiscal</label>
+                <input class="form-control" placeholder="Año fiscal" formControlName="anio"
+                          id="anio" type="number" name="anio" [class.is-invalid]="formRegistro.get('anio')?.invalid &&
+                          (formRegistro.get('anio')?.dirty || formRegistro.get('anio')?.touched)" />
+                <div *ngIf="formRegistro.get('anio')?.invalid && formRegistro.get('anio')?.errors
+                    && (formRegistro.get('anio')?.dirty || formRegistro.get('anio')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('anio')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                  <small class="text-danger" *ngIf="formRegistro.get('anio')?.hasError('minlength')">
+                    El valor mínimo es 4 dígitos.
+                  </small>
+                </div>
+              </div>
+              <div class="col-md-6" >
+                <label for="cp_tipo_procedimiento" class="form-label">Tipo de procedimiento</label>
+                <select class="form-select" formControlName="id_tipo_procedimiento" id="cp_tipo_procedimiento" name="id_tipo_procedimiento"
+                          [class.is-invalid]="formRegistro.get('id_tipo_procedimiento')?.invalid &&
+                          (formRegistro.get('id_tipo_procedimiento')?.dirty || formRegistro.get('id_tipo_procedimiento')?.touched)">
+                  <option selected [ngValue]="null" [disabled]="false">Seleccione opción</option>
+                  <option *ngFor="let ctur of lstCatTipoProcedimiento; index as ictp" [ngValue]="ctur.id_tipo_procedimiento" >{{ctur.nombre_procedimiento}}</option>
+                </select>
+                <div *ngIf="formRegistro.get('id_tipo_procedimiento')?.invalid && formRegistro.get('id_tipo_procedimiento')?.errors
+                    && (formRegistro.get('id_tipo_procedimiento')?.dirty || formRegistro.get('id_tipo_procedimiento')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('id_tipo_procedimiento')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <label for="presupuesto_autorizado" class="form-label">Presupuesto Autorizado</label>
+                <input class="form-control" placeholder="Presupuesto Autorizado" formControlName="presupuesto_autorizado"
+                        id="presupuesto_autorizado" name="presupuesto_autorizado" [class.is-invalid]="formRegistro.get('presupuesto_autorizado')?.invalid &&
+                        (formRegistro.get('presupuesto_autorizado')?.dirty || formRegistro.get('presupuesto_autorizado')?.touched)" />
+                <div *ngIf="formRegistro.get('presupuesto_autorizado')?.invalid && formRegistro.get('presupuesto_autorizado')?.errors
+                    && (formRegistro.get('presupuesto_autorizado')?.dirty || formRegistro.get('presupuesto_autorizado')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('presupuesto_autorizado')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                  <small class="text-danger" *ngIf="formRegistro.get('presupuesto_autorizado')?.hasError('minlength')">
+                    El valor mínimo es 5 characters.
+                  </small>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <label for="costo_inscripcion" class="form-label">Importe</label>
+                <div class="input-group mb-3">
+                  <span class="input-group-text">$</span>
+                  <input class="form-control" placeholder="Importe" formControlName="costo_inscripcion"
+                      id="costo_inscripcion" name="costo_inscripcion" [class.is-invalid]="formRegistro.get('costo_inscripcion')?.invalid &&
+                      (formRegistro.get('costo_inscripcion')?.dirty || formRegistro.get('costo_inscripcion')?.touched)" />
+                  <div *ngIf="formRegistro.get('costo_inscripcion')?.invalid && formRegistro.get('costo_inscripcion')?.errors
+                      && (formRegistro.get('costo_inscripcion')?.dirty || formRegistro.get('costo_inscripcion')?.touched)">
+                    <small class="text-danger" *ngIf="formRegistro.get('costo_inscripcion')?.hasError('required')">
+                      Este campo es requerido.
+                    </small>
+                    <small class="text-danger" *ngIf="formRegistro.get('costo_inscripcion')?.hasError('minlength')">
+                      El valor mínimo es 5 characters.
+                    </small>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4" *ngIf="blnEditar">
+                <label class="form-label">Estatus</label>
+                <select class="form-select" formControlName="activo" id="activoRegistro" name="activo"
+                        [class.is-invalid]="formRegistro.get('activo')?.invalid &&
+                        (formRegistro.get('activo')?.dirty || formRegistro.get('activo')?.touched)">
+                  <option selected [ngValue]="null" [disabled]="false">Seleccione opción</option>
+                  <option [ngValue]="1">Activo</option>
+                  <option [ngValue]="0">Baja</option>
+                </select>
+                <div *ngIf="formRegistro.get('activo')?.invalid &&
+                formRegistro.get('activo')?.errors &&
+                (formRegistro.get('activo')?.dirty || formRegistro.get('activo')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('activo')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="card-footer d-flex justify-content-end">
+              <button type="button" class="btn btn-sm btn-outline-dark me-2" (click)="cancelar()">
+                Regresar
+              </button>
+              <button type="submit" class="btn btn-sm btn-success" [disabled]="!formRegistro.valid || loaderGuardar">
+                {{messageButton}} <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- modal -->
+<ng-template #modalEliminar let-c="close" let-d="dismiss">
+
+  <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer eliminar el registro?</h4>
+        <label class="mt-2 text-muted">No será posible recuperar después</label>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-default" (click)="cancelar()">No, cancela!</button>
+    <button type="button" class="btn btn-sm btn-danger" (click)="eliminarSubmit()" [disabled]="loaderGuardar">
+        Sí, eliminalo!
+        <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+    </button>
+  </div>
+</ng-template>

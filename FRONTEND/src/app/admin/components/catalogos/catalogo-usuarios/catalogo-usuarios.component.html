@@ -1,0 +1,400 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin id="sidebar"
+                    class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"></app-side-nav-admin>
+
+<div class="content-layout-admin">
+    <section *ngIf="!blnEditar && !blnAgregar && !blnEditarContrasena">
+        <div class="container pt-5">
+            <div class="row">
+                <div class="d-inline-block col-md-8">
+                    <h2 class="d-inline-block me-2">Usuarios</h2>
+                    <h6 class="d-inline-block">Ver listado de usuarios en el sistema</h6>
+                </div>
+                <div class="col-md-4">
+                    <div class="d-flex justify-content-end align-items-end">
+                        <button class="btn  btn-sm btn-success" (click)="agregar()"
+                                *ngIf="canActivate('ADMIN_CAT_USUARIOS_AGR')">
+                            <i class="bi bi-plus-lg"></i>
+                            Agregar usuario
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="card mt-2">
+                <div class="container ">
+                    <form [formGroup]="formBusqueda" (ngSubmit)="buscarSubmit()" >
+                        <div class="row pt-3 pb-3">
+
+                            <div class="col-md-4">
+                                <input class="form-control" placeholder="Escriba el nombre del usuario
+                                ....."
+                                       formControlName="nombre" id="nombreBusqueda" name="nombreBusqueda"
+                                       [class.is-invalid]="formBusqueda.get('nombre')?.invalid &&
+                       (formBusqueda.get('nombre')?.dirty || formBusqueda.get('nombre')?.touched)"/>
+                            </div>
+
+                            <div class="col-md-4">
+                              <input class="form-control" placeholder="Escriba un apellido paterno....."
+                                     formControlName="aPaterno" id="aPaternoBusqueda" name="aPaternoBusqueda"
+                                     [class.is-invalid]="formBusqueda.get('aPaterno')?.invalid &&
+                         (formBusqueda.get('aPaterno')?.dirty || formBusqueda.get('aPaterno')?.touched)"/>
+                            </div>
+
+                            <div class="col-md-4">
+                              <input class="form-control" placeholder="Escriba un apellido materno....."
+                                     formControlName="aMaterno" id="aMaternoBusqueda" name="aMaternoBusqueda"
+                                     [class.is-invalid]="formBusqueda.get('aMaterno')?.invalid &&
+                         (formBusqueda.get('aMaterno')?.dirty || formBusqueda.get('aMaterno')?.touched)"/>
+                            </div>
+
+                          <div class="col-md-4">
+                            <select class="form-select" formControlName="idRol" id="idRolBusqueda"
+                                    name="idRolBusqueda">
+                              <option selected [ngValue]="null" [disabled]="false">Todos los roles</option>
+                              <option *ngFor="let rol of lstRolesFiltro" [ngValue]="rol.id" >{{rol.nombre}}</option>
+                            </select>
+
+                          </div>
+
+                          <div class="col-md-4">
+                                <select class="form-select" formControlName="estatus" id="estatusBusqueda"
+                                        name="estatusBusqueda">
+                                    <option selected [ngValue]="null" [disabled]="false">Todos los estatus</option>
+                                    <option [ngValue]="true">Activo</option>
+                                    <option [ngValue]="false">Baja</option>
+                                </select>
+
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="d-flex justify-content-end align-items-end">
+                                    <button class="btn  btn-sm btn-outline-secondary me-2" type="button"
+                                            (click)="formBusqueda.reset()">
+                                        Restablecer
+                                    </button>
+                                    <button type="submit" class="btn btn-sm btn-info"
+                                            [disabled]="!formBusqueda.valid || loaderBusqueda">
+                                        Filtrar
+                                        <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-sm" role="status"></div>
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card mt-3">
+                <div class="container table-responsive">
+                    <table class="table table-striped " aria-describedby="table_usuarios">
+                        <thead>
+                        <tr>
+                            <th scope="col">ID</th>
+                            <th scope="col">Nombre completo</th>
+                            <th scope="col">Usuario</th>
+                            <th scope="col">Rol</th>
+                            <th scope="col">Estatus</th>
+                            <th scope="col">Fecha registro</th>
+                            <th scope="col">Fecha modificación</th>
+                            <th scope="col">Fecha último ingreso</th>
+                            <th scope="col" *ngIf="canActivate('ADMIN_CAT_USUARIOS_MOD') || canActivate('ADMIN_CAT_USUARIOS_ELM') || canActivate('ADMIN_CAT_USUARIOS_PASS')">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody *ngIf="lstTabla != null">
+                        <tr *ngFor="let item of lstTabla; index as i">
+                            <td> {{ item.id }} </td>
+                            <td> {{ item.nombreCompleto}} </td>
+                            <td> {{ item.usuario}} </td>
+                            <td> {{ item.rol}} </td>
+                            <td>
+                                <span class="badge bg-success" *ngIf="item.estatus">Activo</span>
+                                <span class="badge bg-danger" *ngIf="!item.estatus">Baja</span>
+                            </td>
+                          <td> {{ item.fechaRegistro}} </td>
+                          <td> {{ item.fechaModificacion}} </td>
+                          <td> {{ item.fechaUltimoIngreso}} </td>
+                          <td *ngIf="canActivate('ADMIN_CAT_USUARIOS_PASS') || canActivate('ADMIN_CAT_USUARIOS_MOD') || canActivate('ADMIN_CAT_USUARIOS_ELM') " class="overflow-hidden text-center">
+                            <div ngbDropdown container="body">
+                              <button type="button" class="btn btn-warning btn-sm btn-circle  me-2" ngbDropdownToggle><i class="bi bi-three-dots-vertical"></i></button>
+                              <div ngbDropdownMenu>
+                                <button *ngIf="canActivate('ADMIN_CAT_USUARIOS_PASS')" (click)="editarContrasena(item)" ngbDropdownItem>Cambiar contraseña</button>
+                                <button *ngIf="canActivate('ADMIN_CAT_USUARIOS_MOD')" (click)="editar(item)" ngbDropdownItem>Modificar</button>
+                                <button *ngIf="canActivate('ADMIN_CAT_USUARIOS_ELM')" (click)="eliminarModal(modalEliminar, item)"  ngbDropdownItem>Eliminar</button>
+
+                              </div>
+                            </div>
+
+                          </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <ngb-alert *ngIf="lstTabla != null && lstTabla.length == 0">
+                        Sin datos para mostrar
+                    </ngb-alert>
+                    <div class="d-flex justify-content-between p-2">
+                        <ngb-pagination *ngIf="lstTabla != null && lstTabla.length>pageSizeLstTabla"
+                                        [collectionSize]="lstTabla.length"
+                                        [(page)]="pageLstTabla"
+                                        [pageSize]="pageSizeLstTabla"
+                        >
+                        </ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section *ngIf="blnAgregar || blnEditar || blnEditarContrasena">
+        <div class="container pt-4">
+            <div class="d-inline-block col-md-8">
+                <h2 class="d-inline-block me-2">{{messageTitle}}</h2>
+                <h6 class="d-inline-block">{{messageSubTitle}}</h6>
+            </div>
+            <div class="card mt-3">
+                <div class="container ">
+                    <form [formGroup]="formRegistro" (ngSubmit)="guardarSubmit()">
+                        <div class="row pt-3 pb-3">
+
+
+                            <div class="col-md-4">
+                                <label class="form-label">Nombre: <app-campo-obligatorio/></label>
+                                <input class="form-control" placeholder="Escriba un nombre"
+                                       formControlName="nombre" id="nombreRegistro" name="nombreRegistro"
+                                       [class.is-invalid]="formRegistro.get('nombre')?.invalid &&
+                                        (formRegistro.get('nombre')?.dirty || formRegistro.get('nombre')?.touched)"/>
+                                <div *ngIf="formRegistro.get('nombre')?.invalid &&
+                                  formRegistro.get('nombre')?.errors &&
+                                  (formRegistro.get('nombre')?.dirty || formRegistro.get('nombre')?.touched)">
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('nombre')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('nombre')?.hasError('minlength')">
+                                        El valor mínimo es 3 characters.
+                                    </small>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <label class="form-label">Paterno: <app-campo-obligatorio/></label>
+                                <input class="form-control" placeholder="Escriba un apellido paterno"
+                                       formControlName="aPaterno" id="aPaternoRegistro" name="aPaternoRegistro"
+                                       [class.is-invalid]="formRegistro.get('aPaterno')?.invalid &&
+                                        (formRegistro.get('aPaterno')?.dirty || formRegistro.get('aPaterno')?.touched)"/>
+                                <div *ngIf="formRegistro.get('aPaterno')?.invalid &&
+                                  formRegistro.get('aPaterno')?.errors &&
+                                  (formRegistro.get('aPaterno')?.dirty || formRegistro.get('aPaterno')?.touched)">
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('aPaterno')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('aPaterno')?.hasError('minlength')">
+                                        El valor mínimo es 3 characters.
+                                    </small>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <label class="form-label">Materno: <app-campo-obligatorio/></label>
+                                <input class="form-control" placeholder="Escriba un apellido materno"
+                                       formControlName="aMaterno" id="aMaternoRegistro" name="aMaternoRegistro"
+                                       [class.is-invalid]="formRegistro.get('aMaterno')?.invalid &&
+                                        (formRegistro.get('aMaterno')?.dirty || formRegistro.get('aMaterno')?.touched)"/>
+                                <div *ngIf="formRegistro.get('aMaterno')?.invalid &&
+                                  formRegistro.get('aMaterno')?.errors &&
+                                  (formRegistro.get('aMaterno')?.dirty || formRegistro.get('aMaterno')?.touched)">
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('aMaterno')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('aMaterno')?.hasError('minlength')">
+                                        El valor mínimo es 3 characters.
+                                    </small>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <label class="form-label">Usuario: <app-campo-obligatorio/></label>
+                                <input class="form-control" placeholder="Escriba un nombre de usuario"
+                                       formControlName="usuario" id="usuarioRegistro" name="usuarioRegistro"
+                                       [class.is-invalid]="formRegistro.get('usuario')?.invalid &&
+                                        (formRegistro.get('usuario')?.dirty || formRegistro.get('usuario')?.touched)"/>
+                                <div *ngIf="formRegistro.get('usuario')?.invalid &&
+                                  formRegistro.get('usuario')?.errors &&
+                                  (formRegistro.get('usuario')?.dirty || formRegistro.get('usuario')?.touched)">
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('usuario')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('usuario')?.hasError('minlength')">
+                                        El valor mínimo es 3 characters.
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <label class="form-label">Rol: <app-campo-obligatorio/></label>
+                                <select class="form-select" formControlName="idRol" id="idRolRegistro"
+                                        name="idRolRegistro"
+                                        [class.is-invalid]="formRegistro.get('idRol')?.invalid &&
+                                        (formRegistro.get('idRol')?.dirty || formRegistro.get('idRol')?.touched)">
+                                    <option selected [ngValue]="null" [disabled]="false">Seleccione opción</option>
+                                    <option *ngFor="let rol of lstRoles" [ngValue]="rol.id" >{{rol.nombre}}</option>
+                                </select>
+                                <div *ngIf="formRegistro.get('idRol')?.invalid &&
+                                  formRegistro.get('idRol')?.errors &&
+                                  (formRegistro.get('idRol')?.dirty || formRegistro.get('idRol')?.touched)">
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('idRol')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <label class="form-label">email: <app-campo-obligatorio/></label>
+                                <input class="form-control" placeholder="Escriba un correo"
+                                       formControlName="email" id="emailRegistro" name="emailRegistro"
+                                       [class.is-invalid]="formRegistro.get('email')?.invalid &&
+                                        (formRegistro.get('email')?.dirty || formRegistro.get('email')?.touched)"/>
+                                <div *ngIf="formRegistro.get('email')?.invalid &&
+                                  formRegistro.get('email')?.errors &&
+                                  (formRegistro.get('email')?.dirty || formRegistro.get('email')?.touched)">
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('email')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('email')?.hasError('minlength')">
+                                        El valor mínimo es 3 characters.
+                                    </small>
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('email')?.hasError('email')">
+                                        ¡El email debe tener el formato correcto!.
+                                    </small>
+                                </div>
+                            </div>
+
+
+
+                            <div class="col-md-4" *ngIf="blnEditar">
+                                <label class="form-label">Estatus: <app-campo-obligatorio/></label>
+                                <select class="form-select" formControlName="estatus" id="estatusRegistro"
+                                        name="estatusRegistro"
+                                        [class.is-invalid]="formRegistro.get('estatus')?.invalid &&
+                                        (formRegistro.get('estatus')?.dirty || formRegistro.get('estatus')?.touched)">
+                                    <option selected [ngValue]="null" [disabled]="false">Seleccione opción</option>
+                                    <option [ngValue]="true">Activo</option>
+                                    <option [ngValue]="false">Baja</option>
+                                </select>
+                                <div *ngIf="formRegistro.get('estatus')?.invalid &&
+                                  formRegistro.get('estatus')?.errors &&
+                                  (formRegistro.get('estatus')?.dirty || formRegistro.get('estatus')?.touched)">
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('estatus')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                </div>
+                            </div>
+
+
+                            <div class="col-md-4" *ngIf="!blnEditar || blnEditarContrasena">
+                                <label class="form-label">Contraseña: <app-campo-obligatorio/></label>
+                                <input class="form-control" placeholder="Escriba una contraseña"
+                                       formControlName="contrasena" id="contrasenaRegistro" name="contrasenaRegistro"
+                                       type="password"
+                                       [class.is-invalid]="formRegistro.get('contrasena')?.invalid &&
+                                        (formRegistro.get('contrasena')?.dirty || formRegistro.get('contrasena')?.touched)"/>
+                                <div *ngIf="formRegistro.get('contrasena')?.invalid &&
+                                  formRegistro.get('contrasena')?.errors &&
+                                  (formRegistro.get('contrasena')?.dirty || formRegistro.get('contrasena')?.touched)">
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('contrasena')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('contrasena')?.hasError('pattern')">
+                                        ¡La nueva constraseña debe tener al menos 8 caracteres,
+                                        contemplando mayúsculas, minúsculas y números!
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4" *ngIf="!blnEditar || blnEditarContrasena">
+                                <label class="form-label">Confirmar contraseña: <app-campo-obligatorio/></label>
+                                <input class="form-control" placeholder="Escriba una contraseña"
+                                       formControlName="repetirContrasena" id="repetirContrasenaRegistro" name="repetirContrasenaRegistro"
+                                       type="password"
+                                       [class.is-invalid]="formRegistro.get('repetirContrasena')?.invalid &&
+                                        (formRegistro.get('repetirContrasena')?.dirty || formRegistro.get('repetirContrasena')?.touched)"/>
+                                <div *ngIf="formRegistro.get('repetirContrasena')?.invalid &&
+                                  formRegistro.get('repetirContrasena')?.errors &&
+                                  (formRegistro.get('repetirContrasena')?.dirty || formRegistro.get('repetirContrasena')?.touched)">
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('repetirContrasena')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('repetirContrasena')?.hasError('pattern')">
+                                        ¡La nueva constraseña debe tener al menos 8 caracteres,
+                                        contemplando mayúsculas, minúsculas y números!
+                                    </small>
+                                    <small class="text-danger"
+                                           *ngIf="formRegistro.get('repetirContrasena')?.errors?.['noMatch']">
+                                        ¡Las contraseñas no son iguales!
+                                    </small>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <div class="card-footer d-flex justify-content-end">
+                            <button type="button" class="btn btn-sm btn-outline-dark me-2" (click)="cancelar()">
+                                Regresar
+                            </button>
+                            <button type="submit" class="btn btn-sm btn-success"
+                                    [disabled]="!formRegistro.valid || loaderGuardar">
+                                {{messageButton}} <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+                            </button>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+
+<!-- modal -->
+<ng-template #modalEliminar let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer eliminar este usuario?</h4>
+        <label class="mt-2 text-muted">No será posible recuperar después</label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default" (click)="cancelar()">No, cancela!</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="eliminarSubmit()" [disabled]="loaderGuardar">
+            Sí, eliminalo!
+            <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+        </button>
+    </div>
+</ng-template>
+
+

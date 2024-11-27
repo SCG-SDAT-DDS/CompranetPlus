@@ -1,0 +1,244 @@
+#sp-page-title{
+  background-color: var(--primary-color);
+  overflow-x: hidden;
+  height: 100vh;
+}
+
+#sp-page-title .sp-page-title{
+  min-height: 100vh;
+  padding-top: calc(50px + 10px);
+  padding-bottom: calc(50px + 32px);
+  padding-bottom: 32px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+#sp-page-title .sp-page-title .container{
+  position: relative;
+  z-index: 5;
+}
+
+.container-md{
+  position: relative;
+  z-index: 5;
+}
+
+.img-auth{
+  height: 4rem;
+  width: auto;
+  max-width: 100%;
+  margin: 0 auto;
+  display: inline-block;
+}
+
+.cls-auth-secretaria{
+  font-size: 13px;
+  padding: 0px;
+  color: white;
+  padding-left: 10px;
+  align-self: end;
+  text-align: center;
+}
+
+#sp-page-title .sp-page-title::after{
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  height: calc(4rem + 4px);
+  background-image: url(../../../assets/images/pattern-white.svg);
+  background-size: auto 8rem;
+  background-position: left 50% top 0;
+  background-repeat: no-repeat;
+  opacity: 0.35;
+}
+
+#sp-page-title .sp-page-title .sp-page-title-image{
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+  background-repeat: no-repeat;
+  background-position: 50% 50%;
+  background-size: cover;
+  background-attachment: fixed;
+  opacity: 0.7;
+  filter: blur(5px);
+  mix-blend-mode: multiply;
+}
+
+.cls_password_missed{
+  font-size: 11px;
+  color: var(--blanco-color);
+  font-weight: 500;
+  align-self: center;
+  text-decoration: underline;
+}
+
+@media (max-width: 500px) {
+  .info-login{
+     display: none;
+  }
+
+  .cls-auth-movil{
+    display: flex;
+    justify-content: center;
+  }
+
+  #sp-page-title .sp-page-title{
+    padding-top: calc(5px + 32px);
+    padding-bottom: calc(35px + 32px);
+  }
+
+  .cls-auth-logos-movil{
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .cls-info-movil{
+    display: block;
+    margin-top: 0.5rem;
+    text-align: center;
+    color: var(--blanco-color);
+  }
+
+  .cls-auth-footer-movil{
+    display: flex;
+    justify-content: center;
+    margin: 2rem 0rem 2rem 0rem;
+  }
+  
+}
+
+@media (min-width: 501px){
+  #sp-page-title .sp-page-title{
+    height: 100vh; 
+  }
+
+  .cls-auth-logos-movil{
+    display: none !important;
+  }
+
+  .cls-info-movil{
+    display: none !important;
+  }
+
+  .cls-auth-footer-movil{
+    display: none;
+  }
+
+}
+
+/* CSS para las animaciones */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.cls-input-group{
+  position: relative;
+  margin: 5px 0;
+}
+
+.cls-input-group label{
+  position: absolute;
+  top: 40px;
+  left: 0;
+  transform: translateY(-50%);
+  font-size: 15px;
+  font-weight: 600;
+  color: rgb(255, 255, 255);
+  padding: 0 5px;
+  pointer-events: none;
+  transition: 0.5s;
+  font-family: 'Montserrat', sans-serif;
+}
+
+
+
+.cls-input-group input{
+  font-size: 16px;
+  border: none !important;
+  color: var(--blanco-color) !important;
+  padding: 20px 0px 15px 15px;
+  background: transparent;
+  border-bottom: 1.2px solid white !important;
+  outline: none;
+  border-radius: 0px;
+}
+.cls-input-group input:not(:placeholder-shown) + label,
+.cls-input-group input:focus + label {
+  top: 10px;
+  font-size: 10px;
+}
+
+
+.cls-input-errors{
+  padding: 1%;
+  background-color: white;
+  border-radius: 15px;
+}
+
+ .cls-input-group input::placeholder {
+  color: transparent;
+}
+
+.cls-input-group input:focus::placeholder {
+  color: white;
+  font-size: 13px;
+  
+}
+
+/* Estilo para el checkbox cuando está seleccionado */
+.form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Estilo para la seccion de login */
+.btn-primary{
+  background-color: var(--blanco-color) !important;
+  border-color: var(--blanco-color) !important;
+  color: black !important;
+  font-weight: 900;
+  font-family: 'Montserrat',sans-serif;
+}
+
+.btn-primary:hover{
+  background-color: var(--warning-color) !important;
+  border-color: var(--warning-color) !important;
+  color: var(--blanco-color) !important;
+  font-weight: 900;
+  font-family: 'Montserrat',sans-serif;
+
+}
+
+
+.cls-input-group input:-webkit-autofill,
+.cls-input-group input:-webkit-autofill:hover,
+.cls-input-group input:-webkit-autofill:focus,
+.cls-input-group input:-webkit-autofill:active {
+    transition: background-color 5000s ease-in-out 0s;
+    -webkit-text-fill-color: var(--blanco-color) !important
+}
+
+.btn-registro{
+  width: fit-content;
+  justify-self: center;
+  border-radius: 5px;
+  margin-top: 5px;
+}

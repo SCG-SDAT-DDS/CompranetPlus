@@ -1,0 +1,241 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin
+  id="sidebar"
+  class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"
+></app-side-nav-admin>
+
+<div class="content-layout-admin">
+  <section *ngIf="!blnEditar">
+    <div class="container pt-5">
+      <div class="row">
+        <div class="d-inline-block col-md-8">
+          <h2 class="d-inline-block me-2">Proveedores</h2>
+          <h6 class="d-inline-block">Ver listado de Proveedores</h6>
+        </div>      
+      </div>
+
+      <div class="card mt-2">
+        <div class="container">
+          <form [formGroup]="formBusqueda">
+            <div class="row pt-3">
+              <div class="col-md-4">
+                <input class="form-control" formControlName="rfc" placeholder="RFC" name="rfc"/>
+              </div>
+              <div class="col-md-4">
+                <input class="form-control" formControlName="razon_social" placeholder="Nombre o Razón Social" name="razon_social"/>
+              </div>
+              <div class="col-md-4">
+                <select class="form-select" formControlName="id_personalidad_juridica" name="id_personalidad_juridica">
+                  <option [ngValue]="null">Personalidad Juridica</option>
+                  <option value="1">Moral</option>
+                  <option value="2">Fisica</option>
+                </select>
+              </div>
+            </div>
+            <div class="row pt-3">
+              <div class="col-md-4 mt-2">
+                <select class="form-select" formControlName="estatus" name="estatus">
+                  <option [ngValue]="null">Todos los Estatus</option>
+                  <option  *ngFor="let item of lstEstatus" [ngValue]="item.id">{{item.name}}</option>
+                </select>
+              </div>
+              <div class="col-md-4 mt-2">
+                <select class="form-select" formControlName="activo" name="estatus2">
+                  <option [ngValue]="null">Activo e Inactivo</option>
+                  <option [ngValue]="1">Activo</option>
+                  <option [ngValue]="0">Inactivo</option>
+                </select>
+              </div>
+              <div class="col-md-4 mt-3 mb-3">
+                <div class="d-flex justify-content-end align-items-end">
+                  <button class="btn btn-sm btn-outline-secondary me-2" type="button"
+                          (click)="resetFiltro()">
+                      Restablecer
+                  </button>
+                  <button type="submit" class="btn btn-sm btn-info" (click)="filtrarProveedores()"
+                          [disabled]="!formBusqueda.valid || loaderBusqueda">
+                      Filtrar
+                      <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-sm" role="status"></div>
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+          </form>
+        </div>
+      </div>
+
+      <div class="card mt-3">
+        <div class="container table-responsive">
+
+          <table class="table table-striped " aria-describedby="table_procedimientos">
+            <thead>
+              <tr>
+                <th scope="col">RFC</th>
+                <th scope="col">Nombre o Razón Social</th>
+                <th scope="col">Personalidad Juridica</th>
+                <th scope="col">Estatus</th>
+                <th scope="col">Activo/Inactivo</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let proveedor of proveedores">
+
+                <td>
+                  {{ proveedor.rfc_proveedor}}
+                </td>
+                <td>
+                  {{ 
+                    proveedor.razon_social != null 
+                      ? proveedor.razon_social 
+                      : proveedor.nombre_proveedor + 
+                        " " + 
+                        proveedor.primer_apellido_proveedor + 
+                        " " + 
+                        proveedor.segundo_apellido_proveedor
+                  }}
+                </td>
+                <td>
+                    {{ proveedor.nombre_personeria_juridica}}
+                </td>
+                <td>
+                  <span [class]="proveedor.estilo"> {{proveedor.nombre_estatus_proveedor}} </span>
+                </td>
+                <td>
+                  <span class="badge bg-success" *ngIf="proveedor.activo">Activo</span>
+                  <span class="badge bg-danger" *ngIf="!proveedor.activo">Inactivo</span>
+                </td>
+                <td class="overflow-hidden"  *ngIf="canActivate('ADMIN_CAT_PROV_MOD')">
+                  <div ngbDropdown container="body">
+                    <button type="button" class="btn btn-warning btn-sm btn-circle  me-2" ngbDropdownToggle><i class="bi bi-three-dots-vertical"></i></button>
+                    <div ngbDropdownMenu>
+                      <button *ngIf="canActivate('ADMIN_CAT_PROV_MOD')" (click)="editarProveedor(proveedor)" ngbDropdownItem>Modificar</button>
+                      <button *ngIf="canActivate('ADMIN_CAT_PROV_ELM')" (click)="openModalEliminar(modalDelete, proveedor)" ngbDropdownItem>Eliminar</button>
+                      <button (click)="openModalCambiarEstatus(modalCambiarEstatus, proveedor)" ngbDropdownItem>Cambiar estatus</button>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <ngb-alert *ngIf="proveedores != null && proveedores.length == 0">
+              Sin datos para mostrar
+          </ngb-alert>
+        </div>
+      </div>
+
+      <div class="container mt-2" *ngIf="proveedores != null && proveedores.length > 0">
+        <div class="row">
+          <div class="col-md-7 col-12 d-flex justify-content-start">
+            <div class="mt-1 table-responsive">
+              <ngb-pagination
+                size="sm"
+                [collectionSize]="collectionSize"
+                [(page)]="page"
+                [pageSize]="pageSize"
+                [maxSize]="5"
+                [rotate]="true"
+                [boundaryLinks]="true"
+                [disabled]="loaderBusqueda"
+                (pageChange)="onPageChange()"
+              ></ngb-pagination>
+            </div>
+          </div>
+          <div class="col-md-5 col-12 d-flex justify-content-end">
+            <div class="d-flex align-items-baseline">
+              <small class="me-2">Mostrando: </small>
+              <input 
+                type="number"  
+                class="form-control me-2" 
+                style=" max-width: 4em;"
+                inputmode="numeric"
+                pattern="[0-9]*"
+                [value]="pageSize"
+                [(ngModel)]="pageSize"
+                (change)="obtenerProveedores(true)"
+              >
+              <small>registros por página</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section *ngIf="blnEditar">
+    <div class="container pt-4">
+      <app-form-persona-moral [proveedorEdit]="proveedor" *ngIf="formPersonaMoral" (cancelarEditar)="cancelarEditar($event)"></app-form-persona-moral>
+      <app-form-persona-fisica [proveedorEdit]="proveedor" *ngIf="!formPersonaMoral" (cancelarEditar)="cancelarEditar($event)"></app-form-persona-fisica>
+    </div>
+  </section>
+
+   <!-- modal cambiar estatus-->
+  <ng-template #modalCambiarEstatus let-modal>
+    <div class="modal-header">
+      <h4 class="modal-title" id="modal-basic-title">Cambiar estatus del Proveedor</h4>
+      <button type="button" class="btn-close" aria-label="Close" (click)="cerrarModalEstatus()"></button>
+    </div>
+    <div class="modal-body">
+      <div class="row pt-3">
+        <div class="col-md-4">
+            <label class="form-label">RFC: </label>
+            <span><b> {{proveedor.rfc_proveedor}} </b></span>
+        </div>
+        
+        <div class="col-md-8">
+            <label class="form-label">Nombre o Razón Social: </label>
+            <span><b> {{proveedor.razon_social != null ? proveedor.razon_social : proveedor.nombre_proveedor}}</b></span>
+        </div>
+      </div>
+      <form [formGroup]="formEstatus">
+        <div class="row pt-3">
+          <div class="col-md-4">
+            <label class="form-label" style="margin-right: 5px;">Estatus:</label>
+            <span [class]="proveedor.estilo">{{proveedor.nombre_estatus_proveedor}}</span>
+          </div>  
+          <div class="col-md-8 estatus-nuevo">
+            <label class="form-label">Estatus nuevo: <span style="color: red;">*</span></label>
+            <select 
+              class="form-select form-select-sm" 
+              formControlName="id_estatus_proveedor"
+              [class.is-invalid]="idEstatusForm?.invalid && (idEstatusForm?.dirty || idEstatusForm?.touched)"
+            >
+              <option [value]="null">Seleccione opción</option>
+              <option *ngFor="let item of lstEstatus" [value]="item.id">
+                {{item.name}}
+              </option>
+            </select>
+               
+          </div>
+        </div> 
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-outline-success" (click)="cambiarEstatusProveedor()" [disabled]="loaderGuardar">
+        Guardar
+        <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+      </button>
+      <button type="button" class="btn btn-outline-dark" (click)="cerrarModalEstatus()">
+        Cancelar
+      </button>
+    </div>
+  </ng-template>
+
+  <!-- modal eliminar-->
+  <ng-template #modalDelete let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer eliminar este proveedor?</h4>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default" (click)="cerrarModalEstatus()">No, cancelar!</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="eliminar()" [disabled]="loaderGuardar">
+            Sí, eliminar!
+            <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+        </button>
+    </div>
+  </ng-template>
+
+</div>

@@ -1,0 +1,917 @@
+<div>
+
+    <div class="d-flex justify-content-center align-items-center mt-5" >
+        <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-lg" role="status"></div>
+    </div>
+
+    <main *ngIf="!loaderBusqueda">
+        <div class="display-area">
+
+
+        <section>
+
+            <div class="container pt-2">
+                <div class="d-inline-block col-md-8">
+                    <h2 class="d-inline-block me-2">{{_messageTitle}}</h2>
+                    <h6 class="d-inline-block">{{_messageSubTitle}}</h6>
+                </div>
+
+
+
+
+                <div class="bs-stepper">
+                <div class="bs-stepper-header" role="tablist">
+                    <!-- your steps here -->
+                    <div class="step" data-target="#logins-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="logins-part" id="logins-part-trigger" >
+                        <span [ngClass]="agregarDatosGenerales?'bs-stepper-circle-selected':'bs-stepper-circle'">1</span>
+                        <span [ngClass]="agregarDatosGenerales?'bs-stepper-label-selected':'bs-stepper-label'">Datos generales</span>
+                    </button>
+                    </div>
+                    <div class="line"></div>
+                    <div class="step" data-target="#information-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="information-part" id="information-part-trigger" >
+                        <span [ngClass]="agregarDetalleContrato?'bs-stepper-circle-selected':'bs-stepper-circle'">2</span>
+                        <span [ngClass]="agregarDetalleContrato?'bs-stepper-label-selected':'bs-stepper-label'">Datos del contrato</span>
+                    </button>
+                    </div>
+                    <div class="line"></div>
+                    <div class="step" data-target="#information-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="information-part" id="information-part-trigger" >
+                        <span [ngClass]="agregarDatosProveedor?'bs-stepper-circle-selected':'bs-stepper-circle'">3</span>
+                        <span [ngClass]="agregarDatosProveedor?'bs-stepper-label-selected':'bs-stepper-label'">Datos del Proveedor adjudicado</span>
+                    </button>
+                    </div>
+                    <div class="line"></div>
+                    <div class="step" data-target="#information-part">
+                    <button type="button" class="step-trigger" role="tab" aria-controls="information-part" id="information-part-trigger" >
+                        <span [ngClass]="agregarAnexosProcedimiento?'bs-stepper-circle-selected':'bs-stepper-circle'">4</span>
+                        <span [ngClass]="agregarAnexosProcedimiento?'bs-stepper-label-selected':'bs-stepper-label'">Anexos del procedimiento</span>
+                    </button>
+                    </div>
+                </div>
+                <div class="bs-stepper-content">
+                    <!-- your steps content here -->
+                    <div id="logins-part" class="content" role="tabpanel" aria-labelledby="logins-part-trigger"></div>
+                    <div id="information-part" class="content" role="tabpanel" aria-labelledby="information-part-trigger"></div>
+                </div>
+                </div>
+            </div>
+
+        </section>
+
+
+
+
+        <form [formGroup]="formRegistro" (ngSubmit)="confirmarGuardarSubmitModal(modalConfirmar)">
+
+            <section *ngIf="agregarDatosGenerales">
+
+
+                <div class="container pt-4">
+
+
+                    <div class="d-inline-block col-md-8">
+                        <h2 class="d-inline-block me-2">Datos Generales</h2>
+                        <h6 class="d-inline-block">agregar datos generales del procedimiento</h6>
+                    </div>
+
+
+
+                <div class="card mt-3">
+                    <div class="container ">
+
+                    <div class="row pt-3">
+
+
+                        <div class="row pt-3">
+
+                            <div class="col-md-4">
+                                <label for="unidadcompradora" class="form-label">Unidad compradora: <app-campo-obligatorio></app-campo-obligatorio></label>
+                                <select class="form-select" aria-label="Default select example" id="unidadcompradora"
+                                    formControlName="id_unidad_compradora"  name="unidadcompradora"
+                                    [class.is-invalid]="formRegistro.get('id_unidad_compradora')?.invalid &&
+                                    (formRegistro.get('id_unidad_compradora')?.dirty || formRegistro.get('id_unidad_compradora')?.touched)">
+
+                                    <option *ngFor="let uc of _lstTablaUnidadesCompradoras" [value]="uc.id_unidad_compradora">{{uc.nombre_unidad_compradora}}</option>
+
+                                </select>
+
+                                <div *ngIf="formRegistro.get('id_unidad_compradora')?.invalid
+                                    && formRegistro.get('id_unidad_compradora')?.errors
+                                    && (formRegistro.get('id_unidad_compradora')?.dirty || formRegistro.get('id_unidad_compradora')?.touched)">
+                                    <small class="text-danger" *ngIf="formRegistro.get('id_unidad_compradora')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                </div>
+
+
+                            </div>
+
+                            <div class="col-md-4" *ngIf="esExtemporanea">
+
+
+                                <label for="unidadcompradora" class="form-label">Ejercicio: <app-campo-obligatorio></app-campo-obligatorio></label>
+                                <select class="form-select" aria-label="Default select example" id="ejercicio"
+                                    formControlName="anio"  name="ejercicio"
+                                    [class.is-invalid]="formRegistro.get('anio')?.invalid &&
+                                    (formRegistro.get('anio')?.dirty || formRegistro.get('anio')?.touched)">
+
+                                    <option *ngFor="let a of lstAniosAnteriores" [value]="a">{{a}}</option>
+
+                                </select>
+
+                                <div *ngIf="formRegistro.get('anio')?.invalid
+                                    && formRegistro.get('anio')?.errors
+                                    && (formRegistro.get('anio')?.dirty || formRegistro.get('anio')?.touched)">
+                                    <small class="text-danger" *ngIf="formRegistro.get('anio')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                </div>
+
+
+                            </div>
+
+                            <div class="col-md-4">
+
+
+                            </div>
+
+                        </div>
+
+                        <div class="row pt-3">
+
+                            <div class="col-md-4">
+                                <label for="tipoprocedimiento" class="form-label">Tipo de procedimiento: <app-campo-obligatorio></app-campo-obligatorio></label>
+                                <select class="form-select" aria-label="Default select example" id="tipoprocedimiento"
+                                formControlName="id_tipo_procedimiento"  name="tipoprocedimiento"
+                                [class.is-invalid]="formRegistro.get('id_tipo_procedimiento')?.invalid &&
+                                (formRegistro.get('id_tipo_procedimiento')?.dirty || formRegistro.get('id_tipo_procedimiento')?.touched)">
+
+                                    <option value = "" selected>Seleccione opción</option>
+                                    <option *ngFor="let tp of lstTablaTiposProcedimientos" [value]="tp.id_tipo_procedimiento">{{tp.nombre_procedimiento}}</option>
+
+
+                                </select>
+
+
+                                <div *ngIf="formRegistro.get('id_tipo_procedimiento')?.invalid
+                                    && formRegistro.get('id_tipo_procedimiento')?.errors
+                                    && (formRegistro.get('id_tipo_procedimiento')?.dirty || formRegistro.get('id_tipo_procedimiento')?.touched)">
+                                    <small class="text-danger" *ngIf="formRegistro.get('id_tipo_procedimiento')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                </div>
+
+
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="licitacionTecnologia" class="form-label">Licitación de tecnología: </label>
+                                <input class="form-check-input" type="checkbox" value="" id="licitaciontecnologia"
+                                formControlName="licitacion_tecnologia"  name="licitaciontecnologia">
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="conceptocontratacion" class="form-label">Concepto de contratación: <app-campo-obligatorio></app-campo-obligatorio></label>
+
+                                <textarea class="form-control" aria-label="Concepto de contratación" id="conceptocontratacion"
+                                    formControlName="descripcion_concepto_contratacion"  name="conceptocontratacion"
+                                    [class.is-invalid]="formRegistro.get('descripcion_concepto_contratacion')?.invalid &&
+                                (formRegistro.get('descripcion_concepto_contratacion')?.dirty || formRegistro.get('descripcion_concepto_contratacion')?.touched)">
+                                </textarea>
+
+                                <div *ngIf="formRegistro.get('descripcion_concepto_contratacion')?.invalid
+                                    && formRegistro.get('descripcion_concepto_contratacion')?.errors
+                                    && (formRegistro.get('descripcion_concepto_contratacion')?.dirty || formRegistro.get('descripcion_concepto_contratacion')?.touched)">
+                                    <small class="text-danger" *ngIf="formRegistro.get('descripcion_concepto_contratacion')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="row pt-3">
+
+
+
+                            <div class="col-md-4">
+                                <label for="descripcionnormatividad" class="form-label">Normatividad Aplicada: </label>
+
+                                <textarea class="form-control" aria-label="Normatividad Aplicada" id="descripcionnormatividad"
+                                    formControlName="descripcion_normatividad"  name="descripcionnormatividad">
+                                </textarea>
+
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="numerocotizaciones" class="form-label">No. de Cotizaciones: </label>
+                                <input class="form-control" placeholder="No. de Cotizaciones consideradas" id="numerocotizaciones"
+                                formControlName="numero_cotizaciones"  name="numerocotizaciones"/>
+
+                            </div>
+
+                            <div class="col-md-4">
+                                <label for="numerooficio" class="form-label">Numero oficio autorización: <app-campo-obligatorio></app-campo-obligatorio></label>
+                                <input class="form-control" placeholder="Numero oficio autorización" id="numerooficio"
+                                formControlName="numero_oficio_autorizacion"  name="numerooficio"
+                                [class.is-invalid]="formRegistro.get('numero_oficio_autorizacion')?.invalid &&
+                                (formRegistro.get('numero_oficio_autorizacion')?.dirty || formRegistro.get('numero_oficio_autorizacion')?.touched)"/>
+
+                                <div *ngIf="formRegistro.get('numero_oficio_autorizacion')?.invalid
+                                    && formRegistro.get('numero_oficio_autorizacion')?.errors
+                                    && (formRegistro.get('numero_oficio_autorizacion')?.dirty || formRegistro.get('numero_oficio_autorizacion')?.touched)">
+                                    <small class="text-danger" *ngIf="formRegistro.get('numero_oficio_autorizacion')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                    <small
+                                        class="text-danger"
+                                        *ngIf="
+                                        formRegistro.get('numero_oficio_autorizacion')?.hasError('maxlength')
+                                        "
+                                    >
+                                        El número de oficio de autorización no debe ser mayor a 80 caracteres.
+                                    </small>
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="row pt-3">
+
+
+                            <div class="col-md-4">
+                                <label for="oficioautorizacion" class="form-label">Oficio de autorización: <app-campo-obligatorio></app-campo-obligatorio></label>
+                                <input class="form-control" formControlName="archivo_oficio_autorizacion" type="file" id="archivooficioautorizacion"
+
+                                    (change)="obtenerArchivoAutorizacionBase64($event)" id="oficioautorizacion" *ngIf="archivoAutorizacionAux === null"
+                                    [class.is-invalid]="formRegistro.get('archivo_oficio_autorizacion')?.invalid &&
+                                    (formRegistro.get('archivo_oficio_autorizacion')?.dirty || formRegistro.get('archivo_oficio_autorizacion')?.touched)"
+                                />
+
+                                <div *ngIf="archivoAutorizacionAux !== null">
+                                    <small class="text-success">
+                                        Archivo reciente.
+                                    </small>
+                                    <small>
+                                        {{archivoAutorizacionAux}}
+                                    </small>
+                                </div>
+
+                                <div *ngIf="archivoAutorizacionAux !== null">
+                                    <button type="button" class="btn btn-sm btn-primary" (click)="archivoAutorizacionAux=null">Subir nuevo</button>
+                                </div>
+
+                                <div *ngIf="formRegistro.get('archivo_oficio_autorizacion')?.invalid
+                                    && formRegistro.get('archivo_oficio_autorizacion')?.errors
+                                    && (formRegistro.get('archivo_oficio_autorizacion')?.dirty || formRegistro.get('archivo_oficio_autorizacion')?.touched)">
+                                    <small class="text-danger" *ngIf="formRegistro.get('archivo_oficio_autorizacion')?.hasError('required')">
+                                        Este campo es requerido.
+                                    </small>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <label for="importeautorizado" class="form-label">Importe autorizado sin IVA: <app-campo-obligatorio></app-campo-obligatorio></label>
+                                <div class="input-group mb-3">
+                                    <span class="input-group-text">$</span>
+
+                                    <input class="form-control" placeholder="Importe autorizado sin IVA" id="importeautorizado" type="number"
+                                    formControlName="importe_autorizado"  name="importeautorizado" [class.is-invalid]="formRegistro.get('importe_autorizado')?.invalid &&
+                                    (formRegistro.get('importe_autorizado')?.dirty || formRegistro.get('importe_autorizado')?.touched)"/>
+
+                                </div>
+
+                                    <div *ngIf="formRegistro.get('importe_autorizado')?.invalid
+                                        && formRegistro.get('importe_autorizado')?.errors
+                                        && (formRegistro.get('importe_autorizado')?.dirty || formRegistro.get('importe_autorizado')?.touched)">
+                                        <small class="text-danger" *ngIf="formRegistro.get('importe_autorizado')?.hasError('required')">
+                                            Este campo es requerido.
+                                        </small>
+                                    </div>
+
+                            </div>
+
+
+                            <div class="col-md-4">
+                                <label for="numerolicitanet" class="form-label">Num. en Licitanet: </label>
+                                <input class="form-control" placeholder="Num. en Licitanet" id="numerolicitanet"
+                                formControlName="numero_licitanet"  name="numerolicitanet" maxlength="30"/>
+
+                            </div>
+
+                        </div>
+
+
+
+
+                    </div>
+
+
+
+
+                    </div>
+
+
+                    <br>
+
+                </div>
+
+
+                <br>
+
+                <div class="card-footer d-flex justify-content-end">
+
+                    <button class="btn  btn-sm btn-outline-dark me-2" (click)="detalleContrato()"
+                    [disabled]="formRegistro.get('id_tipo_procedimiento')?.invalid || formRegistro.get('descripcion_concepto_contratacion')?.invalid
+                    || formRegistro.get('numero_oficio_autorizacion')?.invalid || formRegistro.get('importe_autorizado')?.invalid
+                    || formRegistro.get('archivo_oficio_autorizacion')?.invalid
+                    || formRegistro.get('anio')?.invalid">
+                        Siguiente
+                    </button>
+
+                    <button class="btn  btn-sm btn-danger me-2" (click)="cancelarAgregarProcedimientoModal(modalCancelar)" type="button">
+                        Cancelar
+                    </button>
+
+                </div>
+
+
+                </div>
+            </section>
+
+
+            <section *ngIf="agregarDetalleContrato">
+                <div class="container pt-4">
+                <div class="d-inline-block col-md-8">
+                    <h2 class="d-inline-block me-2">Datos del Contrato</h2>
+                    <h6 class="d-inline-block">detallar contrato</h6>
+                </div>
+
+
+
+
+
+                <div class="card mt-3">
+                    <div class="container ">
+
+                    <div class="row pt-3">
+                        <div class="col-md-4">
+                            <label for="fechainiciocontrato" class="form-label">Inicio de Contrato: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            <div class="input-group">
+                                <input id="fechainiciocontrato"
+                                    name="fechainiciocontrato"
+                                    ngbDatepicker
+                                    placeholder="Fecha inicio de contrato"
+                                    class="form-control"
+                                    #fechainiciocontrato="ngbDatepicker"
+                                    formControlName="fecha_inicio_contrato"
+                                    [markDisabled]="isDisabled"
+                                    [class.is-invalid]="formRegistro.get('fecha_inicio_contrato')?.invalid &&
+                                    (formRegistro.get('fecha_inicio_contrato')?.dirty || formRegistro.get('fecha_inicio_contrato')?.touched)"
+                                />
+                                <button class="btn btn-outline-secondary bi bi-calendar3" (click)="fechainiciocontrato.toggle()" type="button"></button>
+                            </div>
+
+
+                            <div *ngIf="formRegistro.get('fecha_inicio_contrato')?.invalid
+                                && formRegistro.get('fecha_inicio_contrato')?.errors
+                                && (formRegistro.get('fecha_inicio_contrato')?.dirty || formRegistro.get('fecha_inicio_contrato')?.touched)">
+                                <small class="text-danger" *ngIf="formRegistro.get('fecha_inicio_contrato')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fechafincontrato" class="form-label">Fin de Contrato: <app-campo-obligatorio></app-campo-obligatorio></label>
+
+                            <div class="input-group">
+                                <input id="fechafincontrato"
+                                    name="fechafincontrato"
+                                    ngbDatepicker
+                                    placeholder="Fecha fin de contrato"
+                                    class="form-control"
+                                    #fechafincontrato="ngbDatepicker"
+                                    formControlName="fecha_fin_contrato"
+                                    [markDisabled]="isDisabled"
+                                    [class.is-invalid]="formRegistro.get('fecha_fin_contrato')?.invalid &&
+                                    (formRegistro.get('fecha_fin_contrato')?.dirty || formRegistro.get('fecha_fin_contrato')?.touched)"
+                                />
+                                <button class="btn btn-outline-secondary bi bi-calendar3" (click)="fechafincontrato.toggle()" type="button"></button>
+                            </div>
+
+
+                            <div *ngIf="formRegistro.get('fecha_fin_contrato')?.invalid
+                                && formRegistro.get('fecha_fin_contrato')?.errors
+                                && (formRegistro.get('fecha_fin_contrato')?.dirty || formRegistro.get('fecha_fin_contrato')?.touched)">
+                                <small class="text-danger" *ngIf="formRegistro.get('fecha_fin_contrato')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <label for="monto" class="form-label">Monto Total sin IVA: <app-campo-obligatorio></app-campo-obligatorio></label>
+
+
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">$</span>
+
+                                <input class="form-control" placeholder="Monto Total sin IVA" id="monto"
+                                    formControlName="monto" type="number"  name="monto" [class.is-invalid]="formRegistro.get('monto')?.invalid &&
+                                    (formRegistro.get('monto')?.dirty || formRegistro.get('monto')?.touched)"/>
+
+                            </div>
+
+                            <div *ngIf="formRegistro.get('monto')?.invalid
+                                && formRegistro.get('monto')?.errors
+                                && (formRegistro.get('monto')?.dirty || formRegistro.get('monto')?.touched)">
+                                <small class="text-danger" *ngIf="formRegistro.get('monto')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <div class="row pt-3">
+                        <div class="col-md-4">
+                            <label for="montoanticipo" class="form-label">Anticipo del Contrato: </label>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text">$</span>
+
+                                <input class="form-control" placeholder="Anticipo del Contrato" id="montoanticipo"
+                                    formControlName="monto_anticipo" type="number" name="montoanticipo"/>
+
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <label for="numerocontrato" class="form-label">Número de contrato: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            <input class="form-control" placeholder="Número de contrato" id="numerocontrato"
+                                formControlName="numero_contrato" name="numerocontrato" [class.is-invalid]="formRegistro.get('numero_contrato')?.invalid &&
+                                (formRegistro.get('numero_contrato')?.dirty || formRegistro.get('numero_contrato')?.touched)"/>
+
+                            <div *ngIf="formRegistro.get('numero_contrato')?.invalid
+                                && formRegistro.get('numero_contrato')?.errors
+                                && (formRegistro.get('numero_contrato')?.dirty || formRegistro.get('numero_contrato')?.touched)">
+                                <small class="text-danger" *ngIf="formRegistro.get('numero_contrato')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="archivocontrato" class="form-label">Contrato Firmado: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            <input class="form-control" formControlName="archivo_contrato" type="file" id="archivocontrato"
+
+                                (change)="obtenerArchivoContratoBase64($event)"  *ngIf="archivoContratoAux === null"
+                                [class.is-invalid]="formRegistro.get('archivo_contrato')?.invalid &&
+                                (formRegistro.get('archivo_contrato')?.dirty || formRegistro.get('archivo_contrato')?.touched)"
+                            />
+
+                            <div *ngIf="archivoContratoAux !== null">
+                                <small class="text-success">
+                                    Archivo reciente.
+                                </small>
+                                <small>
+                                    {{archivoContratoAux}}
+                                </small>
+                            </div>
+
+                            <div *ngIf="archivoContratoAux !== null">
+                                <button type="button" class="btn btn-sm btn-primary" (click)="archivoContratoAux=null">Subir nuevo</button>
+                            </div>
+
+                            <div *ngIf="formRegistro.get('archivo_contrato')?.invalid
+                                && formRegistro.get('archivo_contrato')?.errors
+                                && (formRegistro.get('archivo_contrato')?.dirty || formRegistro.get('archivo_contrato')?.touched)">
+                                <small class="text-danger" *ngIf="formRegistro.get('archivo_contrato')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+
+                    <div class="row pt-3">
+                        <div class="col-md-4">
+                            <label for="fechafirmacontrato" class="form-label">Fecha de Firma de Contrato: <app-campo-obligatorio></app-campo-obligatorio></label>
+
+                            <div class="input-group">
+                                <input id="fechafirmacontrato"
+                                    name="fechafirmacontrato"
+                                    ngbDatepicker
+                                    placeholder="Fecha firmar de contrato"
+                                    class="form-control"
+                                    #fechafirmacontrato="ngbDatepicker"
+                                    formControlName="fecha_firma_contrato"
+                                    [markDisabled]="isDisabled"
+                                    [class.is-invalid]="formRegistro.get('fecha_firma_contrato')?.invalid &&
+                                    (formRegistro.get('fecha_firma_contrato')?.dirty || formRegistro.get('fecha_firma_contrato')?.touched)"
+                                />
+                                <button class="btn btn-outline-secondary bi bi-calendar3" (click)="fechafirmacontrato.toggle()" type="button"></button>
+                            </div>
+
+                            <div *ngIf="formRegistro.get('fecha_firma_contrato')?.invalid
+                                && formRegistro.get('fecha_firma_contrato')?.errors
+                                && (formRegistro.get('fecha_firma_contrato')?.dirty || formRegistro.get('fecha_firma_contrato')?.touched)">
+                                <small class="text-danger" *ngIf="formRegistro.get('fecha_firma_contrato')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+
+                        </div>
+                        <div class="col-md-4">
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+
+                    </div>
+
+
+                    <br>
+
+                </div>
+
+                <br>
+
+                <div class="card-footer d-flex justify-content-end">
+                    <button class="btn  btn-sm btn-outline-dark me-2" (click)="datosGeneralesProcedimiento()" type="button">
+                        Anterior
+                    </button>
+
+                    <button class="btn  btn-sm btn-outline-dark me-2" (click)="datosProveedor()"
+                        [disabled]="formRegistro.get('fecha_inicio_contrato')?.invalid || formRegistro.get('fecha_fin_contrato')?.invalid
+                        || formRegistro.get('monto')?.invalid || formRegistro.get('numero_contrato')?.invalid
+                        || formRegistro.get('archivo_contrato')?.invalid || formRegistro.get('fecha_firma_contrato')?.invalid" >
+                        Siguiente
+                    </button>
+
+                    <button class="btn  btn-sm btn-danger me-2" (click)="cancelarAgregarProcedimientoModal(modalCancelar)" type="button">
+                        Cancelar
+                    </button>
+
+                </div>
+
+                </div>
+            </section>
+
+
+            <section *ngIf="agregarDatosProveedor">
+                <div class="container pt-4">
+                <div class="d-inline-block col-md-8">
+                    <h2 class="d-inline-block me-2">Datos del Proveedor adjudicado</h2>
+                    <h6 class="d-inline-block">Agregar datos del proveedor adjudicado</h6>
+                </div>
+
+
+
+
+                <div class="card mt-3">
+                    <div class="container ">
+
+                    <div class="row pt-3">
+                        <div class="col-md-4">
+
+                            <label for="proveedor" class="form-label">Proveedor: <app-campo-obligatorio></app-campo-obligatorio></label>
+
+
+                            <input class="form-control" list="datalistOptions" placeholder="Escribe para buscar..." id="proveedor"
+                            formControlName="id_proveedor"  name="proveedor" (change)="actualizarNombreProveedor()"
+                            [class.is-invalid]="formRegistro.get('id_proveedor')?.invalid &&
+                             (formRegistro.get('id_proveedor')?.dirty || formRegistro.get('id_proveedor')?.touched)">
+                            <datalist id="datalistOptions">
+                                <option *ngFor="let p of lstTablaProveedores" [value]="p.id_proveedor">{{p.rfc_proveedor}} - {{p.nombre_proveedor}} {{p.primer_apellido_proveedor}} {{p.segundo_apellido_proveedor}} {{p.razon_social}}</option>
+
+                            </datalist>
+
+
+                            <div *ngIf="formRegistro.get('id_proveedor')?.invalid
+                                && formRegistro.get('id_proveedor')?.errors
+                                && (formRegistro.get('id_proveedor')?.dirty || formRegistro.get('id_proveedor')?.touched)">
+                                <small class="text-danger" *ngIf="formRegistro.get('id_proveedor')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nombre_proveedor" class="form-label">Nombre del Proveedor: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            <input class="form-control" type="text" id="nombre_proveedor"
+                            formControlName="nombre_proveedor" name="nombre_proveedor"/>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="nombre_representante_proveedor" class="form-label">Representante Legal del Proveedor: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            <input class="form-control" type="text" id="nombre_representante_proveedor"
+                            formControlName="nombre_representante_proveedor" name="nombre_representante_proveedor" />
+                        </div>
+
+
+                    </div>
+
+
+
+
+
+                    </div>
+
+                    <br>
+
+
+                </div>
+
+                <br>
+
+                <div class="card-footer d-flex justify-content-end">
+                    <button class="btn  btn-sm btn-outline-dark me-2" (click)="detalleContrato()" type="button">
+                        Anterior
+                    </button>
+
+                    <button class="btn  btn-sm btn-outline-dark me-2" (click)="anexosProcedimientos()"
+                    [disabled]="formRegistro.get('id_proveedor')?.invalid">
+                        Siguiente
+                    </button>
+
+                    <button class="btn  btn-sm btn-danger me-2" (click)="cancelarAgregarProcedimientoModal(modalCancelar)" type="button">
+                        Cancelar
+                    </button>
+
+                </div>
+
+                </div>
+            </section>
+
+
+
+
+            <section *ngIf="agregarAnexosProcedimiento">
+                <div class="container pt-4">
+                <div class="d-inline-block col-md-8">
+                    <h2 class="d-inline-block me-2">Anexos del procedimiento</h2>
+                    <h6 class="d-inline-block">anexos del procedimiento</h6>
+                </div>
+
+
+
+
+
+                <div class="card mt-3">
+                    <div class="container ">
+
+                    <div class="row pt-3">
+                        <div class="col-md-4">
+                            <label class="form-label">Tipo de archivo: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            <select class="form-select" aria-label="Default select example" id="tipoarchivo"
+                            formControlName="id_tipo_archivo"  name="tipoarchivo" (change)="resetArchivoAnexo()">
+                                <option value="" selected>Seleccione opción</option>
+                                <option *ngFor="let tp of lstTablaTiposArchivos" [value]="tp.id_tipo_archivo"
+                                >{{tp.nombre_tipo_archivo}}</option>
+
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Archivo: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            <input class="form-control" formControlName="archivo_anexo" type="file"
+                                (change)="obtenerArchivoAnexoBase64($event)"
+                            />
+                            <!-- accept="application/pdf, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" -->
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">Comentarios: </label>
+                            <input class="form-control" placeholder="Comentarios" id="comentarios"
+                            formControlName="comentarios"  name="comentarios"/>
+                        </div>
+
+
+
+
+                    </div>
+
+
+            <br>
+
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-end align-items-end">
+                            <button class="btn  btn-sm btn-success" type="button" (click)="guardarAnexosSubmit()"
+                            [disabled]="formRegistro.get('id_tipo_archivo')?.value == '' || formRegistro.get('id_tipo_archivo')?.value == null
+                        || formRegistro.get('archivo_anexo')?.value == '' || formRegistro.get('archivo_anexo')?.value == null">
+                                <i class="bi bi-arrow-down-circle-fill"></i>
+                                Agregar archivo
+                            </button>
+
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="container ">
+
+                        <table class="table table-striped" aria-describedby="table_agregar_procedimiento_adjudicacion">
+                            <thead>
+                            <tr>
+                                <th scope="col">Archivo</th>
+                                <th scope="col">Comentarios</th>
+                                <th scope="col">Acciones</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr *ngFor="let anexo of lstAnexosProcedimientos; index as i">
+
+                                <td>
+                                    {{ anexo.nombre_tipo_archivo}}
+                                    </td>
+                                    <td>
+                                    {{ anexo.comentarios}}
+                                    </td>
+
+
+
+                                    <td>
+
+                                        <button *ngIf="anexo.id_tipo_archivo==18"
+                                                class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                                                title=" Ver partidas del anexo"
+                                                (click)="abrirCerrarModalPartidas(true, true)">
+                                            <i class="bi bi-ticket-detailed"></i>
+                                        </button>
+
+                                        <button class="btn btn-danger btn-sm btn-circle" type="button"
+                                                (click)="eliminarAnexosModal(eliminarAnexo, anexo)">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </button>
+
+                                    </td>
+
+
+
+
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        </div>
+
+                    </div>
+
+
+                    </div>
+
+
+                    <br>
+
+                </div>
+
+                <br>
+
+                <div class="card-footer d-flex justify-content-end">
+
+                    <button class="btn  btn-sm btn-outline-dark me-2" (click)="datosProveedor()" type="button">
+                        Anterior
+                    </button>
+
+                    <button class="btn  btn-sm btn-danger me-2" (click)="cancelarAgregarProcedimientoModal(modalCancelar)" type="button">
+                        Cancelar
+                    </button>
+
+                    <button class="btn  btn-sm btn-success me-2" type="submit">
+                        {{_messageButton}}
+                    </button>
+                </div>
+
+                </div>
+            </section>
+
+
+
+
+
+
+        </form>
+
+        </div>
+    </main>
+</div>
+
+
+
+
+
+
+<!-- Modal para eliminar un anexo de la lista -->
+<ng-template #eliminarAnexo let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+      <i
+        class="bi bi-exclamation-circle icono-grande"
+        style="color: var(--warning-color-hover)"
+      ></i>
+      <h4 class="mt-2 text-center">
+        ¿Estás seguro de querer eliminar el anexo del procedimiento?
+      </h4>
+      <label class="mt-2 text-muted">No será posible recuperar después</label>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-default" (click)="cerrarModalEliminar()">
+        No, cancela!
+      </button>
+      <button type="button" class="btn btn-sm btn-danger" (click)="eliminarAnexoConfirm()">
+        Sí, eliminalo!
+      </button>
+    </div>
+  </ng-template>
+
+
+
+   <!-- modal cancelar -->
+<ng-template #modalCancelar let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer cancelar y regresar?</h4>
+        <label class="mt-2 text-muted">No será posible recuperar después</label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default" (click)="cancelarCancelarAgregarProcedimientoModal()">No, continua!</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="cancelarAgregarProcedimiento()" [disabled]="loaderGuardar">
+            Sí, cancela!
+            <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+        </button>
+    </div>
+</ng-template>
+
+
+
+<!-- modal confirmar -->
+<ng-template #modalConfirmar let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer guardar el procedimiento?</h4>
+        <label class="mt-2 text-muted">Se guardará el procedimiento</label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default" (click)="cancelarConfirmarGuardarSubmitModal()">No, cancela!</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="guardarSubmit()" [disabled]="loaderGuardar">
+            Sí, guarda!
+            <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #modalMostrarPartidasPresupuestales let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center" *ngIf="consultarDatosPartida">Las partidas leidas del excel:</h4>
+        <h4 class="mt-2 text-center" *ngIf="!consultarDatosPartida">Las partidas leidas del excel son los siguientes ¿Deseas continuar con la carga?:</h4>
+
+
+        <table class="table table-striped " aria-describedby="table_usuarios">
+            <thead>
+            <tr>
+                <th scope="col">Consecutivo</th>
+                <th scope="col">Partida</th>
+                <th scope="col">Código</th>
+                <th scope="col">Descripción</th>
+                <th scope="col">Cantidad</th>
+            </tr>
+            </thead>
+            <tbody *ngIf="lstDatosPartidaPresupuestal != null">
+            <tr *ngFor="let partida of lstDatosPartidaPresupuestal; index as i">
+                <td>{{ partida.numero_partida }}</td>
+                <td>{{ partida.nombre_partida }}</td>
+                <td>{{ partida.codigo_partida }}</td>
+                <td>{{ partida.descripcion_partida }}</td>
+                <td>{{ partida.cantidad_partida }}</td>
+            </tr>
+            </tbody>
+        </table>
+
+
+
+    </div>
+    <div class="modal-footer" *ngIf="consultarDatosPartida">
+        <button type="button" class="btn btn-sm btn-default" (click)="abrirCerrarModalPartidas(false)">Cerrar</button>
+    </div>
+    <div class="modal-footer" *ngIf="!consultarDatosPartida">
+        <button type="button" class="btn btn-sm btn-default" (click)="procesarPartidaPresupuestalCancelar()">No, cancela!</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="procesarPartidaPresupuestalAceptar()">
+            Sí, los datos son correctos!
+            <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+        </button>
+    </div>
+</ng-template>

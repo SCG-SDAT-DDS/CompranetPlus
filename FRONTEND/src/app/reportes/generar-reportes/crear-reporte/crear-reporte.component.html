@@ -1,0 +1,706 @@
+<div *ngIf="canActivate('ADMIN_REPORTES_MENU')"></div>
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin
+  id="sidebar"
+  class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"
+></app-side-nav-admin>
+
+<div class="content-layout-admin">
+  <main>
+    <div class="display-area">
+      <section>
+        <div class="container pt-5">
+          <div class="row">
+            <div class="d-inline-block col-md-8">
+              <h2 class="d-inline-block me-2">
+                Reportes de Procedimientos Administrativos
+              </h2>
+              <h6 class="d-inline-block">Crear reporte de procedimientos <span class="badge bg-success" *ngIf="iMsReporteUltimo != null">Fecha de actualización del reporte: {{iMsReporteUltimo.fecha_actualizacion | date:'dd/MM/yyyy h:mm a'}}</span></h6>
+
+            </div>
+          </div>
+
+          <div class="row" *ngIf="iMsReporteUltimo == null">
+            <div class="col-md-12">
+              <div class="alert alert-warning">No contamos con registro de un reporte existente o actualizado</div>
+            </div>
+          </div>
+
+          <div class="row">
+
+            <div class="row">
+              <div class="col-md-12"></div>
+            </div>
+
+            <form [formGroup]="formFiltro" (ngSubmit)="generarReporte">
+              <div class="accordion" id="accordionExample">
+                <!-- acordion de filtros de relacion -->
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      1. Filtros de relación
+                    </button>
+                  </h2>
+
+                  <div id="collapseOne" class="accordion-collapse collapse show" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
+                    <div class="container">
+                      <div class="row">
+                        <div class="d-inline-block col-md-8">
+                          <h4 class="d-inline-block">Del Procedimiento</h4>
+                        </div>
+                      </div>
+
+                      <div class="row pt-3">
+                        <div class="col-md-4">
+                          <label for="id_unidad_responsable" class="form-label">Unidad responsable</label>
+                          <select  id="id_unidad_responsable" formControlName="id_unidad_responsable" class="form-select" aria-label="Default select example">
+                            <option [ngValue]="null" selected>Todas</option>
+                            <option *ngFor="let ctur of lstCatTipoUnidadResponsable; index as ictp" [ngValue]="ctur.id_tipo_unidad_responsable" >{{ctur.tipo_unidad_responsable}}</option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="id_unidad_compradora" class="form-label">Unidad Compradora</label>
+                          <select  id="id_unidad_compradora" formControlName="id_unidad_compradora" class="form-select" aria-label="Default select example">
+                            <option [ngValue]="null" selected>Todas</option>
+                            <option *ngFor="let cur of lstCatUnidadCompradora" [ngValue]="cur.id_unidad_compradora" >{{cur.nombre_unidad_compradora}}</option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="id_tipo_procedimiento" class="form-label">Tipo de procedimiento</label>
+                          <select  id="id_tipo_procedimiento" formControlName="id_tipo_procedimiento"  class="form-select" aria-label="Default select example" >
+                            <option [ngValue]="null" selected>Todos</option>
+                            <option *ngFor="let ctp of lstCatTipoProcedimiento; index as ictp" [ngValue]="ctp.id_tipo_procedimiento"  >{{ctp.nombre_procedimiento}}</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="row pt-3">
+                        <div class="col-md-4">
+                          <label for="id_tipo_caracter_licitacion" class="form-label">Caracter</label>
+                          <select  id="id_tipo_caracter_licitacion" formControlName="id_tipo_caracter_licitacion"  class="form-select" aria-label="Default select example">
+                            <option [ngValue]="null" selected>Todos</option>
+                            <option *ngFor="let tc of lstTablaCaracteres" [value]="tc.id_tipo_caracter_licitacion">{{tc.nombre_caracter_licitacion}}</option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="id_tipo_modalidad" class="form-label">Modalidad</label>
+                          <select  id="id_tipo_modalidad" formControlName="id_tipo_modalidad" class="form-select" aria-label="Default select example">
+                            <option [ngValue]="null" selected>Todos</option>
+                            <option *ngFor="let tc of lstTablaModalidades" [value]="tc.id_tipo_modalidad">{{tc.nombre_modalidad}}</option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="id_estatus_procedimiento" class="form-label">Estatus de procedimiento</label>
+                          <select id="id_estatus_procedimiento" formControlName="id_estatus_procedimiento" class="form-select" aria-label="Default select example" >
+                            <option [ngValue]="null" selected>Todos</option>
+                            <option *ngFor="let ep of lstTablaEstatusProcedimientos" [value]="ep.id_estatus_procedimiento">{{ep.nombre_estatus_procedimiento}}</option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="id_estatus_participacion" class="form-label">Estatus de participación</label>
+                          <select id="id_estatus_participacion" formControlName="id_estatus_participacion" class="form-select" aria-label="Default select example" >
+                            <option [ngValue]="null" selected>Todos</option>
+                            <option *ngFor="let ep of lstCatEstatusParticipaciones" [value]="ep.id_estatus_participacion">{{ep.nombre_estatus_participacion}}</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <br />
+
+                      <div class="row">
+                        <div class="d-inline-block col-md-8">
+                          <h4 class="d-inline-block">Del Proveedor</h4>
+                        </div>
+                      </div>
+
+                      <div class="row pt-3">
+                        <div class="col-md-4">
+                          <label for="id_estado" class="form-label">Estado</label>
+                          <select id="id_estado" formControlName="id_estado" class="form-select" aria-label="Default select example">
+                            <option [ngValue]="null" selected>Todos</option>
+                            <option *ngFor="let e of lstEstado" [value]="e.id">{{e.estado}}</option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="id_municipio" class="form-label">Municipio</label>
+                          <select class="form-select" id="id_municipio" formControlName="id_municipio" aria-label="Default select example">
+                            <option [ngValue]="null" selected>Todos</option>
+                            <option *ngFor="let m of lstMunicipios" [value]="m.id">{{m.municipio}}</option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="id_localidad" class="form-label">Localidad</label>
+                          <select class="form-select" id="id_localidad" formControlName="id_localidad" aria-label="Default select example">
+                            <option [ngValue]="null" selected>Todos</option>
+                            <option *ngFor="let l of lstLocalidad" [value]="l.id">{{l.localidad}}</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div class="row pt-3">
+                        <div class="col-md-4">
+                          <label for="id_tipo_personeria_juridica" class="form-label">Personalidad Juridica</label>
+                          <select id="id_tipo_personeria_juridica" formControlName="id_tipo_personeria_juridica" class="form-select" aria-label="Default select example">
+                            <option [ngValue]="null" selected>Todos</option>
+                            <option *ngFor="let pj of lstCatPersonalidadJuridica" [value]="pj.id_tipo_personeria_juridica">{{pj.nombre_personeria_juridica}}</option>
+                          </select>
+                        </div>
+
+                        <div class="col-md-4"></div>
+
+                        <div class="col-md-4"></div>
+                      </div>
+
+                      <div class="row pt-3 pb-3">
+                        <div class="col-md-12">
+                          <div
+                            class="d-flex justify-content-end align-items-end"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <br />
+                <!-- acordion de filtros abiertos -->
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                      2. Filtros abiertos
+                    </button>
+                  </h2>
+
+                  <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#accordionExample">
+                    <div class="container">
+                      <div class="row">
+                        <div class="d-inline-block col-md-8">
+                          <h4 class="d-inline-block">Del Procedimiento</h4>
+                        </div>
+                      </div>
+
+                      <div class="row pt-3">
+                        <div class="col-md-4">
+                          <label for="numero_licitacion" class="form-label">Numero de licitación</label>
+                          <input id="numero_licitacion" formControlName="numero_licitacion" class="form-control" placeholder="Numero de licitación" name="numero_licitacion"/>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="numero_oficio" class="form-label">Numero de oficio</label>
+                          <input id="numero_oficio" formControlName="numero_oficio" class="form-control"placeholder="Numero de oficio" name="numeroOficio"/>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="importe" class="form-label">Importe</label>
+                          <input id="importe" formControlName="importe" class="form-control" placeholder="importe" name="importe"/>
+                        </div>
+                      </div>
+
+                      <div class="row pt-3">
+                        <div class="col-md-4">
+                          <label for="concepto" class="form-label">Concepto</label>
+                          <input id="concepto" formControlName="concepto"  class="form-control" placeholder="Concepto" name="concepto" />
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="capitulo" class="form-label">Capitulo</label>
+                          <input id="capitulo" formControlName="capitulo" class="form-control" placeholder="Capitulo" name="capitulo" />
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="proyecto" class="form-label">Proyecto</label>
+                          <input id="proyecto" formControlName="proyecto"  class="form-control" placeholder="proyecto" name="proyecto"/>
+                        </div>
+                      </div>
+
+                      <div class="row pt-3">
+                        <div class="col-md-4">
+                          <label for="partida" class="form-label">Partida</label>
+                          <input id="partida" formControlName="partida"  class="form-control" placeholder="partida" name="partida"/>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="fecha_publicacion" class="form-label">Fecha publicación</label>
+                          <input id="fecha_publicacion" formControlName="fecha_publicacion" class="form-control" type="date" />
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="fecha_limite_inscripcion" class="form-label">Fecha limite inscripción</label>
+                          <input id="fecha_limite_inscripcion" formControlName="fecha_limite_inscripcion" class="form-control" type="date" />
+                        </div>
+                      </div>
+
+                      <div class="row pt-3">
+                        <div class="col-md-4">
+                          <label for="fecha_apertura" class="form-label">Fecha apertura</label>
+                          <input id="fecha_apertura" formControlName="fecha_apertura" class="form-control" type="date" />
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="fecha_fallo" class="form-label">Fecha fallo</label>
+                          <input id="fecha_fallo" formControlName="fecha_fallo"  class="form-control" type="date" />
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="fecha_junta_aclaraciones" class="form-label">Fecha junta de aclaraciones</label>
+                          <input id="fecha_junta_aclaraciones" formControlName="fecha_junta_aclaraciones" class="form-control" type="date" />
+                        </div>
+                      </div>
+
+                      <br />
+
+                      <div class="row">
+                        <div class="d-inline-block col-md-8">
+                          <h4 class="d-inline-block">Del Proveedor</h4>
+                        </div>
+                      </div>
+
+                      <div class="row pt-3">
+                        <div class="col-md-4">
+                          <label for="rfc" class="form-label">RFC</label>
+                          <input id="rfc" formControlName="rfc"  class="form-control" placeholder="RFC" name="rfc"/>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="razon_social" class="form-label">Nombre o Razón Social</label>
+                          <input id="razon_social" formControlName="razon_social"  class="form-control" placeholder="Razón social" name="razon_social"/>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="giro" class="form-label">Giro</label>
+                          <input id="giro" formControlName="giro"  class="form-control" placeholder="Giro" name="giro"/>
+                        </div>
+                      </div>
+
+                      <div class="row pt-3">
+                        <div class="col-md-4">
+                          <label for="codigo_postal" class="form-label">Código Postal</label>
+                          <input id="codigo_postal" formControlName="codigo_postal"  class="form-control" placeholder="C.P." name="codigo_postal"/>
+                        </div>
+
+                        <div class="col-md-4"></div>
+
+                        <div class="col-md-4"></div>
+                      </div>
+
+                      <div class="row pt-3 pb-3">
+                        <div class="col-md-12">
+                          <div class="d-flex justify-content-end align-items-end"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <br />
+                <!-- acordion de filtros condicionales -->
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                      3. Filtros condicionales
+                    </button>
+                  </h2>
+
+                  <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#accordionExample">
+                    <div class="container">
+                      <div class="row">
+                        <div class="d-inline-block col-md-8">
+                          <h4 class="d-inline-block">Del Procedimiento</h4>
+                        </div>
+                      </div>
+
+                      <div class="row pt-3">
+                        <div class="col-md-4">
+                          <label for="licitacion_recortada" class="form-label">Licitación recortada</label>
+                          <input  id="licitacion_recortada" formControlName="licitacion_recortada" name="licitacion_recortada" class="form-check-input" type="checkbox" role="switch" id="licitacion_recortada" value="1"/>                      </div>
+
+                        <div class="col-md-4">
+                          <label for="licitacion_tecnologia" class="form-label">Licitación de tecnología</label>
+                          <input  id="licitacion_tecnologia" formControlName="licitacion_tecnologia" name="licitacion_tecnologia" class="form-check-input" type="checkbox" role="switch" id="licitacion_tecnologia" value="1"/>
+                        </div>
+
+                        <div class="col-md-4">
+                          <label for="diferendo_acto_apertura" class="form-label">Con diferendo de apertura</label>
+                          <input  id="diferendo_acto_apertura" formControlName="diferendo_acto_apertura" name="diferendo_acto_apertura" class="form-check-input" type="checkbox" role="switch" id="diferendo_acto_apertura" value="1"/>
+                        </div>
+                      </div>
+
+                      <br />
+
+                      <div class="row pt-3 pb-3">
+                        <div class="col-md-12">
+                          <div
+                            class="d-flex justify-content-end align-items-end"
+                          ></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <br />
+                <!-- acordion para los datos de salida -->
+                <div class="accordion-item">
+                  <h2 class="accordion-header" id="headingFour">
+                    <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseFour" >
+                      4. Datos de salida
+                    </button>
+                  </h2>
+
+                  <div
+                    id="collapseFour"
+                    class="accordion-collapse collapse"
+                    aria-labelledby="headingFour"
+                    data-bs-parent="#accordionExample">
+                    <div class="container">
+                      <div class="row pt-3">
+                        <div class="col-md-4">
+                          <select name="columnas_disponibles" class="form-select" aria-label="Default select example" multiple [formControl]="formColumns" [value]="lstColumnasSeleccionadas">
+                            <option *ngFor="let cd of lstColumnasDisponibles" [value]="cd.Field">{{cd.Field | titlecase}}</option>
+                          </select>
+                          <span class="help-text">Puede selecionar más de un campo presionando el boton CTRL de su teclado</span>
+                        </div>
+
+                        <div class="col-md-4">
+                          <div class="row">
+                            <div class="col-md-6 ">
+                              <button class="btn btn-sm btn-outline-secondary me-2" (click)="agregarColumnaDatosSalida()" > >> </button>
+                            </div>
+                            <div class="col-md-6 text-right" style="text-align: right !important;">
+                              <button class="btn btn-sm btn-outline-secondary me-2" (click)="removerColumnasDatosSalida()"> << </button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div class="col-md-4">
+                          <select name="columnas_agregadas" class="form-select" aria-label="Default select example" multiple [formControl]="formColumnsRmv">
+                            <option *ngFor="let cd of lstColumnasSeleccionadas" [value]="cd.Field">{{cd.Field | titlecase}}</option>
+                          </select>
+                          <span class="help-text">Si no hay campos seleccionados, se traera el reporte completo</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 mt-3">
+                <div class="d-flex justify-content-end align-items-end">
+                  <button class="btn  btn-sm btn-outline-secondary me-2" type="button"
+                          (click)="formFiltro.reset()">
+                      Restablecer
+                  </button>
+                  <button type="submit" class="btn btn-sm btn-danger me-2" [disabled]="loaderGuardar" (click)="actualizarReporteSistema()">
+                    <i class="bi bi-building-up"></i> Actualizar Reporte
+                    <div *ngIf="loaderFiltro" class="spinner-border spinner-border-sm" role="status"></div>
+                  </button>
+                  <button type="submit" class="btn btn-sm btn-dark me-2" [disabled]="loaderFiltro" (click)="generarReporte('tablero')">
+                    <i class="bi bi-display"></i> En línea
+                    <div *ngIf="loaderFiltro" class="spinner-border spinner-border-sm" role="status"></div>
+                  </button>
+                  <button type="submit" class="btn btn-sm btn-info me-2" [disabled]="loaderFiltro" (click)="generarReporte('json')">
+                      <i class="bi bi-filetype-json"></i> JSON
+                      <div *ngIf="loaderFiltro" class="spinner-border spinner-border-sm" role="status"></div>
+                  </button>
+                  <button type="submit" class="btn btn-sm btn-warning me-2" [disabled]="loaderFiltro" (click)="generarReporte('xml')">
+                    <i class="bi bi-filetype-xml"></i> XML
+                    <div *ngIf="loaderFiltro" class="spinner-border spinner-border-sm" role="status"></div>
+                  </button>
+                  <button type="submit" class="btn btn-sm btn-success me-2" [disabled]="loaderFiltro" (click)="generarReporte('excel')">
+                    <i class="bi bi-file-excel"></i> Excel
+                    <div *ngIf="loaderFiltro" class="spinner-border spinner-border-sm" role="status"></div>
+                  </button>
+                </div>
+              </div>
+            </form>
+
+            <!-- considero que no es necesario que los reportes esten arrojados en pantalla, dado que se piden en formato JSON, XML, EXCEL/XLS/CSV -->
+            <div class="card mt-3">
+              <div class="container">
+                <table class="table table-striped" aria-describedby="tabla_reportes_licitaciones">
+                  <thead>
+                    <tr>
+                      <th scope="col">No. de Licitación</th>
+                      <th scope="col">Tipo de procedimiento</th>
+                      <th scope="col">Concepto de contrato</th>
+                      <th scope="col">Estatus</th>
+                      <th>...</th>
+                    </tr>
+                  </thead>
+                  <tbody *ngIf="reporteTableroPaginado != null">
+                    <tr *ngFor="let rt of reporteTableroPaginado; index as i">
+
+                      <td>{{rt.numero_licitacion}}</td>
+                      <td>{{rt.tipo_procedimiento}} </td>
+                      <td>{{rt.concepto }}</td>
+                      <td>{{rt.estatus_de_procedimiento}}</td>
+                      <td>...</td>
+                    </tr>
+                  </tbody>
+                  <tbody *ngIf="reporteTableroPaginado == null && !pantallaIncial">
+                    <tr>
+                      <td colspan="5" class="text-center">Sin datos por mostrar</td>
+                    </tr>
+                  </tbody>
+                  <tbody *ngIf="reporteTableroPaginado == null && pantallaIncial">
+                    <tr>
+                      <td colspan="5" class="text-center">Realice una busqueda del reporte En linea</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <div class="d-flex justify-content-between p-2">
+                  <ngb-pagination *ngIf="reporteTablero != null && reporteTablero.length>pageSizeLstReporteTablero"
+                                  [collectionSize]="pageCollectionReporteTablero"
+                                  [(page)]="pageLstReporteTablero"
+                                  [pageSize]="pageSizeLstReporteTablero"
+                                  (pageChange)="paginacionReportesTablero()"
+                  >
+                  </ngb-pagination>
+              </div>
+              </div>
+            </div>
+
+            <!-- botones para guardar y ver reportes -->
+            <div class="col-md-12 mt-3" *ngIf="canActivate('ADMIN_REPORTES_MENU')">
+              <div class="d-flex justify-content-end align-items-end" >
+                <button class="btn  btn-sm btn-info me-2" type="button" [disabled]="!guardarReporte" (click)="abrirModalRegistro(modalRegistroReporte)">
+                  Guardar reporte
+                </button>
+                <button class="btn  btn-sm btn-success me-2" type="button" (click)="listadoModalMisReportes(modalListadoReporte)">
+                  Mis reportes
+              </button>
+              </div>
+            </div>
+
+          </div>
+
+          
+
+
+        </div>
+      </section>
+
+      <!-- <div class="card-footer d-flex justify-content-end mt-3">
+        <button
+          class="btn btn-sm btn-info me-2"
+          routerLink="/admin/reportes/lista-reportes"
+          *ngIf="canActivate('ADMIN_REPORTES_MENU')"
+        >
+          Reportes guardados
+        </button>
+
+        <button
+          class="btn btn-sm btn-success me-2"
+          routerLink="/admin/reportes/lista-reportes"
+          *ngIf="canActivate('ADMIN_REPORTES_MENU')"
+        >
+          Guardar reporte
+        </button>
+
+        <button *ngIf="canActivate('ADMIN_REPORTES_MENU')" class="btn btn-sm btn-success">Generar reporte</button>
+      </div> -->
+    </div>
+  </main>
+</div>
+
+<!-- modal crear reporte -->
+<ng-template #modalRegistroReporte let-c="close" let-d="dismiss">
+
+  <form [formGroup]="formRegistro" (ngSubmit)="guardarSubmit()">
+    <div class="modal-body d-flex flex-column align-items-center">
+      <h4 class="mt-2 text-center">Guardar reporte</h4>
+      <div class="col-md-12">
+        <label for="cp_anio_fiscal" class="form-label">Nombre del reporte</label>
+        <input class="form-control" placeholder="Nombre del reporte" formControlName="nombre_reporte"
+                  id="nombre_reporte" type="text" name="nombre_reporte" [class.is-invalid]="formRegistro.get('nombre_reporte')?.invalid &&
+                  (formRegistro.get('nombre_reporte')?.dirty || formRegistro.get('nombre_reporte')?.touched)" />
+        <div *ngIf="formRegistro.get('nombre_reporte')?.invalid && formRegistro.get('nombre_reporte')?.errors
+            && (formRegistro.get('nombre_reporte')?.dirty || formRegistro.get('nombre_reporte')?.touched)">
+          <small class="text-danger" *ngIf="formRegistro.get('nombre_reporte')?.hasError('required')">
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-default" (click)="cancelar()">Cancelar</button>
+      <button type="submit" class="btn btn-sm btn-success" [disabled]="loaderGuardar">
+          Guadar
+          <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+      </button>
+    </div>
+  </form>
+
+</ng-template>
+
+<ng-template #modalListadoReporte let-c="close" let-d="dismiss">
+  <div class="modal-body d-flex flex-column align-items-center">
+    <h4 class="mt-2 text-center">Mis reportes</h4>
+    <div class="container table-responsive">
+      <table class="table table-striped " aria-describedby="table_usuarios">
+          <thead>
+          <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Fecha</th>
+              <th scope="col" *ngIf="canActivate('ADMIN_REPORTES_MENU')">Acciones</th>
+          </tr>
+          </thead>
+          <tbody *ngIf="lstMisReportesPaginado != null">
+            <tr *ngFor="let item of lstMisReportesPaginado; index as i">
+                <td> {{ item.nombre_reporte }} </td>
+                <td> {{ item.fecha | date:'dd/MM/yyyy h:mm a'}} </td>
+                <td class="overflow-hidden"  *ngIf="canActivate('ADMIN_REPORTES_MENU')">
+                  <div ngbDropdown container="body">
+                    <button type="button" class="btn btn-warning btn-sm btn-circle  me-2" ngbDropdownToggle><i class="bi bi-three-dots-vertical"></i></button>
+                    <div ngbDropdownMenu>
+                      <button (click)="generarReporteMiReporte('json',item)" ngbDropdownItem>Descargar en JSON</button>
+                      <button (click)="generarReporteMiReporte('xml',item)" ngbDropdownItem>Descargar en XML</button>
+                      <button (click)="generarReporteMiReporte('excel',item)" ngbDropdownItem>Descargar en Excel</button>
+                      <button (click)="eliminarSubmit(item)" ngbDropdownItem>Eliminar</button>
+                      <button (click)="showTableroReportesPublicados(item,item.id_det_reportes)" ngbDropdownItem>Reportes publicados a cliente</button>
+                    </div>
+                  </div>
+                </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="lstMisReportesPaginado == null">
+            <tr>
+              <td colspan="3">Sin datos para mostrar</td>
+            </tr>
+          </tbody>
+      </table>
+
+      <ngb-pagination *ngIf="lstMisReportes != null && lstMisReportes.length>pagSizeLstMisReporte"
+        [collectionSize]="pagCollectionSize"
+        [(page)]="pageLstMisReportes"
+        [pageSize]="pagSizeLstMisReporte"
+        (pageChange)="paginacionMisReportes()"
+      >
+      </ngb-pagination>
+
+      <div class="form-group row" *ngIf="showTableroReportesClientes">
+        <div class="container">
+          <!-- tablero de registro de reportes publicados previamente -->
+          <div class="card mt-3" >
+            <div class="card-header">
+              Reportes públicos registrados
+              <button type="button" (click)="showFormReporteNuevoCliente()" class="btn btn-sm btn-info me-2">Compartir nuevo reporte</button>
+              <button type="button" (click)="cerrarTableroReportesPublicados()" class="btn btn-sm btn-default me-2">Cerrar tablero reportes</button>
+            </div>
+
+            <div class="card-body" *ngIf="!showFormRegistroReportePublico">
+
+              <div class="container table-responsive">
+                <table class="table table-striped" aria-describedby="table_reportes_publicos">
+                  <thead>
+                    <tr>
+                      <th>Cliente</th>
+                      <th>Correo</th>
+                      <th>Fecha</th>
+                      <th>Acciones</th>
+                    </tr>
+                  </thead>
+
+                  <tbody *ngIf="lstDetReportePublic != null && !loaderBuscarRp">
+                    <tr *ngFor="let item of lstDetReportePublic; index as i">
+                        <td> {{ item.nombre_cliente }} </td>
+                        <td> {{ item.correo }} </td>
+                        <td> {{ item.fecha | date:'dd/MM/yyyy h:mm a'}} </td>
+                        <td class="overflow-hidden"  *ngIf="canActivate('ADMIN_REPORTES_MENU')">
+                          <div ngbDropdown container="body">
+                            <button type="button" class="btn btn-warning btn-sm btn-circle  me-2" ngbDropdownToggle><i class="bi bi-three-dots-vertical"></i></button>
+                            <div ngbDropdownMenu>
+                              <button (click)="enviarCorreoReporte(item)" ngbDropdownItem>Enviar Correo</button>
+                              <button (click)="eliminarRegistroPublicSubmit(item)" ngbDropdownItem>Eliminar reporte</button>
+                            </div>
+                          </div>
+                        </td>
+                    </tr>
+                  </tbody>
+                  <tbody *ngIf="lstDetReportePublic == null && !loaderBuscarRp">
+                    <tr>
+                      <td colspan="4">Sin datos para mostrar</td>
+                    </tr>
+                  </tbody>
+                  <tbody *ngIf="lstDetReportePublic == null && loaderBuscarRp">
+                    <tr>
+                      <td colspan="4">Buscando registros... <div class="spinner-border spinner-border-sm" role="status"></div></td>
+                    </tr>
+                  </tbody>
+
+                </table>
+              </div>
+            </div>
+
+            <div class="card-body" *ngIf="showFormRegistroReportePublico">
+              <div class="container">
+                <form [formGroup]="formRegistroReportePublic" (ngSubmit)="guardarReportePublicoSubmit()">
+                  <div class="form-group row">
+                    <label class="col-6">Cliente de consulta</label>
+                    <div class="col-6">
+                      <input class="form-control" placeholder="Nombre del cliente" formControlName="nombre_cliente"
+                        id="nombre_reporte" type="text" name="nombre_cliente" [class.is-invalid]="formRegistroReportePublic.get('nombre_cliente')?.invalid &&
+                        (formRegistroReportePublic.get('nombre_cliente')?.dirty || formRegistroReportePublic.get('nombre_cliente')?.touched)" />
+                      <div *ngIf="formRegistroReportePublic.get('nombre_cliente')?.invalid && formRegistroReportePublic.get('nombre_cliente')?.errors
+                          && (formRegistroReportePublic.get('nombre_cliente')?.dirty || formRegistroReportePublic.get('nombre_cliente')?.touched)">
+                        <small class="text-danger" *ngIf="formRegistroReportePublic.get('nombre_cliente')?.hasError('required')">
+                          Este campo es requerido.
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group row mt-2">
+                    <label class="col-6">Correo cliente</label>
+                    <div class="col-6">
+                      <input class="form-control" placeholder="Correo del cliente" formControlName="correo"
+                        id="correo" type="text" name="correo" [class.is-invalid]="formRegistroReportePublic.get('correo')?.invalid &&
+                        (formRegistroReportePublic.get('correo')?.dirty || formRegistroReportePublic.get('correo')?.touched)" />
+                      <div *ngIf="formRegistroReportePublic.get('correo')?.invalid && formRegistroReportePublic.get('correo')?.errors
+                          && (formRegistroReportePublic.get('correo')?.dirty || formRegistroReportePublic.get('correo')?.touched)">
+                        <small class="text-danger" *ngIf="formRegistroReportePublic.get('correo')?.hasError('required')">
+                          Este campo es requerido.
+                        </small>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="form-group row mt-2">
+                    <div class="col-12" style="text-align: right !important;">
+                      <button  class="btn btn-sm btn-danger me-2" (click)="cancelarFormReporteNuevoCliente()">Cancelar</button>
+                      <button  class="btn btn-sm btn-success me-2" [disabled]="!formRegistroReportePublic.valid || loaderGuardar">
+                        Guardar
+                        <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+                      </button>
+                    </div>
+                  </div>
+
+                </form>
+              </div>
+            </div>
+
+            <div class="card-footer">
+              <div class="form-group row">
+                <div class="col-12">
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-default" (click)="cerrarListado()">Cerrar</button>
+  </div>
+</ng-template>

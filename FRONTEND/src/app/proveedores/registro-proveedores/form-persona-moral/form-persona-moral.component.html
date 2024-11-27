@@ -1,0 +1,1305 @@
+<div
+  class="container mt-2 entrada"
+  style="
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 0px 30px;
+    padding: 2%;
+    border-radius: 10px;
+  "
+>
+  <form
+    [formGroup]="formRegistroProveedorPersonaMoral"
+  >
+    <div class="row cls-seccion-header">
+      <div class="col-12">
+        <h4>Datos generales (Proveedor)</h4>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-6 col-12">
+        <label class="form-label"
+          >Razón Social: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="razon_social"
+          type="text"
+          [class.is-invalid]="
+            razonSocialForm?.invalid &&
+            (razonSocialForm?.dirty || razonSocialForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            razonSocialForm?.invalid &&
+            razonSocialForm?.errors &&
+            (razonSocialForm?.dirty || razonSocialForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="razonSocialForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-6 col-12">
+        <label class="form-label"
+          >RFC: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          style="text-transform: uppercase"
+          class="form-control"
+          formControlName="rfc_proveedor"
+          type="text"
+          [class.is-invalid]="
+            rfc_proveedorForm?.invalid &&
+            (rfc_proveedorForm?.dirty || rfc_proveedorForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            rfc_proveedorForm?.invalid &&
+            rfc_proveedorForm?.errors &&
+            (rfc_proveedorForm?.dirty || rfc_proveedorForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="rfc_proveedorForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+          <small
+            class="text-danger"
+            *ngIf="rfc_proveedorForm?.hasError('minlength')"
+          >
+            El RFC debe contener 12 caracteres.
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-4 col-12">
+        <label class="form-label"
+          >Nombre: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="nombre_proveedor"
+          type="text"
+          [class.is-invalid]="
+            nombreProveedorForm?.invalid &&
+            (nombreProveedorForm?.dirty || nombreProveedorForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            nombreProveedorForm?.invalid &&
+            nombreProveedorForm?.errors &&
+            (nombreProveedorForm?.dirty || nombreProveedorForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="nombreProveedorForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-4 col-12">
+        <label class="form-label"
+          >Primer Apellido : <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="primer_apellido_proveedor"
+          type="text"
+          [class.is-invalid]="
+            paternoProveedorForm?.invalid &&
+            (paternoProveedorForm?.dirty || paternoProveedorForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            paternoProveedorForm?.invalid &&
+            paternoProveedorForm?.errors &&
+            (paternoProveedorForm?.dirty || paternoProveedorForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="vialidadForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-4 col-12">
+        <label class="form-label"
+          >Segundo Apellido: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="segundo_apellido_proveedor"
+          type="text"
+          [class.is-invalid]="
+            maternoProveedorForm?.invalid &&
+            (maternoProveedorForm?.dirty || maternoProveedorForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            maternoProveedorForm?.invalid &&
+            maternoProveedorForm?.errors &&
+            (maternoProveedorForm?.dirty || maternoProveedorForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="maternoProveedorForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3" *ngIf="!formEditar">
+      <div class="col-md-6 col-12">
+        <label class="form-label"
+          >Contraseña <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="password"
+          type="password"
+          [class.is-invalid]="
+            passwordForm?.invalid &&
+            (passwordForm?.dirty || passwordForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            passwordForm?.invalid &&
+            passwordForm?.errors &&
+            (passwordForm?.dirty || passwordForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="passwordForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+          <small
+            *ngIf="
+              passwordForm?.hasError('pattern') ||
+              passwordForm?.hasError('minLength')
+            "
+          >
+            ¡La constraseña debe tener al menos 8 caracteres, contemplando
+            mayúsculas, minúsculas y números!
+          </small>
+        </div>
+      </div>
+      <div class="col-md-6 col-12">
+        <label class="form-label"
+          >Confirmar contraseña <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="passwordConfirm"
+          type="password"
+          (keyup)="onPasswordConfirmInput()"
+          [class.is-invalid]="
+            passwordConfirmForm?.invalid &&
+            (passwordConfirmForm?.dirty || passwordConfirmForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            passwordConfirmForm?.invalid &&
+            passwordConfirmForm?.errors &&
+            (passwordConfirmForm?.dirty || passwordConfirmForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="passwordConfirmForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+          <small
+            class="text-danger"
+            *ngIf="
+              passwordConfirmForm?.hasError('mismatchedPasswords') &&
+              passwordConfirmForm?.dirty
+            "
+          >
+            Las contraseñas no coinciden
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-6 col-12">
+        <label class="form-label">Registro patronal del IMSS:</label>
+        <input
+          class="form-control"
+          formControlName="numero_registro_imss"
+          type="text"
+        />
+      </div>
+      <div class="col-md-6 col-12">
+        <label class="form-label">Giro de la empresa:</label>
+        <input
+          class="form-control"
+          formControlName="descripcion_giro_empresa"
+          type="text"
+        />
+      </div>
+    </div>
+
+    <div class="row mt-2 mb-5">
+      <div class="col-md-6 col-12 mb-3">
+        <label class="form-label"
+          >Acta constitutiva (Incluyendo modificaciones):</label
+        >
+        <input
+          class="form-control"
+          type="file"
+          multiple
+          (change)="obtenerArchivosBase64($event)"
+          accept=".pdf"
+        />
+
+        <ul class="list-group">
+          <li *ngFor="let item of lst_actas" class="list-group-item d-flex justify-content-between align-items-center">
+            {{item.nombre_archivo}}
+            <button class="btn btn-sm btn-new-file" type="button" (click)="obtenerArchivo(item.url_documento, item.nombre_archivo)">
+              <i class="bi bi-download"></i>
+            </button>
+          </li>
+        </ul>
+
+      </div>
+      <div class="col-md-6 col-12">
+        <div>
+          <label class="form-label">Constancia de Situación Fiscal:
+            <app-campo-obligatorio></app-campo-obligatorio>
+          </label>
+          <input
+            *ngIf="!formEditar"
+            class="form-control"
+            formControlName="url_constancia_situacion"
+            type="file"
+            (change)="obtenerSitFiscalBase64($event)"
+            accept=".pdf"
+            [class.is-invalid]="
+              sitFiscalForm?.invalid &&
+              (sitFiscalForm?.dirty || sitFiscalForm?.touched)
+            "
+          />
+          <div *ngIf="formEditar" class="input-group">
+            <input
+              class="form-control"
+              formControlName="url_constancia_situacion"
+              type="file"
+              accept=".pdf"
+              [required]="btnCancelCSF || archivoCSF == null ? true : false"
+              (change)="obtenerSitFiscalBase64($event)"
+              [hidden]="!btnCancelCSF && archivoCSF != null"
+              [class.is-invalid]="
+                sitFiscalForm?.invalid &&
+                (sitFiscalForm?.dirty || sitFiscalForm?.touched)
+              "
+            />
+            <button *ngIf="btnCancelCSF" class="btn btn-sm btn-outline-secondary" type="button" (click)="cancelarArchivoCSF()">Cancelar</button>
+
+            <div *ngIf="!btnCancelCSF && archivoCSF != null" class="input-group">
+              <button class="btn btn-new-file" type="button" (click)="btnCancelCSF = true">Subir archivo nuevo</button>
+              <button class="btn btn-sm btn-new-file" type="button" (click)="obtenerArchivo(proveedorEdit?.url_constancia_situacion, archivoCSF)">
+                <i class="bi bi-download"></i>
+              </button>
+              <ul class="list-group">
+                <li class="list-group-item">{{archivoCSF}}</li>
+              </ul>
+            </div>
+          </div>
+          <div
+            *ngIf="
+              sitFiscalForm?.invalid &&
+              sitFiscalForm?.errors &&
+              (sitFiscalForm?.dirty || sitFiscalForm?.touched)
+            "
+          >
+            <small
+              class="text-danger"
+              *ngIf="sitFiscalForm?.hasError('required')"
+            >
+              Este campo es requerido.
+            </small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row cls-seccion-form-header">
+      <div class="col-12">
+        <h4>Datos del Representante Legal</h4>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-4 col-12">
+        <label class="form-label"
+          >Nombre Representante: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="nombre_representante"
+          type="text"
+          [class.is-invalid]="
+            nombreRepresentanteForm?.invalid &&
+            (nombreRepresentanteForm?.dirty || nombreRepresentanteForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            nombreRepresentanteForm?.invalid &&
+            nombreRepresentanteForm?.errors &&
+            (nombreRepresentanteForm?.dirty || nombreRepresentanteForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="nombreRepresentanteForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-4 col-12">
+        <label class="form-label"
+          >Primer Apellido Representante :
+          <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="primer_apellido_representante"
+          type="text"
+          [class.is-invalid]="
+            paternoRepresentanteForm?.invalid &&
+            (paternoRepresentanteForm?.dirty ||
+              paternoRepresentanteForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            paternoRepresentanteForm?.invalid &&
+            paternoRepresentanteForm?.errors &&
+            (paternoRepresentanteForm?.dirty ||
+              paternoRepresentanteForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="paternoRepresentanteForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-4 col-12">
+        <label class="form-label"
+          >Segundo Apellido Representante:
+          <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="segundo_apellido_representante"
+          type="text"
+          [class.is-invalid]="
+            maternoRepresentanteForm?.invalid &&
+            (maternoRepresentanteForm?.dirty ||
+              maternoRepresentanteForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            maternoRepresentanteForm?.invalid &&
+            maternoRepresentanteForm?.errors &&
+            (maternoRepresentanteForm?.dirty ||
+              maternoRepresentanteForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="maternoRepresentanteForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-2 mb-5">
+      <div class="col-md-6 col-12">
+        <label class="form-label"
+          >INE (FRENTE):
+          <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          *ngIf="!formEditar"
+          class="form-control"
+          formControlName="url_identificacion_representante"
+          type="file"
+          (change)="obtenerIneFrontBase64($event)"
+          accept=".jpg"
+          [class.is-invalid]="
+            ineRepresentanteForm?.invalid &&
+            (ineRepresentanteForm?.dirty || ineRepresentanteForm?.touched)
+          "
+        />
+        <div *ngIf="formEditar" class="input-group">
+          <input
+            class="form-control"
+            formControlName="url_identificacion_representante"
+            type="file"
+            accept=".jpg"
+            [required]="btnCancelINEFront || archivoINEFront == null ? true : false"
+            (change)="obtenerIneFrontBase64($event)"
+            [hidden]="!btnCancelINEFront && archivoINEFront != null"
+            [class.is-invalid]="
+              ineRepresentanteForm?.invalid &&
+              (ineRepresentanteForm?.dirty || ineRepresentanteForm?.touched)
+            "
+          />
+          <button *ngIf="btnCancelINEFront" class="btn btn-sm btn-outline-secondary" type="button" (click)="cancelarArchivoINEFront()">Cancelar</button>
+
+          <div *ngIf="!btnCancelINEFront && archivoINEFront != null" class="input-group">
+            <button class="btn btn-new-file" type="button" (click)="btnCancelINEFront = true">Subir archivo nuevo</button>
+            <button class="btn btn-sm btn-new-file" type="button" (click)="obtenerArchivo(proveedorEdit?.url_identificacion_representante, archivoINEFront)">
+              <i class="bi bi-download"></i>
+            </button>
+            <ul class="list-group">
+              <li class="list-group-item">{{archivoINEFront}}</li>
+            </ul>
+          </div>
+        </div>
+        <div
+          *ngIf="
+            ineRepresentanteForm?.invalid &&
+            ineRepresentanteForm?.errors &&
+            (ineRepresentanteForm?.dirty || ineRepresentanteForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="ineRepresentanteForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-6 col-12">
+        <label class="form-label"
+          >INE (ATRAS):
+          <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          *ngIf="!formEditar"
+          class="form-control"
+          formControlName="url_identificacion_reverso_representante"
+          type="file"
+          (change)="obtenerIneBackBase64($event)"
+          accept=".jpg"
+          [class.is-invalid]="
+            ineReversoRepresentanteForm?.invalid &&
+            (ineRepresentanteForm?.dirty ||
+              ineReversoRepresentanteForm?.touched)
+          "
+        />
+        <div *ngIf="formEditar" class="input-group">
+          <input
+            class="form-control"
+            formControlName="url_identificacion_reverso_representante"
+            type="file"
+            accept=".jpg"
+            [required]="btnCancelINEBack || archivoINEBack == null ? true : false"
+            (change)="obtenerIneBackBase64($event)"
+            [hidden]="!btnCancelINEBack && archivoINEBack != null"
+            [class.is-invalid]="
+              ineReversoRepresentanteForm?.invalid &&
+              (ineRepresentanteForm?.dirty ||
+                ineReversoRepresentanteForm?.touched)
+            "
+          />
+          <button *ngIf="btnCancelINEBack" class="btn btn-sm btn-outline-secondary" type="button" (click)="cancelarArchivoINEBack()">Cancelar</button>
+
+          <div *ngIf="!btnCancelINEBack && archivoINEBack != null" class="input-group">
+            <button class="btn btn-new-file" type="button" (click)="btnCancelINEBack = true">Subir archivo nuevo</button>
+            <button class="btn btn-sm btn-new-file" type="button" (click)="obtenerArchivo(proveedorEdit?.url_identificacion_reverso_representante, archivoINEBack)">
+              <i class="bi bi-download"></i>
+            </button>
+            <ul class="list-group">
+              <li class="list-group-item">{{archivoINEBack}}</li>
+            </ul>
+          </div>
+        </div>
+        <div
+          *ngIf="
+            ineReversoRepresentanteForm?.invalid &&
+            ineReversoRepresentanteForm?.errors &&
+            (ineReversoRepresentanteForm?.dirty ||
+              ineReversoRepresentanteForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="ineReversoRepresentanteForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="row cls-seccion-form-header">
+        <div class="col-12">
+          <h4>Socios</h4>
+        </div>
+      </div>
+      <div class="row mt-2 mb-5">
+        <div class="col-md-12 col-12 table-responsive">
+          <div class="d-flex justify-content-between">
+            <label class="form-label">Socios vigentes:</label>
+            <button
+              class="btn btn-success"
+              type="button"
+              (click)="agregarSociosModal(formSocio)"
+            >
+              <i class="bi bi-plus-lg"></i> Agregar socio
+            </button>
+          </div>
+          <table class="table table-striped" aria-describedby="tabla_socios">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Apellido paterno</th>
+                <th scope="col">Apellido materno</th>
+                <th scope="col">RFC</th>
+                <th scope="col">CURP</th>
+                <th scope="col">Domicilio</th>
+                <th scope="col" *ngIf="formEditar">Estatus</th>
+                <th scope="col">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let socio of lst_socios; index as i">
+                <td>
+                  {{ socio.id_proveedor_socio }}
+                </td>
+                <td>
+                  {{ socio.nombre_socio }}
+                </td>
+                <td>
+                  {{ socio.primer_apellido_socio }}
+                </td>
+                <td>
+                  {{ socio.segundo_apellido_socio }}
+                </td>
+                <td>
+                  {{ socio.rfc_socio }}
+                </td>
+                <td>
+                  {{ socio.curp_socio }}
+                </td>
+                <td>
+                  {{ socio.domicilio }}
+                </td>
+                <td *ngIf="formEditar">
+                  <span class="badge bg-success" *ngIf="socio.vigente">Activo</span>
+                  <span class="badge bg-danger" *ngIf="!socio.vigente">Inactivo</span>
+                </td>
+                <td>
+                  <button
+                    class="btn btn-warning btn-sm btn-circle me-2"
+                    (click)="editarSociosModal(formSocio, socio, i)"
+                  >
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm btn-circle"
+                    *ngIf="socio.vigente && socio.id_proveedor_socio != null"
+                    (click)="eliminarSociosModal(eliminarSocio, socio)"
+                  >
+                    <i class="bi bi-trash3-fill"></i>
+                  </button>
+                  <button
+                    class="btn btn-danger btn-sm btn-circle"
+                    *ngIf="socio.id_proveedor_socio == null"
+                    (click)="eliminarSocioNuevo(i)"
+                  >
+                    <i class="bi bi-x-lg"></i>
+                  </button>
+                </td>
+              </tr>
+              <tr *ngIf="lst_socios.length === 0">
+                <td colspan="9" class="text-center">
+                  No ha añadido ningún socio a su registro.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="row cls-seccion-form-header">
+      <div class="col-12">
+        <h4>Datos de domicilio</h4>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-3 col-12">
+        <label class="form-label"
+          >Código postal: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <div class="d-flex input-group">
+          <input
+            class="form-control"
+            formControlName="codigo_postal"
+            type="text"
+            [class.is-invalid]="
+              codigoPostalForm?.invalid &&
+              (codigoPostalForm?.dirty || codigoPostalForm?.touched)
+            "
+          />
+          <span
+            class="input-group-text text-white"
+            style="background: var(--ternary-color); cursor:pointer;"
+            id="basic-addon2"
+            (click)="buscarPorCodigoPostal()"
+            ><i class="bi bi-search" *ngIf="!loaderBuscarCP"></i
+          >
+          <div
+            *ngIf="loaderBuscarCP"
+            class="spinner-border spinner-border-sm"
+            role="status"
+            ></div>
+        </span>
+        </div>
+
+        <div
+          *ngIf="
+            codigoPostalForm?.invalid &&
+            codigoPostalForm?.errors &&
+            (codigoPostalForm?.dirty || codigoPostalForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="codigoPostalForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+          <small
+            class="text-danger"
+            *ngIf="codigoPostalForm?.hasError('minLength')"
+          >
+            El CP debe ser de 5 caracteres.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-2 col-12">
+        <label class="form-label"
+          >No.Exterior: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="numero_exterior"
+          type="text"
+          [class.is-invalid]="
+            numExteriorForm?.invalid &&
+            (numExteriorForm?.dirty || numExteriorForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            numExteriorForm?.invalid &&
+            numExteriorForm?.errors &&
+            (numExteriorForm?.dirty || numExteriorForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="numExteriorForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-2 col-12">
+        <label class="form-label">No.Interior:</label>
+        <input
+          class="form-control"
+          formControlName="numero_interior"
+          type="text"
+        />
+      </div>
+      <div class="col-md-5 col-12">
+        <label class="form-label"
+          >Domicilio: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="nombre_vialidad"
+          type="text"
+          [class.is-invalid]="
+            vialidadForm?.invalid &&
+            (vialidadForm?.dirty || vialidadForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            vialidadForm?.invalid &&
+            vialidadForm?.errors &&
+            (vialidadForm?.dirty || vialidadForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="vialidadForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-3 col-12">
+        <label class="form-label"
+          >Estado: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="id_estado"
+          readonly
+          required
+          [class.is-invalid]="
+            estadoForm?.invalid && (estadoForm?.dirty || estadoForm?.touched)
+          "
+          [ngModel]="estado_selected.nombre_estado"
+        />
+        <div
+          *ngIf="
+            estadoForm?.invalid &&
+            estadoForm?.errors &&
+            (estadoForm?.dirty || estadoForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="estadoForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+        <label class="form-label"
+          >Municipio: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="id_municipio"
+          required
+          readonly
+          [class.is-invalid]="
+            municipioForm?.invalid &&
+            (municipioForm?.dirty || municipioForm?.touched)
+          "
+          [ngModel]="municipio_selected.nombre_municipio"
+        />
+        <div
+          *ngIf="
+            municipioForm?.invalid &&
+            municipioForm?.errors &&
+            (municipioForm?.dirty || municipioForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="municipioForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-3 col-12">
+        <label class="form-label"
+          >Localidad: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="id_localidad"
+          required
+          readonly
+          [class.is-invalid]="
+            localidadForm?.invalid &&
+            (localidadForm?.dirty || localidadForm?.touched)
+          "
+          [ngModel]="municipio_selected.nombre_municipio"
+        />
+        <div
+          *ngIf="
+            localidadForm?.invalid &&
+            localidadForm?.errors &&
+            (localidadForm?.dirty || localidadForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="localidadForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div>
+        <!-- <select
+          class="form-select"
+          formControlName="id_localidad"
+          required
+          [class.is-invalid]="
+            localidadForm?.invalid &&
+            (localidadForm?.dirty || localidadForm?.touched)
+          "
+        >
+          <option>Seleccione....</option>
+          <option
+            *ngFor="let localidad of lst_cat_localidad"
+            [value]="localidad.id"
+          >
+            {{ localidad.localidad }}
+          </option>
+        </select>
+        <div
+          *ngIf="
+            localidadForm?.invalid &&
+            localidadForm?.errors &&
+            (localidadForm?.dirty || localidadForm?.touched)
+          "
+        >
+          <small
+            class="text-danger"
+            *ngIf="localidadForm?.hasError('required')"
+          >
+            Este campo es requerido.
+          </small>
+        </div> -->
+      </div>
+      <div class="col-md-3 col-12">
+        <label class="form-label"
+          >Colonia: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <select
+          class="form-select"
+          formControlName="nombre_colonia"
+          required
+          [class.is-invalid]="
+            coloniaForm?.invalid && (coloniaForm?.dirty || coloniaForm?.touched)
+          "
+        >
+          <option
+            *ngFor="let colonia of lst_cat_asentamientos"
+            [value]="colonia.nombre_asentamiento"
+          >
+            {{ colonia.nombre_asentamiento }}
+          </option>
+        </select>
+        <div
+          *ngIf="
+            coloniaForm?.invalid &&
+            coloniaForm?.errors &&
+            (coloniaForm?.dirty || coloniaForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="coloniaForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-12">
+        <label class="form-label">Referencia: </label>
+        <input
+          class="form-control"
+          formControlName="referencia"
+          type="referencia"
+          placeholder="Escribe referencia cerca de tu domicilio (Ejemplo: a un lado de la gasolinera, frente a la tienda de abarrotes, etc.)"
+        />
+      </div>
+    </div>
+    <div class="row mt-2 mb-3">
+      <div class="col-md-4 col-12">
+        <label class="form-label"
+          >Correo electronico: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="correo_electronico"
+          type="email"
+          [class.is-invalid]="
+            correoForm?.invalid && (correoForm?.dirty || correoForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            correoForm?.invalid &&
+            correoForm?.errors &&
+            (correoForm?.dirty || correoForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="correoForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+          <small class="text-danger" *ngIf="correoForm?.hasError('email')">
+            Ingrese un correo valido.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-4 col-12">
+        <label class="form-label"
+          >Teléfono: <app-campo-obligatorio></app-campo-obligatorio
+        ></label>
+        <input
+          class="form-control"
+          formControlName="telefono"
+          type="tel"
+          pattern="[0-9]*"
+          [class.is-invalid]="
+            telefonoForm?.invalid &&
+            (telefonoForm?.dirty || telefonoForm?.touched)
+          "
+        />
+        <div
+          *ngIf="
+            telefonoForm?.invalid &&
+            telefonoForm?.errors &&
+            (telefonoForm?.dirty || telefonoForm?.touched)
+          "
+        >
+          <small class="text-danger" *ngIf="telefonoForm?.hasError('required')">
+            Este campo es requerido.
+          </small>
+          <small class="text-danger" *ngIf="telefonoForm?.hasError('nonNumeric')">
+            Este campo solo admite valores numéricos.
+          </small>
+          <small
+            class="text-danger"
+            *ngIf="
+              telefonoForm?.hasError('minlength') ||
+              telefonoForm?.hasError('maxlength')
+            "
+          >
+            El telefono debe ser de 10 caracteres.
+          </small>
+        </div>
+      </div>
+      <div class="col-md-4 col-12" *ngIf="formEditar">
+        <label for="estatus-proveedor" class="form-label">Estatus</label>
+        <select class="form-select" formControlName="activo" name="activo">
+          <option [ngValue]="1">Activo</option>
+          <option [ngValue]="0">Inactivo</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row mt-2 mb-3" *ngIf="!formEditar">
+      <div class="col-md-6 col-12" style="display: contents">
+        <app-captcha
+          (captchaValidacion)="captchaResponse($event)"
+          [captchaFormRegistro]="true"
+        ></app-captcha>
+      </div>
+    </div>
+    <div class="row mt-2 mb-3" style="display: contents">
+      <button class="btn btn-sm btn-success" style="width: fit-content" (click)="guardarSubmit()">
+        <span *ngIf="!formEditar">Finalizar registro</span>
+        <span *ngIf="formEditar">Modificar</span>
+        <div
+          *ngIf="loaderGuardar"
+          class="spinner-border spinner-border-sm"
+          role="status"
+          ></div>
+      </button>
+
+      <button
+        class="btn btn-sm btn-outline-secondary"
+        style="width: fit-content; margin-left: 1%"
+        (click)="cancelar()"
+      >
+        Cancelar
+      </button>
+    </div>
+  </form>
+</div>
+
+<!-- Modal para agregar o editar informacion de un socio -->
+<ng-template #formSocio>
+  <div class="modal-body d-flex flex-column align-items-center">
+    <div class="container pt-4">
+      <div class="d-inline-block col-md-8">
+        <h2 class="d-inline-block me-2">{{ messageTitle }}</h2>
+        <h6 class="d-inline-block">{{ messageSubTitle }}</h6>
+      </div>
+      <form [formGroup]="formRegistroSocios">
+        <div class="row pt-3">
+          <div class="col-md-4 mb-3">
+            <label for="nombre" class="form-label"
+              >Nombre: <app-campo-obligatorio></app-campo-obligatorio>
+            </label>
+            <input
+              formControlName="nombre_socio"
+              class="form-control"
+              placeholder="Escriba un nombre"
+              type="text"
+              [class.is-invalid]="
+                nombreSocioForm?.invalid &&
+                (nombreSocioForm?.dirty || nombreSocioForm?.touched)
+              "
+            />
+            <div
+              *ngIf="
+                nombreSocioForm?.invalid &&
+                nombreSocioForm?.errors &&
+                (nombreSocioForm?.dirty || nombreSocioForm?.touched)
+              "
+            >
+              <small
+                class="text-danger"
+                *ngIf="nombreSocioForm?.hasError('required')"
+              >
+                Este campo es requerido.
+              </small>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="paterno" class="form-label"
+              >Primer Apellido: <app-campo-obligatorio></app-campo-obligatorio>
+            </label>
+            <input
+              formControlName="primer_apellido_socio"
+              class="form-control"
+              placeholder="Escriba un apellido paterno"
+              type="text"
+              [class.is-invalid]="
+                paternoSocioForm?.invalid &&
+                (paternoSocioForm?.dirty || paternoSocioForm?.touched)
+              "
+            />
+            <div
+              *ngIf="
+                paternoSocioForm?.invalid &&
+                paternoSocioForm?.errors &&
+                (paternoSocioForm?.dirty || paternoSocioForm?.touched)
+              "
+            >
+              <small
+                class="text-danger"
+                *ngIf="paternoSocioForm?.hasError('required')"
+              >
+                Este campo es requerido.
+              </small>
+            </div>
+          </div>
+          <div class="col-md-4 mb-3">
+            <label for="materno" class="form-label"
+              >Segundo Apellido: <app-campo-obligatorio></app-campo-obligatorio>
+            </label>
+            <input
+              formControlName="segundo_apellido_socio"
+              class="form-control"
+              placeholder="Escriba un apellido materno"
+              type="text"
+              [class.is-invalid]="
+                maternoSocioForm?.invalid &&
+                (maternoSocioForm?.dirty || maternoSocioForm?.touched)
+              "
+            />
+            <div
+              *ngIf="
+                maternoSocioForm?.invalid &&
+                maternoSocioForm?.errors &&
+                (maternoSocioForm?.dirty || maternoSocioForm?.touched)
+              "
+            >
+              <small
+                class="text-danger"
+                *ngIf="maternoSocioForm?.hasError('required')"
+              >
+                Este campo es requerido.
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="col-md-6 mb-3">
+            <label for="rfc" class="form-label"
+              >RFC:<app-campo-obligatorio></app-campo-obligatorio>
+            </label>
+            <input
+              style="text-transform: uppercase"
+              formControlName="rfc_socio"
+              class="form-control"
+              placeholder="RFC"
+              type="text"
+              [class.is-invalid]="
+                rfcSocioForm?.invalid &&
+                (rfcSocioForm?.dirty || rfcSocioForm?.touched)
+              "
+            />
+            <div
+              *ngIf="
+                rfcSocioForm?.invalid &&
+                rfcSocioForm?.errors &&
+                (rfcSocioForm?.dirty || rfcSocioForm?.touched)
+              "
+            >
+              <small
+                class="text-danger"
+                *ngIf="rfcSocioForm?.hasError('required')"
+              >
+                Este campo es requerido.
+              </small>
+              <small
+                class="text-danger"
+                *ngIf="
+                  rfcSocioForm?.hasError('minlength') ||
+                  rfcSocioForm?.hasError('maxlength')
+                "
+              >
+                El valor mínimo es 13 caracteres.
+              </small>
+            </div>
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="curp" class="form-label"
+              >CURP: <app-campo-obligatorio></app-campo-obligatorio>
+            </label>
+            <input
+              formControlName="curp_socio"
+              class="form-control"
+              placeholder="CURP"
+              type="text"
+              [class.is-invalid]="
+                curpSocioForm?.invalid &&
+                (curpSocioForm?.dirty || curpSocioForm?.touched)
+              "
+            />
+            <div
+              *ngIf="
+                curpSocioForm?.invalid &&
+                curpSocioForm?.errors &&
+                (curpSocioForm?.dirty || curpSocioForm?.touched)
+              "
+            >
+              <small
+                class="text-danger"
+                *ngIf="curpSocioForm?.hasError('required')"
+              >
+                Este campo es requerido.
+              </small>
+              <small
+                class="text-danger"
+                *ngIf="
+                  curpSocioForm?.hasError('minlength') ||
+                  curpSocioForm?.hasError('maxlength')
+                "
+              >
+                El valor mínimo es 18 caracteres.
+              </small>
+            </div>
+          </div>
+        </div>
+
+        <div class="row">
+          <div [ngClass]="!editarSocio ? 'col-md-12 mb-3' : 'col-md-8 mb-3'" >
+            <label for="direccion" class="form-label"
+              >Domicilio <app-campo-obligatorio></app-campo-obligatorio>
+            </label>
+            <textarea
+              formControlName="domicilio"
+              class="form-control"
+              placeholder="Escriba un domicilio"
+              type="text"
+              [class.is-invalid]="
+                domicilioForm?.invalid &&
+                (domicilioForm?.dirty || domicilioForm?.touched)
+              "
+            >
+            </textarea>
+            <div
+              *ngIf="
+                domicilioForm?.invalid &&
+                domicilioForm?.errors &&
+                (domicilioForm?.dirty || domicilioForm?.touched)
+              "
+            >
+              <small
+                class="text-danger"
+                *ngIf="domicilioForm?.hasError('required')"
+              >
+                Este campo es requerido.
+              </small>
+            </div>
+          </div>
+
+          <div class="col-md-4 mb-3" *ngIf="formEditar && editarSocio">
+            <label for="estatus-socio" class="form-label">
+              Estatus
+            </label>
+            <select class="form-select" formControlName="vigente" name="vigente">
+              <option [ngValue]="1">Activo</option>
+              <option [ngValue]="0">Inactivo</option>
+            </select>
+          </div>
+        </div>
+      </form>
+
+      <div class="modal-footer d-flex justify-content-end">
+        <button
+          class="btn btn-sm btn-outline-dark me-2"
+          (click)="cerrarModalRegistroOeliminar()"
+        >
+          Regresar
+        </button>
+        <button (click)="guardarSocioSubmit()" class="btn btn-sm btn-success" [disabled]="formRegistroSocios.invalid">
+          {{ messageButton }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+</ng-template>
+
+<!-- Modal para eliminar a un socio de la lista -->
+<ng-template #eliminarSocio let-c="close" let-d="dismiss">
+  <div class="modal-body d-flex flex-column align-items-center">
+    <i
+      class="bi bi-exclamation-circle icono-grande"
+      style="color: var(--warning-color-hover)"
+    ></i>
+    <h4 class="mt-2 text-center">
+      ¿Estás seguro de querer eliminar al usuario como Socio?
+    </h4>
+    <label class="mt-2 text-muted text-center">Los cambios se guardarán cuando este seguro de modificar el proveedor</label>
+  </div>
+  <div class="modal-footer">
+    <button
+      type="button"
+      class="btn btn-sm btn-default"
+      (click)="cerrarModalRegistroOeliminar()"
+    >
+      No, cancela!
+    </button>
+    <button
+      type="button"
+      class="btn btn-sm btn-danger"
+      (click)="eliminarSocioConfirm()"
+    >
+      Sí, eliminalo!
+    </button>
+  </div>
+</ng-template>

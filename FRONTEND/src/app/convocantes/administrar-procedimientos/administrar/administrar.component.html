@@ -1,0 +1,512 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin
+  id="sidebar"
+  class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"
+></app-side-nav-admin>
+
+
+
+
+<div class="content-layout-admin" *ngIf="blnActivarAdministrar">
+  <main>
+    <div class="display-area">
+      <section >
+
+
+
+        <div class="container pt-5">
+          <div class="row">
+            <ngb-alert type="danger" *ngIf="lstTablaUnidadesCompradoras != null && lstTablaUnidadesCompradoras.length == 0">
+              El usuario no tiene relacionadas unidades compradoras
+            </ngb-alert>
+
+
+
+
+            <div class="d-inline-block col-md-8">
+              <h2 class="d-inline-block me-2">{{titulo}}</h2>
+              <h6 class="d-inline-block">Listado de {{titulo}}</h6>
+            </div>
+
+
+
+
+                <div class="col-md-4">
+                  <div class="d-flex justify-content-end align-items-end">
+                    <button *ngIf="canActivate('ADMIN_LICPUB_AGR') || canActivate('ADMIN_LICSIMP_AGR')" class="btn  btn-sm btn-success"
+                    (click)="agregarProcedimiento()" [disabled]="!formBusqueda.valid || loaderBusqueda">
+                      <i class="bi bi-plus-lg"></i>
+                        Nueva {{tituloSingular}}
+                    </button>
+
+                  </div>
+                </div>
+              </div>
+
+              <div class="col-md-12">
+                <div class="d-flex justify-content-end align-items-end">
+                  <button *ngIf="canActivate('ADMIN_LICPUB_CRON')" class="btn  btn-sm btn-success"
+                  (click)="actualizarEstatusCron()" [disabled]="!formBusqueda.valid || loaderBusqueda">
+                    <i class="bi bi-arrow-repeat"></i>
+                      Actualizar estatus (CRON)
+                  </button>
+
+                </div>
+              </div>
+
+            <form [formGroup]="formBusqueda" (ngSubmit)="buscarProcedimientosAdministrativos()">
+
+
+              <div class="card mt-2">
+                <div class="container">
+                  <div class="row pt-3">
+                    <div class="col-md-4">
+
+                      <!-- <select class="form-select" aria-label="Default select example" id="unidadcompradora"
+                      formControlName="id_unidad_compradora"  name="unidadcompradora">
+                        <option *ngFor="let uc of lstTablaUnidadesCompradoras" [value]="uc.id_unidad_compradora">{{uc.nombre_unidad_compradora}}
+
+                        </option>
+
+                      </select> -->
+
+                      <input
+                        class="form-control"
+                        list="datalistOptions"
+                        placeholder="Escribe la clave de UC para buscar..."
+                        formControlName="nombre_unidad_compradora"
+                        id="nombre_unidad_compradora"
+                        name="nombre_unidad_compradora"
+                        (change)="actualizarNombreUsuario($event)"
+                        autocomplete="off"
+                      />
+
+                      <datalist id="datalistOptions">
+                        <option
+                          *ngFor="let uc of lstTablaUnidadesCompradoras; index as ictp"
+                          [value]="uc.clave_unidad_compradora"
+                        >
+                          {{
+                            uc.nombre_unidad_compradora +
+                              " " +
+                              (uc.clave_unidad_compradora) 
+                          }}
+                        </option>
+                      </datalist>
+
+                    </div>
+
+                    <div class="col-md-4">
+                      <input class="form-control" placeholder="Numero de licitacion" id="numeroprocedimiento"
+                      formControlName="numero_procedimiento"  name="numeroprocedimiento" />
+
+                    </div>
+
+                    <div class="col-md-4">
+                      <select class="form-select" aria-label="Default select example" id="tipoprocedimiento"
+                      formControlName="id_tipo_procedimiento"  name="tipoprocedimiento">
+                        <option value="" selected>Todos</option>
+                        <option *ngFor="let tp of lstTablaTiposProcedimientos" [value]="tp.id_tipo_procedimiento">{{tp.nombre_procedimiento}}</option>
+
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="row pt-3">
+                    <div class="col-md-4">
+                      <input class="form-control" placeholder="Concepto de Contratación" id="conceptocontratacion"
+                      formControlName="concepto_contratacion"  name="conceptocontratacion"/>
+                    </div>
+
+                    <div class="col-md-4">
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                    </div>
+                  </div>
+
+                  <div class="row pt-3 pb-3">
+                    <div class="col-md-12">
+                      <div class="d-flex justify-content-end align-items-end">
+                        <button class="btn btn-sm btn-outline-secondary me-2" type="button" (click)="formBusqueda.reset()">
+                          Restablecer
+                        </button>
+                        <button class="btn btn-sm btn-info" type="submit" class="btn btn-sm btn-info"
+                          [disabled]="!formBusqueda.valid || loaderBusqueda">Filtrar
+
+                          <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-sm" role="status"></div>
+
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+              <div class="card mt-3">
+                <div class="container table-responsive">
+
+                  <table class="table table-striped " aria-describedby="table_procedimientos">
+                    <thead>
+                      <tr>
+                        <th scope="col">No. de Licitación</th>
+                        <th scope="col" *ngIf="visualizarAdmin()">Unidad Responsable</th>
+                        <th scope="col">Tipo de procedimiento</th>
+                        <th scope="col">Tipo de modalidad</th>
+                        <th scope="col">Concepto de contratación</th>
+                        <th scope="col">No. de particip.</th>
+                        <th scope="col">Estatus</th>
+                        <th scope="col" *ngIf="canActivate('ADMIN_LICPUB_CONV') || canActivate('ADMIN_LICSIMP_CONV')" >Convocatoria</th>
+                        <th scope="col" *ngIf="canActivate('ADMIN_LICPUB_BASES') || canActivate('ADMIN_LICSIMP_BASES')">Bases</th>
+                        <th scope="col" *ngIf="canActivate('ADMIN_LICPUB_OFICIOS') || canActivate('ADMIN_LICSIMP_OFICIOS')">Oficio</th>
+                        <th scope="col">Acciones</th>
+
+
+                      </tr>
+                    </thead>
+
+                    <tbody *ngIf="lstTablaProcedimientos != null && !loaderBusqueda">
+                      <tr *ngFor="let procedimiento of lstTablaProcedimientos; index as i">
+
+                        <td>
+                          {{ procedimiento.numero_procedimiento}}
+                        </td>
+                        <td *ngIf="visualizarAdmin()">
+                          {{ procedimiento.nombre_unidad_responsable}}
+                        </td>
+                        <td>
+                          {{ procedimiento.nombre_procedimiento}}
+                        </td>
+                        <td>
+                          {{ procedimiento.nombre_modalidad}}
+                        </td>
+                        <td>
+                            {{ procedimiento.descripcion_concepto_contratacion}}
+                        </td>
+                        <td>
+                          {{ procedimiento.numero_participantes}}
+                      </td>
+
+                        <td>
+                          <span [ngClass]=procedimiento.estilo >{{procedimiento.nombre_estatus_procedimiento}}</span>
+
+                        </td>
+                        <td *ngIf="canActivate('ADMIN_LICPUB_CONV') || canActivate('ADMIN_LICSIMP_CONV')">
+                            <button class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                            (click)="descargarPdf(procedimiento.url_archivo_convocatoria, 'convocatoria')">
+                                <i class="bi bi-download"></i>
+                            </button>
+                        </td>
+
+                        <td *ngIf="canActivate('ADMIN_LICPUB_BASES') || canActivate('ADMIN_LICSIMP_BASES')">
+                            <button class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                            (click)="descargarPdf(procedimiento.url_archivo_bases, 'bases')">
+                                <i class="bi bi-download"></i>
+                            </button>
+                        </td>
+
+                        <td *ngIf="canActivate('ADMIN_LICPUB_OFICIOS') || canActivate('ADMIN_LICSIMP_OFICIOS')" >
+                            <button class="btn btn-warning btn-sm btn-circle me-2" type="button"
+                            (click)="descargarPdf(procedimiento.url_archivo_oficio_autorizacion, 'oficio')">
+                            <i class="bi bi-download"></i>
+                            </button>
+                        </td>
+
+                        <td>
+
+                            <button class="btn btn-warning btn-sm btn-circle me-2" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-three-dots-vertical"></i>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                              <li>
+                                <a class="dropdown-item btn_menu" (click)="detalleProcedimiento(procedimiento)" *ngIf="canActivate('ADMIN_LICPUB_CONSULTA') || canActivate('ADMIN_LICSIMP_CONSULTA')">
+                                  Detalle
+                                  <i class="bi bi-unlock"></i>
+                                </a>
+                              </li>
+
+
+                              <li *ngIf="permiteModificar(procedimiento)">
+                                <a class="dropdown-item btn_menu" (click)="editarProcedimiento(procedimiento)" *ngIf="(canActivate('ADMIN_LICPUB_AGR') || canActivate('ADMIN_LICSIMP_AGR'))">
+                                  Modificar
+                                  <i class="bi bi-unlock"></i>
+                                </a>
+                              </li>
+                              <li *ngIf="!permiteModificar(procedimiento)">
+                                <a class="dropdown-item btn_menu" *ngIf="(canActivate('ADMIN_LICPUB_AGR') || canActivate('ADMIN_LICSIMP_AGR'))"
+                                [class.disabled]="true">
+                                  Modificar
+                                  <i class="bi bi-lock"></i>
+                                </a>
+                              </li>
+
+
+                              <li *ngIf="permiteAnexos(procedimiento)">
+                                <a class="dropdown-item btn_menu" (click)="anexosProcedimiento(procedimiento)" *ngIf="canActivate('ADMIN_LICPUB_ANEXOS') || canActivate('ADMIN_LICSIMP_ANEXOS')">
+                                  Anexos / Actas
+                                  <i class="bi bi-unlock"></i>
+                                </a>
+                              </li>
+                              <li *ngIf="!permiteAnexos(procedimiento)">
+                                <a class="dropdown-item btn_menu"  *ngIf="canActivate('ADMIN_LICPUB_ANEXOS') || canActivate('ADMIN_LICSIMP_ANEXOS')"
+                                [class.disabled]="true">
+                                  Anexos / Actas
+                                  <i class="bi bi-lock"></i>
+                                </a>
+                              </li>
+
+
+                              <li *ngIf="permitePartidas(procedimiento)">
+                                <a class="dropdown-item btn_menu" (click)="cargarPartidasProveedor(procedimiento)" *ngIf="canActivate('ADMIN_LICPUB_CARGAPART') || canActivate('ADMIN_LICSIMP_CARGAPART')">
+                                  Partidas
+                                  <i class="bi bi-unlock"></i>
+                                </a>
+                              </li>
+                              <li *ngIf="!permitePartidas(procedimiento)">
+                                <a class="dropdown-item btn_menu"  *ngIf="canActivate('ADMIN_LICPUB_CARGAPART') || canActivate('ADMIN_LICSIMP_CARGAPART')"
+                                [class.disabled]="true">
+                                  Partidas
+                                  <i class="bi bi-lock"></i>
+                                </a>
+                              </li>
+
+
+                              <li *ngIf="permiteRespuestas(procedimiento)">
+                                <a class="dropdown-item btn_menu" (click)="adminRespuestasProcedimiento(procedimiento)" *ngIf="canActivate('ADMIN_RESP_PROC')">
+                                  Respuestas del procedimiento
+                                  <i class="bi bi-unlock"></i>
+                                </a>
+                              </li>
+                              <li *ngIf="!permiteRespuestas(procedimiento)">
+                                <a class="dropdown-item btn_menu" *ngIf="canActivate('ADMIN_RESP_PROC')"
+                                [class.disabled]="true">
+                                  Respuestas del procedimiento
+                                  <i class="bi bi-lock"></i>
+                                </a>
+                              </li>
+
+
+                              <li *ngIf="permiteParticipantes(procedimiento)">
+                                <a class="dropdown-item btn_menu" (click)="verParticipantes(procedimiento,tituloParticipantes)" *ngIf="canActivate('ADMIN_LICPUB_PARTICIP') || canActivate('ADMIN_LICSIMP_PARTICIP')">
+                                  {{tituloParticipantes}}
+                                  <i class="bi bi-unlock"></i>
+                                </a>
+                              </li>
+                              <li *ngIf="!permiteParticipantes(procedimiento)">
+                                <a class="dropdown-item btn_menu" *ngIf="canActivate('ADMIN_LICPUB_PARTICIP') || canActivate('ADMIN_LICSIMP_PARTICIP')"
+                                [class.disabled]="true">
+                                  {{tituloParticipantes}}
+                                  <i class="bi bi-lock"></i>
+                                </a>
+                              </li>
+
+
+                              <li *ngIf="permiteDiferimiento(procedimiento)">
+                                <a class="dropdown-item btn_menu" (click)="diferendoProcedimiento(procedimiento)" *ngIf="canActivate('ADMIN_LICPUB_APERTURA') || canActivate('ADMIN_LICSIMP_APERTURA')">
+                                  Diferimiento de acto de Recepción y Apertura
+                                  <i class="bi bi-unlock"></i>
+                                </a>
+                              </li>
+                              <li *ngIf="!permiteDiferimiento(procedimiento)">
+                                <a class="dropdown-item btn_menu" *ngIf="canActivate('ADMIN_LICPUB_APERTURA') || canActivate('ADMIN_LICSIMP_APERTURA')"
+                                [class.disabled]="true">
+                                  Diferimiento de acto de Recepción y Apertura
+                                  <i class="bi bi-lock"></i>
+                                </a>
+                              </li>
+
+
+                              <li *ngIf="permiteAperturaProposiciones(procedimiento)">
+                                <a class="dropdown-item btn_menu" (click)="recepcionProcedimiento(procedimiento)" *ngIf="canActivate('ADMIN_LICPUB_RECPROPS') || canActivate('ADMIN_LICSIMP_RESPROPS')">
+                                  Apertura de Proposiciones
+                                  <i class="bi bi-unlock"></i>
+                                </a>
+                              </li>
+                              <li *ngIf="!permiteAperturaProposiciones(procedimiento)">
+                                <a class="dropdown-item btn_menu" *ngIf="canActivate('ADMIN_LICPUB_RECPROPS') || canActivate('ADMIN_LICSIMP_RESPROPS')"
+                                [class.disabled]="true">
+                                  Apertura de Proposiciones
+                                  <i class="bi bi-lock"></i>
+                                </a>
+                              </li>
+
+
+                              <li *ngIf="permiteEvaluacionPropuestas(procedimiento)">
+                                <a class="dropdown-item btn_menu" (click)="falloProcedimiento(procedimiento)" *ngIf="canActivate('ADMIN_LICPUB_EVALFALLO') || canActivate('ADMIN_LICSIMP_EVALFALLO')">
+                                  Evaluación de propuestas y fallo
+                                  <i class="bi bi-unlock"></i>
+                                </a>
+                              </li>
+                              <li *ngIf="!permiteEvaluacionPropuestas(procedimiento)">
+                                <a class="dropdown-item btn_menu"  *ngIf="canActivate('ADMIN_LICPUB_EVALFALLO') || canActivate('ADMIN_LICSIMP_EVALFALLO')"
+                                [class.disabled]="true">
+                                  Evaluación de propuestas y fallo
+                                  <i class="bi bi-lock"></i>
+                                </a>
+                              </li>
+
+
+                              <li *ngIf="permiteContrato(procedimiento)">
+                                <a class="dropdown-item btn_menu" (click)="contratosProcedimiento(procedimiento)" *ngIf="(canActivate('ADMIN_LICPUB_CONTRATOS') || canActivate('ADMIN_LICSIMP_CONTRATOS'))">
+                                  Contratos
+                                  <i class="bi bi-unlock"></i>
+                                </a>
+                              </li>
+                              <li *ngIf="!permiteContrato(procedimiento)">
+                                <a class="dropdown-item btn_menu" *ngIf="(canActivate('ADMIN_LICPUB_CONTRATOS') || canActivate('ADMIN_LICSIMP_CONTRATOS'))"
+                                [class.disabled]="true">
+                                  Contratos
+                                  <i class="bi bi-lock"></i>
+                              </a></li>
+
+
+                            </ul>
+
+
+
+                        </td>
+
+
+
+                      </tr>
+                    </tbody>
+                  </table>
+
+                  <div class="d-flex justify-content-center align-items-center pb-2" >
+                    <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-lg" role="status"></div>
+                  </div>
+                  <ngb-alert *ngIf="lstTablaProcedimientos != null && lstTablaProcedimientos.length == 0">
+                    Sin datos para mostrar
+                  </ngb-alert>
+
+                </div>
+
+              </div>
+
+
+
+
+              <div class="container mt-2" *ngIf="lstTablaProcedimientos != null && lstTablaProcedimientos.length > 0">
+                <div class="row">
+                  <div class="col-md-7 col-12 d-flex justify-content-start">
+                    <div class="mt-1 table-responsive">
+                      <ngb-pagination
+                        size="sm"
+                        [collectionSize]="collectionSize"
+                        [(page)]="page"
+                        [pageSize]="pageSize"
+                        [maxSize]="5"
+                        [rotate]="true"
+                        [boundaryLinks]="true"
+                        [disabled]="loaderBusqueda"
+                        (pageChange)="onPageChange()"
+                      ></ngb-pagination>
+                    </div>
+                  </div>
+                  <div class="col-md-5 col-12 d-flex justify-content-end">
+                    <div class="d-flex align-items-baseline">
+                      <small class="me-2">Mostrando: </small>
+                      <input
+                        type="number"
+                        class="form-control me-2"
+                        style=" max-width: 4em;"
+                        inputmode="numeric"
+                        pattern="[0-9]*"
+                        [value]="pageSize"
+                        [(ngModel)]="pageSize"
+                        readonly
+                      >
+                      <small>registros por página</small>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+
+        </div>
+      </section>
+
+        </div>
+    </main>
+</div>
+
+
+
+<div class="content-layout-admin" *ngIf="blnActivarAgregar">
+  <app-agregar-procedimiento [_idTipo]="idTipo" [_tipo]="tipo" [_tituloSingular]="tituloSingular" [_blnActivarEditar] = "blnActivarEditar"
+  [_procedimientoElegido]="procedimientoElegido" [_lstTablaUnidadesCompradoras]="lstTablaUnidadesCompradoras"
+  [_messageTitle] = messageTitle [_messageSubTitle] = messageSubTitle [_messageButton] = messageButton (_cancelarAgregarProcedimiento)="cancelarAgregarProcedimiento()">
+
+  </app-agregar-procedimiento>
+</div>
+
+
+
+<div class="content-layout-admin" *ngIf="blnActivarDetalle">
+  <app-detalle-procedimiento [_procedimientoElegido]="procedimientoElegido" (_cancelarDetalleProcedimiento)="cancelarDetalleProcedimiento()">
+
+  </app-detalle-procedimiento>
+</div>
+
+
+<div class="content-layout-admin" *ngIf="blnActivarAnexosProcedimientos">
+  <app-anexos-procedimientos [_procedimientoElegido]="procedimientoElegido" (_cancelarAnexosProcedimiento)="cancelarAnexosProcedimiento()">
+
+  </app-anexos-procedimientos>
+</div>
+
+
+<div class="content-layout-admin" *ngIf="blnActivarDiferendoProcedimientos">
+  <app-diferendo-apertura  [_procedimientoElegido]="procedimientoElegido"  (_cancelarDiferendoProcedimiento)="cancelarDiferendoProcedimiento()">
+
+  </app-diferendo-apertura>
+</div>
+
+<div class="content-layout-admin" *ngIf="blnActivarRecepcionProcedimientos">
+  <app-recepcion-apertura-proposiciones  [_procedimientoElegido]="procedimientoElegido"  (_cancelarRecepcionProcedimiento)="cancelarRecepcionProcedimiento()">
+
+  </app-recepcion-apertura-proposiciones>
+</div>
+
+
+<div class="content-layout-admin" *ngIf="blnActivarContratos">
+  <app-contratos [_procedimientoElegido]="procedimientoElegido" (_cancelarContratosProcedimiento)="cancelarContratosProcedimiento()">
+
+  </app-contratos>
+</div>
+
+
+<div class="content-layout-admin" *ngIf="blnVerParticipante">
+  <app-participante [_procedimientoElegido]="participanteInvitadoElegido" (_cancelarVerParticipantes)="cancelarVerParticipantes()">
+
+  </app-participante>
+</div>
+
+<div class="content-layout-admin" *ngIf="blnFalloProcedimiento">
+  <app-evaluacion-propuesta-fallo [_procedimientoElegido]="falloProcedimientoElegido" (_cancelarFalloProcedimiento)="cancelarFalloProcedimiento()">
+
+  </app-evaluacion-propuesta-fallo>
+</div>
+
+<div class="content-layout-admin" *ngIf="blnActivarCargarPartidasProveedor">
+
+  <app-partidas-presupuestales
+    [_procedimientoElegido]="procedimientoElegido"
+    (_cancelarPartidasPresupuestales)="cancelarPartidasProveedor()">
+
+  </app-partidas-presupuestales>
+</div>
+
+
+<div class="content-layout-admin" *ngIf="blnActivarRespuestasProcedimient">
+
+  <app-respuestas-procedimiento
+          [_procedimientoElegido]="procedimientoElegido"
+          (_cancelar)="cancelarRespuestasProcedimiento()">
+  </app-respuestas-procedimiento>
+</div>

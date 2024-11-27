@@ -1,0 +1,240 @@
+<app-header-admin></app-header-admin>
+<app-side-nav-admin id="sidebar" class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"></app-side-nav-admin>
+<div class="content-layout-admin" *ngIf="tipo == 0">
+
+    <main>
+        <div class="display-area">
+
+            <section *ngIf="blnActivarDetalle">
+                <div class="container pt-5">
+
+                    <div class="row">
+                    <div class="d-inline-block col-md-8">
+                        <h2 class="d-inline-block me-2">Procedimientos en los que participa</h2>
+                        <h6 class="d-inline-block">Ver listado en sistema</h6>
+                    </div>
+
+                    <div class="col-md-4">
+                        <div class="d-flex justify-content-end align-items-end">
+                        <button class="btn  btn-sm btn-success" (click)="rutaLink('')">
+                            <i class="bi bi-plus-lg"></i>
+                            Agregar nuevo procedimiento
+                        </button>
+                        </div>
+                    </div>
+                    </div>
+
+                    <div class="card mt-2">
+                    <div class="container ">
+                        <form [formGroup]="formBusqueda" (ngSubmit)="buscarSubmit()">
+                        <div class="row pt-3">
+                            <div class="col-md-4 mb-3">
+                            <input
+                            class="form-control"
+                            placeholder="Escribe el número de licitación"
+                            name="noProcedimiento"
+                            id="noProcedimiento"
+                            formControlName="noProcedimiento"
+                            [class.is-invalid]="formBusqueda.get('noProcedimiento')?.invalid &&
+                                (formBusqueda.get('noProcedimiento')?.dirty || formBusqueda.get('noProcedimiento')?.touched)"
+                            />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                            <select class="form-select"
+                                    id="tipoProcedimientoId"
+                                    formControlName="tipoProcedimientoId"
+                            >
+                                <option [ngValue]="null" [disabled]="false">Todos los procedimientos</option>
+                                <option *ngFor="let prod of lstCatTipoProcedimiento; index as ictp" [ngValue]="prod.id_tipo_procedimiento"  >{{prod.nombre_procedimiento}}</option>
+                            </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                            <select class="form-select"
+                            formControlName="tipoEstatusId">
+                                <option selected [ngValue]="null" [disabled]="false" >Todos los estatus</option>
+                                <option [ngValue]="2">Vigente</option>
+                                <option [ngValue]="3">Seguimiento</option>
+                                <option [ngValue]="7">Adjudicada</option>
+                                <option [ngValue]="6">Desierta</option>
+                                <option [ngValue]="5">Cancelada</option>
+                            </select>
+
+                            </div>
+                        </div>
+
+                        <div class="row">
+
+                            <div class="col-md-12 mb-3">
+                            <div class="d-flex justify-content-end align-items-end">
+                                <button type="button" class="btn  btn-sm btn-outline-secondary me-2"
+                                        (click)="reset()">
+                                Restablecer
+                                </button>
+                                <button type="submit" class="btn  btn-sm btn-info" (click)="filtrar()"
+                                        [disabled]="!formBusqueda.valid || loaderBusqueda">
+                                    Filtrar
+                                    <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-sm" role="status"></div>
+                                </button>
+
+                            </div>
+                            </div>
+                        </div>
+                        </form>
+                    </div>
+
+                    </div>
+
+
+                    <div class="card mt-3">
+                    <div class="container table-responsive">
+
+                        <table class="table table-striped" aria-describedby="table_anuncios">
+
+                        <thead>
+                            <tr>
+                            <th scope="col">Tipo contratación</th>
+                            <th scope="col">Tipo modalidad</th>
+                            <th scope="col">Número de Licitación</th>
+                            <th scope="col">Tipo de procedimiento</th>
+                            <th scope="col">Concepto de contrato</th>
+                            <th scope="col">Proceso siguiente</th>
+                            <th scope="col">Estatus</th>
+                            <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody *ngIf="!loader">
+                            <tr *ngFor="let info of lstTabla; index as i">
+                            <td>{{ info.id_tipo_contratacion === 1 ? 'Licitación Pública' : info.id_tipo_contratacion === 2 ? 'Licitación Simplificada' : info.id_tipo_contratacion === 3 ? 'Adjudicación Directa' : 'Desconocida' }}</td>
+                            <td>{{ info.id_tipo_modalidad === 1 ? 'Presencial' : info.id_tipo_modalidad === 2 ? 'Electronica' : info.id_tipo_modalidad === 3 ? 'Mixta' : 'Desconocida' }}</td>
+                            <td>
+                                {{ info.numero_procedimiento}}
+                            </td>
+                            <td>
+                                {{ info.nombre_procedimiento}}
+                            </td>
+                            <td>
+                                {{ info.descripcion_concepto_contratacion}}
+                            </td>
+                            <td>
+                                <span class="badge bg-default" >{{ info.nombre_flujo_procedimiento }}</span>
+                            </td>
+                            <td>
+                                <span class="badge" [ngClass]="info.estilo">{{ info.nombre_estatus_procedimiento }}</span>
+                            </td>
+                            <td>
+
+                                <button class="btn btn-warning btn-sm btn-circle me-2 mb-1" (click)="tipoProcedimiento(info)">
+                                <i class="bi bi-eye-fill"></i>
+                                </button>
+                                <button class="btn btn-warning btn-sm btn-circle me-2" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false" *ngIf="validarParametrosProcedimiento(info)">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                <li><a class="dropdown-item btn_menu" (click)="adminPreguntasProcedimientos(info)" [class.disabled]="!validarAdminPreguntasProcedimientos(info) ? true: null" *ngIf="info.id_tipo_modalidad !== 1">
+                                    Preguntas del procedimiento <i class="bi icono-grande" [className]="validarAdminPreguntasProcedimientos(info)?'bi-unlock':'bi-lock'" style="color: var(--secondary-color);"></i>
+                                </a></li>
+                                <li><a class="dropdown-item btn_menu" (click)="generarPaseCaja(info)" [class.disabled]="!validarGenerarPaseCaja(info) ? true: null" *ngIf="info.id_tipo_contratacion === 1">
+                                    Generar Pase a Caja <i class="bi icono-grande" [className]="validarGenerarPaseCaja(info)?'bi-unlock':'bi-lock'" style="color: var(--secondary-color);"></i>
+                                </a></li>
+                                <li><a class="dropdown-item btn_menu" (click)="presentarPropuesta(info)" [class.disabled]="!esFechaRecepcion(info) ? true: null" *ngIf="info.id_tipo_modalidad !== 1">
+                                    Presentar propuesta <i class="bi icono-grande" [className]="esFechaRecepcion(info)?'bi-unlock':'bi-lock'" style="color: var(--secondary-color);"></i>
+                                </a></li>
+
+                                </ul>
+
+                            </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-center align-items-center pb-2" >
+                        <div *ngIf="loader" class="spinner-border spinner-border-lg" role="status"></div>
+                    </div>
+                    <ngb-alert *ngIf="lstTabla != null && lstTabla.length == 0">
+                        Sin datos para mostrar
+                    </ngb-alert>
+                    </div>
+
+                    </div>
+
+
+                    <div class="container mt-2 p-2" *ngIf="!loader && collectionSize >0">
+                    <div class="row ">
+                        <div class="col-md-6 col-12 d-flex justify-content-start">
+                        <div class="mt-1 table-responsive">
+                            <ngb-pagination
+                            size="sm"
+                            [collectionSize]="collectionSize"
+                            [(page)]="page"
+                            [pageSize]="pageSize"
+                            [maxSize]="5"
+                            [rotate]="true"
+                            [boundaryLinks]="true"
+                            (pageChange)="buscarSubmit()"
+                            ></ngb-pagination>
+                        </div>
+                        </div>
+                        <div class="col-md-6 col-12 d-flex justify-content-end">
+                        <div class="d-flex align-items-baseline">
+                            <small class="me-2">Mostrando: </small>
+                            <input
+                                type="number"
+                                class="form-control me-2"
+                                style=" max-width: 4em; "
+                                inputmode="numeric"
+                                pattern="[0-9]*"
+                                [value]="pageSize"
+                                [(ngModel)]="pageSize"
+                                (change)="buscarSubmit(true)"
+                            >
+                            <small>registros por página</small>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+
+
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </main>
+
+</div>
+
+<div class="content-layout-admin" *ngIf="tipo == 1 || tipo ==2">
+    <app-detalle-procedimiento  [_procedimientoElegido]="procedimientoElegido" (_cancelarDetalleProcedimiento)="cancelarDetalleProcedimiento()">
+
+    </app-detalle-procedimiento>
+
+</div>
+
+<div *ngIf="tipo == 3">
+    <app-detalle-procedimiento-adjudicacion [_procedimientoElegido]="procedimientoElegido" (_cancelarDetalleProcedimiento)="cancelarDetalleProcedimiento()">
+
+    </app-detalle-procedimiento-adjudicacion>
+</div>
+
+<div *ngIf="blnPresentarPropuesta">
+    <app-presentar-propuesta [_procedimientoElegido]="procedimientoElegido" (_cancelarPresentarPropuesta)="cancelarPresentarPropuesta()">
+
+    </app-presentar-propuesta>
+</div>
+
+<div *ngIf="blnGenerarPaseCaja">
+    <app-pase-caja [_procedimientoElegido]="procedimientoElegido" (_cancelarPaseCaja)="cancelarPaseCaja()">
+
+    </app-pase-caja>
+</div>
+
+<div *ngIf="blnActivarPreguntasProcedimimento">
+
+    <app-preguntas-procedimiento
+            [_procedimientoElegido]="procedimientoElegido"
+            (_cancelar)="cancelarPreguntasProcedimiento()">
+
+    </app-preguntas-procedimiento>
+</div>

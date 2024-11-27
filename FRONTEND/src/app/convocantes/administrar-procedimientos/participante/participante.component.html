@@ -1,0 +1,215 @@
+<div>
+
+    <main>
+        <div class="display-area">
+           
+            <section class="container pt-5" *ngIf="agregarParticipante">
+                <div class="row">
+                    <div class="d-inline-block col-md-12" >
+                        <h2 class="d-inline-block me-2">{{messageTitle}}s</h2>
+                        <h6 class="d-inline-block">Ver listado de {{messageSubTitle}}s en el sistema</h6>
+                     </div>
+              
+                    <div class="d-inline-block col-md-12" *ngIf="!agregarParticipante">
+                        <h2 class="d-inline-block me-2">Agregar {{messageSubTitle}}</h2>
+                        <h6 class="d-inline-block">Agregar un nuevo {{messageSubTitle}}</h6>
+                    </div>
+                </div>    
+                <div class="container pt-3">
+                    <app-encabezado-procedimiento [__procedimientoElegido]="_procedimientoElegido"></app-encabezado-procedimiento>
+                </div>
+                <div class="row pt-3">
+                    <div class="col-md-12">
+                        <div class="d-flex justify-content-end align-items-end" *ngIf="_procedimientoElegido?.id_tipo_contratacion === 1 && canActivate('ADMIN_CAT_UCOMPRA_ELM') && _procedimientoElegido?.nombre_estatus_procedimiento==='Vigente'">
+                            <button class="btn  btn-sm btn-success" (click)="redireccionar()">
+                            <i class="bi bi-plus-lg"></i>
+                                Agregar Participante
+                            </button>
+                
+                        </div>
+                        <div class="d-flex justify-content-end align-items-end" *ngIf="_procedimientoElegido?.id_tipo_contratacion === 2 && _procedimientoElegido?.nombre_estatus_procedimiento==='Capturada'">
+                            <button class="btn  btn-sm btn-success" (click)="redireccionar()">
+                            <i class="bi bi-plus-lg"></i>
+                                Agregar invitado
+                            </button>
+                
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+            <section *ngIf="agregarParticipante">
+               
+                <div class="container pt-2">
+
+                    <div class="card mt-3">
+                        <div class="container table-responsive">
+                        
+                            <table class="table table-striped " aria-describedby="table_participantes">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">RFC</th>
+                                        <th scope="col">Nombre o Razón social</th>
+                                        <th scope="col">Giro de la empresa</th>
+                                        <th scope="col">Invitado o Participando</th>
+                                        <th scope="col">Estatus participación</th>
+                                        <th scope="col">Acciones</th>
+                                        
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let participante of participantes; index as i">
+                                        
+                                        <td>
+                                            {{ participante.rfc_proveedor}}
+                                        </td>
+                                        <td>
+                                            {{participante.nombre_proveedor}} {{participante.primer_apellido_proveedor}} {{participante.segundo_apellido_proveedor}} {{participante.razon_social}}
+                                        </td>
+                                        <td>
+                                            {{ participante.descripcion_giro_empresa}}
+                                        </td>
+                                        
+                                        <td>
+                                        <span class="badge bg-default" *ngIf="participante.id_tipo_participacion ==2">Participando</span>
+                                        <span class="badge bg-default" *ngIf="participante.id_tipo_participacion ==1">Invitado</span>
+                                        </td>
+                                        <td>
+                                            <span [ngClass]="participante.estilo" >{{participante.nombre_estatus_participacion}}</span>
+                                            
+                                        </td>
+                                        <td>
+                                        <button *ngIf="(_procedimientoElegido?.id_estatus_procedimiento===1 && _procedimientoElegido?.id_tipo_contratacion === 2) || (_procedimientoElegido?.id_estatus_procedimiento === 2 && _procedimientoElegido?.id_tipo_contratacion === 1)" class="btn btn-danger btn-sm btn-circle"  (click)="eliminarModal(modalEliminar,participante)">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </button>
+                                        </td>
+                                        
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div class="d-flex justify-content-center align-items-center pb-2" >
+                                <div *ngIf="loader" class="spinner-border spinner-border-lg" role="status"></div>
+                            </div>
+                            <ngb-alert *ngIf="participantes != null && participantes.length == 0 && !loader">
+                                Sin datos para mostrar
+                            </ngb-alert>
+                        </div>
+                
+                    </div>
+                
+                    <div class="card-footer d-flex justify-content-end pt-3">
+                        <button class="btn  btn-sm btn-outline-dark me-2" (click)="cancelarParticipantesProcedimiento()">
+                            Regresar
+                        </button>
+                    
+                    </div>
+            
+                   
+                </div>
+            </section>
+              
+            <section *ngIf="!agregarParticipante">
+                <div class="container pt-4">
+                    
+                    
+                    <div class="card mt-3">
+                        <div class="container">  
+                            
+                            <form [formGroup]="formularioParticipante">
+                                <div class="row pb-3 pt-3">
+                                    <div class="col-md-6">
+                                        <label for="proveedor" class="form-label">{{messageTitle}}</label>
+                                        
+                                        <input class="form-control" list="datalistOptions" autocomplete="off" placeholder="Escribe para buscar..." id="proveedor"
+                                        formControlName="id_proveedor"  name="proveedor" (change)="actualizarNombreProveedor()"
+                                        [class.is-invalid]="formularioParticipante.get('id_proveedor')?.invalid &&
+                                        (formularioParticipante.get('id_proveedor')?.dirty || formularioParticipante.get('id_proveedor')?.touched)" 
+                                        [value]="formularioParticipante.get('nombre_proveedor')?.value">
+                                        <datalist id="datalistOptions">
+                                            <option *ngFor="let p of lstProveedores" [value]="p.id_proveedor">
+                                                {{p.rfc_proveedor}} - {{p.nombre_proveedor}} {{p.primer_apellido_proveedor}} {{p.segundo_apellido_proveedor}} {{p.razon_social}}
+                                            </option>
+                                        </datalist>
+                                        <div *ngIf="loaderBusqueda" class="loading-indicator">
+                                            Cargando datos...
+                                        </div>
+                        
+                                    </div>
+                                </div>
+
+                                <h6>Datos: </h6>
+                                <div class="row pb-3" >
+                                    <div class="col-md-6">
+                                        <label for="rfc" class="form-label">RFC del Proveedor: <app-campo-obligatorio></app-campo-obligatorio></label>
+                                        <input class="form-control" type="text" id="rfc"
+                                        formControlName="rfc" name="rfc" />
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="nombre_proveedor" class="form-label">Nombre del Proveedor: <app-campo-obligatorio></app-campo-obligatorio></label>
+                                        <input class="form-control" type="text" id="nombre_proveedor"
+                                        formControlName="nombre_proveedor" name="nombre_proveedor"/>
+                                    </div>
+                                </div>
+                                
+                                <div class="row pb-3" >
+                                    <div class="col-md-6">
+                                        <label for="nombre_representante_proveedor" class="form-label">Representante Legal del Proveedor: </label>
+                                        <input class="form-control" type="text" id="nombre_representante_proveedor"
+                                        formControlName="nombre_representante_proveedor" name="nombre_representante_proveedor" />
+                                    </div>
+                                
+                                </div>
+                            </form>
+                            <div class="card-footer d-flex justify-content-end">
+                                <button class="btn  btn-sm btn-outline-dark me-2" (click)="cancelarAgregarProcedimientoModal(modalCancelar)">
+                                    Cancelar 
+                                </button>
+                                <button class="btn  btn-sm btn-success" (click)="guardarDatos()"  [disabled]="activarBtnRegistro">
+                                    Guardar
+                                    <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+                                </button>
+                                
+                            </div> 
+                                
+                        </div>
+                        
+                    </div>
+            
+                </div>
+            </section>
+
+        </div>
+    </main>
+        
+</div>
+
+ <!-- modal -->
+<ng-template #modalEliminar let-c="close" let-d="dismiss">
+
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer eliminar este {{messageSubTitle}}?</h4>
+        <label class="mt-2 text-muted">No será posible recuperar después</label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default" (click)="cancelarEliminar()">No, cancela!</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="eliminarSubmit()">Sí, eliminalo!
+          <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #modalCancelar let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer cancelar y regresar?</h4>
+        <label class="mt-2 text-muted">No será posible recuperar después</label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default" (click)="cancelar()">No, continua!</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="cancelarAgregarProcedimiento()" [disabled]="loaderGuardar">
+            Sí, cancela!
+            <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+        </button>
+    </div>
+</ng-template>

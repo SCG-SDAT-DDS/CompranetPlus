@@ -1,0 +1,345 @@
+
+
+    <main>
+        <div class="display-area">
+
+
+        <section >
+
+            <div class="container pt-4">
+                <div class="d-inline-block col-md-8">
+                    <h2 class="d-inline-block me-2">Agregar contrato</h2>
+                    <h6 class="d-inline-block">agregar contrato </h6>
+                </div>
+
+               
+            </div>
+
+        </section>
+
+
+
+
+        <form [formGroup]="formContrato" (ngSubmit)="confirmarGuardarSubmitModal(modalConfirmar)">
+
+        
+        
+            <section >
+                <div class="container pt-4">
+                <div class="d-inline-block col-md-8">
+                    <h2 class="d-inline-block me-2">Datos del Contrato</h2>
+                    <h6 class="d-inline-block">detallar contrato</h6>
+                </div>
+
+
+
+                <div class="card mt-3">
+                    <div class="container ">
+
+                    <div class="row pt-3">
+
+                        <div class="col-md-4">
+                            <label for="participanteprocedimiento" class="form-label">Proveedor: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            <select class="form-select" aria-label="Default select example" id="participanteprocedimiento"
+                            formControlName="id_participante_procedimiento"  name="participanteprocedimiento"
+                            [class.is-invalid]="formContrato.get('id_participante_procedimiento')?.invalid &&
+                             (formContrato.get('id_participante_procedimiento')?.dirty || formContrato.get('id_participante_procedimiento')?.touched)">
+                            
+                                <option value = "" selected>Seleccione opción</option>
+                                <option *ngFor="let tp of lstTablaParticipantes" [value]="tp.id_participante_procedimiento">{{tp.rfc_proveedor}} - {{tp.nombre_proveedor}} {{tp.primer_apellido_proveedor}} {{tp.segundo_apellido_proveedor}} {{tp.razon_social}}</option>
+                                
+
+                            </select>
+
+
+                            <div *ngIf="formContrato.get('id_participante_procedimiento')?.invalid 
+                                && formContrato.get('id_participante_procedimiento')?.errors
+                                && (formContrato.get('id_participante_procedimiento')?.dirty || formContrato.get('id_participante_procedimiento')?.touched)">
+                                <small class="text-danger" *ngIf="formContrato.get('id_participante_procedimiento')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+
+
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="numerocontrato" class="form-label">Número de contrato: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            <input class="form-control" placeholder="Número de contrato" id="numerocontrato"
+                                formControlName="numero_contrato" name="numerocontrato" [class.is-invalid]="formContrato.get('numero_contrato')?.invalid &&
+                                (formContrato.get('numero_contrato')?.dirty || formContrato.get('numero_contrato')?.touched)"/>
+
+                            <div *ngIf="formContrato.get('numero_contrato')?.invalid 
+                                && formContrato.get('numero_contrato')?.errors
+                                && (formContrato.get('numero_contrato')?.dirty || formContrato.get('numero_contrato')?.touched)">
+                                <small class="text-danger" *ngIf="formContrato.get('numero_contrato')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label for="fechafirmacontrato" class="form-label">Fecha de Firma de Contrato: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            
+                            <div class="input-group">
+                                <input id="fechafirmacontrato" 
+                                    name="fechafirmacontrato"
+                                    ngbDatepicker
+                                    placeholder="Fecha de firma de contrato"
+                                    class="form-control"
+                                    #fechafirmacontrato="ngbDatepicker"
+                                    formControlName="fecha_firma_contrato"
+                                    [markDisabled]="isDisabled"
+                                    [class.is-invalid]="formContrato.get('fecha_firma_contrato')?.invalid &&
+                                    (formContrato.get('fecha_firma_contrato')?.dirty || formContrato.get('fecha_firma_contrato')?.touched)"
+                                />
+                                <button class="btn btn-outline-secondary bi bi-calendar3" (click)="fechafirmacontrato.toggle()" type="button"></button>
+                            </div>
+
+
+                            <div *ngIf="formContrato.get('fecha_firma_contrato')?.invalid 
+                                && formContrato.get('fecha_firma_contrato')?.errors
+                                && (formContrato.get('fecha_firma_contrato')?.dirty || formContrato.get('fecha_firma_contrato')?.touched)">
+                                <small class="text-danger" *ngIf="formContrato.get('fecha_firma_contrato')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+                        </div>
+                        
+
+                        
+
+                    </div>
+
+                    <div class="row pt-3">
+
+
+                        <div class="col-md-4">
+                            <label for="fechainiciocontrato" class="form-label">Inicio de Contrato: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            
+                            <div class="input-group">
+                                <input id="fechainiciocontrato" 
+                                    name="fechainiciocontrato"
+                                    ngbDatepicker
+                                    placeholder="Fecha de inicio de contrato"
+                                    class="form-control"
+                                    #fechainiciocontrato="ngbDatepicker"
+                                    formControlName="fecha_inicio_contrato"
+                                    [markDisabled]="isDisabled"
+                                    [class.is-invalid]="formContrato.get('fecha_inicio_contrato')?.invalid &&
+                                    (formContrato.get('fecha_inicio_contrato')?.dirty || formContrato.get('fecha_inicio_contrato')?.touched)"
+                                />
+                                <button class="btn btn-outline-secondary bi bi-calendar3" (click)="fechainiciocontrato.toggle()" type="button"></button>
+                            </div>
+
+                            <div *ngIf="formContrato.get('fecha_inicio_contrato')?.invalid 
+                                && formContrato.get('fecha_inicio_contrato')?.errors
+                                && (formContrato.get('fecha_inicio_contrato')?.dirty || formContrato.get('fecha_inicio_contrato')?.touched)">
+                                <small class="text-danger" *ngIf="formContrato.get('fecha_inicio_contrato')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+
+                        </div>
+                        <div class="col-md-4">
+                            <label for="fechafincontrato" class="form-label">Fin de Contrato: </label>
+                            
+                            <div class="input-group">
+                                <input id="fechafincontrato" 
+                                    name="fechafincontrato"
+                                    ngbDatepicker
+                                    placeholder="Fecha de fin de contrato"
+                                    class="form-control"
+                                    #fechafincontrato="ngbDatepicker"
+                                    formControlName="fecha_fin_contrato"
+                                    [class.is-invalid]="formContrato.get('fecha_fin_contrato')?.invalid &&
+                                    (formContrato.get('fecha_fin_contrato')?.dirty || formContrato.get('fecha_fin_contrato')?.touched)"
+                                />
+                                <button class="btn btn-outline-secondary bi bi-calendar3" (click)="fechafincontrato.toggle()" type="button"></button>
+                            </div>
+    
+                            
+                        </div>
+
+                        <div class="col-md-4">
+
+                            
+                            <label for="contratogenerado" class="form-label">Tiene contrato generado: </label>
+                            <input class="form-check-input" type="checkbox" value="" id="contratogenerado"
+                            formControlName="contrato_generado"  name="contratogenerado">
+                            
+                            
+                        </div>
+
+                        
+                    </div>
+
+
+                    <div class="row pt-3">
+                        
+
+                        <div class="col-md-4">
+                            <label for="monto" class="form-label">Monto Total sin IVA: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            <input class="form-control" placeholder="Monto Total sin IVA" id="monto"
+                                formControlName="monto" type="number"  name="monto" [class.is-invalid]="formContrato.get('monto')?.invalid &&
+                                (formContrato.get('monto')?.dirty || formContrato.get('monto')?.touched)"/>
+
+                            <div *ngIf="formContrato.get('monto')?.invalid 
+                                && formContrato.get('monto')?.errors
+                                && (formContrato.get('monto')?.dirty || formContrato.get('monto')?.touched)">
+                                <small class="text-danger" *ngIf="formContrato.get('monto')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+                        </div>
+
+
+                        <div class="col-md-4">
+                            <label for="montoanticipo" class="form-label">Anticipo del Contrato: </label>
+                            <input class="form-control" placeholder="Anticipo del Contrato" id="montoanticipo"
+                                formControlName="monto_anticipo" type="number" name="montoanticipo"/>
+                        </div>
+                        
+                        <div class="col-md-4">
+                            <label for="archivocontrato" class="form-label">Contrato Firmado: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            <input class="form-control" formControlName="archivo_contrato" type="file" id="archivocontrato"
+                                    (change)="obtenerArchivoContratoBase64($event)" 
+                                    [class.is-invalid]="formContrato.get('archivo_contrato')?.invalid &&
+                                    (formContrato.get('archivo_contrato')?.dirty || formContrato.get('archivo_contrato')?.touched)"
+                            />
+
+                            <div *ngIf="formContrato.get('archivo_contrato')?.invalid 
+                                && formContrato.get('archivo_contrato')?.errors
+                                && (formContrato.get('archivo_contrato')?.dirty || formContrato.get('archivo_contrato')?.touched)">
+                                <small class="text-danger" *ngIf="formContrato.get('archivo_contrato')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+                        </div>
+
+
+                        
+                        
+
+                    </div>
+
+
+                    <div class="row pt-3">
+
+                        <div class="col-md-4">
+
+                            <label for="conveniomodificatorio" class="form-label">Convenio modificatorio: </label>
+                            <input class="form-check-input" type="checkbox" value="" id="conveniomodificatorio"
+                            formControlName="convenio_modificatorio"  name="conveniomodificatorio" (change)="seleccionarConvenioModificatorio()">
+                            
+                            
+                        </div>
+
+
+                        <div class="col-md-4" *ngIf="blnMostrarArchivoConvenio">
+                            <label for="archivoconveniomodificatorio" class="form-label">Convenio Modificatorio: <app-campo-obligatorio></app-campo-obligatorio></label>
+                            <input class="form-control" formControlName="archivo_convenio_modificatorio" type="file" id="archivoconveniomodificatorio"
+                                    (change)="obtenerArchivoConvenioBase64($event)" 
+                                    [class.is-invalid]="formContrato.get('archivo_convenio_modificatorio')?.invalid &&
+                                    (formContrato.get('archivo_convenio_modificatorio')?.dirty || formContrato.get('archivo_convenio_modificatorio')?.touched)"
+                            />
+
+                            <div *ngIf="formContrato.get('archivo_convenio_modificatorio')?.invalid 
+                                && formContrato.get('archivo_convenio_modificatorio')?.errors
+                                && (formContrato.get('archivo_convenio_modificatorio')?.dirty || formContrato.get('archivo_convenio_modificatorio')?.touched)">
+                                <small class="text-danger" *ngIf="formContrato.get('archivo_convenio_modificatorio')?.hasError('required')">
+                                    Este campo es requerido.
+                                </small>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4" *ngIf="!blnMostrarArchivoConvenio">
+
+                        </div>
+
+                        
+
+                        <div class="col-md-4">
+                            
+                        </div>
+                        
+
+                    </div>
+
+
+                </div>
+
+
+                    <br>
+
+                </div>
+
+                <br>
+                
+                <div class="card-footer d-flex justify-content-end">
+                   
+
+                    <button class="btn  btn-sm btn-danger me-2" (click)="cancelarAgregarContratoModal(modalCancelar)" type="button">
+                        Cancelar
+                    </button>
+
+                    <button class="btn  btn-sm btn-success" type="submit" 
+                    [disabled]="formContrato.get('id_participante_procedimiento')?.invalid || formContrato.get('fecha_inicio_contrato')?.invalid
+                    || formContrato.get('monto')?.invalid || formContrato.get('numero_contrato')?.invalid
+                    || formContrato.get('archivo_contrato')?.invalid || formContrato.get('fecha_firma_contrato')?.invalid
+                    || formContrato.get('archivo_convenio_modificatorio')?.invalid">
+                        Guardar
+                    </button>
+
+                </div>
+
+                </div>
+            </section>
+
+
+            
+
+        </form>
+        
+        </div>
+    </main>
+
+
+
+
+
+
+
+   <!-- modal cancelar -->
+<ng-template #modalCancelar let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer cancelar y regresar?</h4>
+        <label class="mt-2 text-muted">No será posible recuperar después</label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default" (click)="cancelarCancelarAgregarContratoModal()">No, continua!</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="cancelarAgregarContrato()" [disabled]="loaderGuardar">
+            Sí, cancela!
+            <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+        </button>
+    </div>
+</ng-template>
+
+
+
+<!-- modal confirmar -->
+<ng-template #modalConfirmar let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer guardar el procedimiento?</h4>
+        <label class="mt-2 text-muted">Se guardará el procedimiento</label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default" (click)="cancelarConfirmarGuardarSubmitModal()">No, cancela!</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="guardarSubmit()" [disabled]="loaderGuardar">
+            Sí, guarda!
+            <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+        </button>
+    </div>
+</ng-template>

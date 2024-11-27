@@ -1,0 +1,273 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin
+  id="sidebar"
+  class="offcanvas offcanvas-start show"
+  data-bs-backdrop="false"
+  tabindex="-1"
+></app-side-nav-admin>
+
+<div class="content-layout-admin">
+  <section *ngIf="!blnAgregar">
+    <div class="container pt-5">
+      <div class="row">
+        <div class="d-inline-block col-md-8">
+          <h2 class="d-inline-block me-2">
+            Listado de Usuarios de la Unidad Compradora
+          </h2>
+          <h6 class="d-inline-block">
+            {{
+              catUnidadCompradora.clave_unidad_compradora +
+                " / " +
+                catUnidadCompradora.nombre_unidad_compradora
+            }}
+          </h6>
+        </div>
+
+        <div class="col-md-4">
+          <div class="d-flex justify-content-end align-items-end">
+            <button
+              *ngIf="canActivate('ADMIN_CAT_UCOMPRA_MOD')"
+              class="btn btn-sm btn-success"
+              (click)="agregar()"
+            >
+              <i class="bi bi-plus-lg"></i> Agregar Usuario
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- apartado para el formulario de busqueda NO APLICA EN ESTE COMPONENTE-->
+
+      <!--apartado para el tablero de resultados-->
+      <div class="card mt-3">
+        <div class="card-body">
+          <div class="container table-responsive">
+            <table
+              class="table table-striped"
+              aria-describedby="table_usuarios"
+            >
+              <thead>
+                <tr>
+                  <th scope="col">Usuario</th>
+                  <th scope="col">Nombre del Usuario</th>
+                  <th scope="col">Correo Electrónico</th>
+                  <th scope="col">Estatus</th>
+                  <th scope="col" *ngIf="canActivate('ADMIN_CAT_URESP_MOD')">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody *ngIf="lstUsuario != null">
+                <tr *ngFor="let usr of lstUsuario; index as i">
+                  <td>{{ usr.usuario }}</td>
+                  <td>
+                    {{
+                      usr.nombre_usuario +
+                        " " +
+                        usr.primer_apellido_usuario +
+                        " " +
+                        usr.segundo_apellido_usuario
+                    }}
+                  </td>
+                  <td>{{ usr.correo }}</td>
+                  <td>
+                    <span class="badge bg-success" *ngIf="usr.activo_usuario"
+                      >Activo</span
+                    >
+                    <span class="badge bg-danger" *ngIf="!usr.activo_usuario"
+                      >Baja</span
+                    >
+                  </td>
+                  <td
+                    *ngIf="
+                      canActivate('ADMIN_CAT_UCOMPRA_MOD') && usr.activo_usuario
+                    "
+                    class="overflow-hidden text-center"
+                  >
+                    <button
+                      class="btn btn-danger btn-sm btn-circle me-2"
+                      (click)="eliminarModal(modalEliminar, usr.id_usuario)"
+                    >
+                      <i class="bi bi-trash3-fill"></i>
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <ngb-alert *ngIf="lstUsuario != null && lstUsuario.length == 0">
+              Sin datos para mostrar
+            </ngb-alert>
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="container">
+            <div class="row">
+              <div class="text-rigth">
+                <button
+                  [routerLink]="[
+                    '/admin/unidad-compradora/',
+                    id_unidad_responsable
+                  ]"
+                  *ngIf="
+                    canActivate('ADMIN_CAT_UCOMPRA_MENU') &&
+                    id_unidad_responsable != null
+                  "
+                  class="btn btn-outline-secondary btn-sm"
+                >
+                  Regresar a Unidades Compradoras
+                </button>
+                <button
+                  [routerLink]="['/admin/unidad-compradora', '']"
+                  *ngIf="
+                    canActivate('ADMIN_CAT_UCOMPRA_MENU') &&
+                    id_unidad_responsable == null
+                  "
+                  class="btn btn-outline-secondary btn-sm"
+                >
+                  Regresar a Unidades Compradoras
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!--end tablero de resultados-->
+    </div>
+  </section>
+
+  <!-- apartado para agregar un usuario -->
+  <section *ngIf="blnAgregar">
+    <div class="container pt-4">
+      <div class="d-inline-block col-md-8">
+        <h2 class="d-inline-block me-2">{{ messageTitle }}</h2>
+        <h6 class="d-inline-block">{{ messageSubTitle }}</h6>
+      </div>
+      <div class="card mt-3">
+        <div class="container">
+          <form [formGroup]="formRegistro" (ngSubmit)="guardarSubmit()">
+            <div
+              class="row pt-3 pb-3"
+              *ngIf="
+                lstUsuariosDisponibles != null &&
+                lstUsuariosDisponibles.length != 0
+              "
+            >
+              <div class="col-md-6">
+                <label class="form-label"
+                  >Usuario: <app-campo-obligatorio
+                /></label>
+                <input
+                  class="form-control"
+                  list="datalistOptions"
+                  placeholder="Escribe para buscar..."
+                  formControlName="id_usuario"
+                  id="id_usuario"
+                  name="id_usuario"
+                  (change)="actualizarNombreUsuario($event)"
+                  [class.is-invalid]="
+                    formRegistro.get('id_usuario')?.invalid &&
+                    (formRegistro.get('id_usuario')?.dirty ||
+                      formRegistro.get('id_usuario')?.touched)
+                  "
+                />
+                <datalist id="datalistOptions">
+                  <option
+                    *ngFor="let usr of lstUsuariosDisponibles; index as ictp"
+                    [value]="usr.nombre_usuario + ' ' + usr.primer_apellido_usuario + ' ' + usr.segundo_apellido_usuario"
+                  >
+                    {{
+                      usr.nombre_usuario +
+                        " " +
+                        usr.primer_apellido_usuario +
+                        " " +
+                        usr.segundo_apellido_usuario
+                    }}
+                  </option>
+                </datalist>
+                <div
+                  *ngIf="
+                    formRegistro.get('id_usuario')?.invalid &&
+                    formRegistro.get('id_usuario')?.errors &&
+                    (formRegistro.get('id_usuario')?.dirty ||
+                      formRegistro.get('id_usuario')?.touched)
+                  "
+                >
+                  <small
+                    class="text-danger"
+                    *ngIf="formRegistro.get('id_usuario')?.hasError('required')"
+                  >
+                    Este campo es requerido.
+                  </small>
+                </div>
+              </div>
+            </div>
+
+            <ngb-alert
+              *ngIf="
+                lstUsuariosDisponibles != null &&
+                lstUsuariosDisponibles.length == 0
+              "
+            >
+              No hay usuarios disponibles para agregar
+            </ngb-alert>
+
+            <div class="card-footer d-flex justify-content-end">
+              <button
+                type="button"
+                class="btn btn-sm btn-outline-dark me-2"
+                (click)="cancelar()"
+              >
+                Regresar
+              </button>
+              <button
+                type="submit"
+                class="btn btn-sm btn-success"
+                [disabled]="!formRegistro.valid || loaderGuardar"
+              >
+                {{ messageButton }}
+                <div
+                  *ngIf="loaderGuardar"
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                ></div>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<!-- modal -->
+<ng-template #modalEliminar let-c="close" let-d="dismiss">
+  <div class="modal-body d-flex flex-column align-items-center">
+    <i
+      class="bi bi-exclamation-circle icono-grande"
+      style="color: var(--warning-color-hover)"
+    ></i>
+    <h4 class="mt-2 text-center">
+      ¿Estás seguro de querer eliminar este registro?
+    </h4>
+    <label class="mt-2 text-muted">No será posible recuperar después</label>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-default" (click)="cancelar()">
+      No, cancela!
+    </button>
+    <button
+      type="button"
+      class="btn btn-sm btn-danger"
+      (click)="eliminarSubmit()"
+      [disabled]="loaderGuardar"
+    >
+      Sí, eliminalo!
+      <div
+        *ngIf="loaderGuardar"
+        class="spinner-border spinner-border-sm"
+        role="status"
+      ></div>
+    </button>
+  </div>
+</ng-template>

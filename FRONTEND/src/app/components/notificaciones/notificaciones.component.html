@@ -1,0 +1,66 @@
+
+<button type="button" class="btn btn-outline-light rounded-pill position-relative" (click)="openModalNotifications(modal)" >
+  <i class="bi bi-bell-fill icon-notification"></i>
+  <span class="position-absolute number-notification top-0 start-100 translate-middle badge rounded-pill bg-danger" *ngIf="total >0">
+    {{total}}
+  </span>
+</button>
+
+<ng-template #modal let-modal>
+	<div class="modal-header">
+		<h4 class="modal-title">Notificaciones</h4>
+		<button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+	</div>
+	<div class="modal-body">
+		<div class="d-flex justify-content-center align-items-center pb-2" >
+            <div *ngIf="lstNotificaciones == null" class="spinner-border spinner-border-lg" role="status"></div>
+        </div>
+		<ngb-alert *ngIf="lstNotificaciones != null && lstNotificaciones.length == 0">
+            Sin notificaciones para mostrar
+        </ngb-alert>
+		<ol class="list-group" *ngIf="!notificacionSeleccionada && !loader">
+			<li class="list-group-item d-flex justify-content-between align-items-start cursor-pointer" *ngFor="let notificacion of lstNotificaciones" [style.background-color]="notificacion.estatus_leido ? 'var(--blanco-color)' : 'var(--primary-rgb-color)'" (click)="mostrarDetalle(notificacion)">
+				<div class="ms-2 me-auto col-12">
+					<div class="fw-bold">
+						{{ notificacion.titulo_notificacion }}
+					</div>
+					
+					<small>
+						{{ notificacion.descripcion_notificacion | slice:0:30 }}
+						{{ notificacion.descripcion_notificacion.length > 30 ? '...' : '' }}
+					</small>
+					<div class="row">
+						<div class="col-6">
+							<small class="text-muted">{{ notificacion.fecha_notificacion | date: 'dd-MM-yy' }}</small>
+							<small class="text-muted"> a las {{ notificacion.fecha_notificacion | date: 'h:mm a' }}</small>
+						</div>
+						<div class="col-6 d-flex justify-content-end" *ngIf="notificacion.estatus_leido">
+							<small  class="text-muted text-primary me-1">Leída</small>
+							<i color="primary" class="bi bi-check-circle icon-read"></i>
+						</div>
+					</div>
+				</div>
+			</li>
+			
+		</ol>
+		
+		
+		<div *ngIf="notificacionSeleccionada">
+			<button (click)="mostrarNotificaciones()" class="btn btn-outline-none">
+				<i class="bi bi-chevron-left" ></i> Volver
+			</button>
+				
+			<div class="m-4">
+				<div class="fw-bold">
+					{{ notificacionSeleccionada.titulo_notificacion }}
+				</div>
+				{{ notificacionSeleccionada.descripcion_notificacion }}
+			</div>
+		</div>
+		
+	</div>
+	
+	<div class="modal-footer">
+		<button type="button" class="btn btn-light" (click)="modal.close('Close click')">Cerrar</button>
+	</div>
+</ng-template>

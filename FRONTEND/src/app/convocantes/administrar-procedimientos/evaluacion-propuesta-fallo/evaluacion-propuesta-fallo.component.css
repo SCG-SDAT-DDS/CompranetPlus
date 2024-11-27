@@ -1,0 +1,17 @@
+.icon-success{
+    color: #237469;
+    font-size: 1em;
+    background-color: #FFF;
+    border: 0.1em solid #237469;
+    border-radius: 0.2em;
+    padding: .1rem 0;
+}
+
+.icon-danger{
+    color: #9B2F3E;
+    font-size: 1em;
+    background-color: #FFF;
+    border: 0.1em solid #9B2F3E;
+    border-radius: 0.2em;
+    padding: .1rem 0;
+}

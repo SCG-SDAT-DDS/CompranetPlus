@@ -1,0 +1,10 @@
+.card{
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+  border: none !important;
+}
+
+.cls-titulo-portal {
+  padding: 1rem;
+  color: var(--ternary-color);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 10px;
+}

@@ -1,0 +1,147 @@
+<div *ngIf="!blnActivarAgregarContrato">
+    
+    <main >
+        <div class="display-area">
+
+
+        
+
+        <section >
+
+
+            
+            <div class="container pt-4">
+
+                <div class="d-inline-block col-md-8">
+                    <h2 class="d-inline-block me-2">Contratos del procedimiento</h2>
+                    <h6 class="d-inline-block">contratos del procedimiento</h6>
+                </div>
+        
+                <app-encabezado-procedimiento [__procedimientoElegido]="_procedimientoElegido"></app-encabezado-procedimiento>
+        
+        
+                <div class="col-md-12" >
+                    <div class="d-flex justify-content-end align-items-end">
+                        <button class="btn  btn-sm btn-success" (click)="agregarContrato()" [disabled]="loaderBusqueda">
+                            <i class="bi bi-plus-lg"></i>
+                            Agregar contrato
+                        </button>
+                    </div>
+                    
+                </div>
+            
+            
+            <hr>
+
+                
+
+                <div class="card mt-3">
+                    <div class="container table-responsive">
+
+                    <table class="table table-striped" aria-describedby="table_contratos">
+                        <thead>
+                        <tr>
+                            
+                            <th scope="col">RFC</th>
+                            <th scope="col">Nombre o Razón Social</th>
+                            <th scope="col">Número de contrato</th>
+                            <th scope="col">Fecha de firma</th>
+                            <th scope="col">Fecha de inicio</th>
+                            <th scope="col">Fecha de termino</th>
+                            <th scope="col">Monto sin IVA</th>
+                            <th scope="col">Contrato</th>
+                            <th scope="col">Convenio modificatorio</th>
+
+                        </tr>
+                        </thead>
+                        <tbody *ngIf="datosContratosProcedimientoAdministrativo != null && !loaderBusqueda">
+                        <tr *ngFor="let contrato of datosContratosProcedimientoAdministrativo; index as i">
+
+                            <td>
+                                {{ contrato.rfc_proveedor}}
+                            </td>
+                            <td>
+                                {{ contrato.nombre_proveedor}} {{ contrato.primer_apellido_proveedor}} {{ contrato.segundo_apellido_proveedor}} {{ contrato.razon_social}}
+                            </td>
+                            <td>
+                                {{ contrato.numero_contrato}}
+                            </td>
+                            <td>
+                                {{ contrato.fecha_firma_contrato | date: 'dd/MM/yyyy'}}
+                            </td>
+                            <td>
+                                {{ contrato.fecha_inicio_contrato | date: 'dd/MM/yyyy'}}
+                            </td>
+                            <td>
+                                {{ contrato.fecha_fin_contrato | date: 'dd/MM/yyyy'}}
+                            </td>
+
+                            <td>
+                                $ {{ contrato.monto}}
+                            </td>
+
+
+                            <td>
+                                <button class="btn btn-warning btn-sm btn-circle me-2" type="button" id="dropdownMenuButton1" 
+                                (click)="onClickDescargarPdf(contrato.url_archivo_contrato, contrato.numero_contrato)">
+                                    <i class="bi bi-file-pdf"></i>
+                                </button>
+
+                            </td>
+
+                            <td>
+                                <button class="btn btn-warning btn-sm btn-circle me-2" type="button" id="dropdownMenuButton1" 
+                                (click)="onClickDescargarPdf(contrato.url_archivo_convenio, 'convenio')"
+                                *ngIf="contrato.url_archivo_convenio != null">
+                                    <i class="bi bi-file-pdf"></i>
+                                </button>
+
+                            </td>
+
+
+
+
+                        </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="d-flex justify-content-center align-items-center pb-2" >
+                        <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-lg" role="status"></div>
+                      </div>
+                      <ngb-alert *ngIf="datosContratosProcedimientoAdministrativo != null && datosContratosProcedimientoAdministrativo.length == 0 && !loaderBusqueda">
+                        Sin datos para mostrar
+                      </ngb-alert>
+
+                    </div>
+
+                </div>
+
+
+
+            </div>
+        </section>
+
+
+       
+        <br>
+
+
+        <div class="card-footer d-flex justify-content-end">
+            <button class="btn  btn-sm btn-outline-dark me-2" (click)="cancelarContratosProcedimiento()">
+                Regresar
+            </button>
+            
+        </div>
+
+        </div>
+    </main>
+</div>
+
+
+
+<div *ngIf="blnActivarAgregarContrato">
+    <app-agregar-contrato [__procedimientoElegido]="_procedimientoElegido" (_cancelarAgregarContrato)="cancelarAgregarContrato()">
+  
+    </app-agregar-contrato>
+</div>
+

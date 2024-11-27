@@ -1,0 +1,173 @@
+<div>
+
+    <main>
+        <div class="display-area">
+
+            <section>
+                <div class="container pt-5">
+                    <div class="row">
+                        <div class="d-inline-block col-md-12">
+                            <h2 class="d-inline-block me-2">Evaluación propuesta y fallo</h2>
+                            <h6 class="d-inline-block">Ver listado en el sistema</h6>
+                        </div>
+                  
+                    </div>
+
+                    <div class="container pb-3">
+                        <app-encabezado-procedimiento [__procedimientoElegido]="_procedimientoElegido"></app-encabezado-procedimiento>
+    
+                    </div>
+            
+                    <div class="card mt-3">
+                        <div class="container ">
+                        
+                            <table class="table table-striped"  aria-describedby="table_fallo">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">RFC</th>
+                                        <th scope="col">Nombre o Razón social</th>
+                                        <th scope="col">Fecha de Inscripción</th>
+                                        <th scope="col">Hora</th>
+                                        <th scope="col">Estatus participación</th>
+                                        <th scope="col">Ganador</th>
+                                    </tr>
+                                </thead>
+                                <tbody *ngIf="!loader">
+                                    <tr *ngFor="let participante of participantes; index as i">
+                                        
+                                        <td>
+                                            {{ participante.rfc_proveedor}}
+                                        </td>
+
+                                        <td>
+                                            {{ participante.razon_social}}
+                                        </td>
+
+                                        <td>
+                                            {{ participante.fecha_inscripcion | date:'yyyy-MM-dd'}}
+                                        </td>
+                                        
+                                        <td>
+                                            {{ participante.fecha_inscripcion | date:'HH:mm:ss'}}
+                                        </td>
+                                        <td>
+                                            <span [ngClass]="participante.estilo" >{{participante.nombre_estatus_participacion}}</span>
+                                        </td>
+                                        <td *ngIf="_procedimientoElegido?.url_archivo_acta_fallo == null && seleccionar ">
+                                            
+                                            <button class="btn btn-sm"
+                                            [ngClass]="{
+                                                'btn-outline-success': ganadorSeleccionado(participante),
+                                                'btn-outline-danger': !ganadorSeleccionado(participante)
+                                              }"
+                                             (click)="seleccionado(participante)">
+                                               {{ ganadorSeleccionado(participante) ? "SI" : "NO"}}
+                                               <i class="bi bi-trophy-fill"></i>
+                                            </button>
+                                        </td>
+                                       
+                                        <td *ngIf="participante.nombre_estatus_participacion === 'Ganador'">
+                                           <div class="icon-success d-flex justify-content-center">
+                                            <small>SI</small>
+                                            <i class="bi bi-trophy-fill ms-2"></i>
+                                           </div>
+                                                
+                                            
+                                        </td>
+                                        <td *ngIf="participante.nombre_estatus_participacion != 'Ganador'  &&  (!seleccionar || _procedimientoElegido?.url_archivo_acta_fallo !=null)">
+                                            <div class="icon-danger d-flex justify-content-center">
+                                                <small>NO</small>
+                                                <i class="bi bi-trophy-fill ms-2"></i>
+                                               </div>
+                                        </td>
+                                        
+                                    </tr>
+                                    
+                                </tbody>
+                                
+                            </table>
+
+                            <div class="d-flex justify-content-center align-items-center pb-2" >
+                                <div *ngIf="loader" class="spinner-border spinner-border-lg" role="status"></div>
+                            </div>
+                            <ngb-alert *ngIf="participantes != null && participantes.length == 0 && !loader">
+                                Sin datos para mostrar
+                            </ngb-alert>
+                            
+                            <form [formGroup]="formFallo" >
+                                <section *ngIf="_procedimientoElegido?.url_archivo_acta_fallo == null && seleccionar">
+                                    <div class="container " *ngIf="participantes.length > 0">
+                                        <div class="col-md-8 pb-3">
+                                            <label for="archivofallo" class="form-label">Acta de fallo: <app-campo-obligatorio></app-campo-obligatorio></label>
+                                            <input class="form-control" formControlName="archivo_fallo" type="file" id="archivofallo"  accept=".pdf"
+                                            (change)="obtenerArchivoFalloBase64($event)"  
+                                            [class.is-invalid]="formFallo.get('archivo_fallo')?.invalid &&
+                                            (formFallo.get('archivo_fallo')?.dirty || formFallo.get('archivo_fallo')?.touched)"    
+                                            />
+    
+                                            <div *ngIf="formFallo.get('archivo_fallo')?.invalid 
+                                                && formFallo.get('archivo_fallo')?.errors
+                                                && (formFallo.get('archivo_fallo')?.dirty || formFallo.get('archivo_fallo')?.touched)">
+                                                <small class="text-danger" *ngIf="formFallo.get('archivo_fallo')?.hasError('required')">
+                                                    Este campo es requerido.
+                                                </small>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                </section>
+                                
+                                <div class="row" *ngIf="_procedimientoElegido?.url_archivo_acta_fallo != null && !loader">
+                                    
+                                    <div class="col-4">
+                                        <p class="me-2"><strong>Acta de fallo: </strong> 
+                                        <button class="btn btn-warning btn-sm btn-circle me-2" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false"
+                                            (click)="onClickDescargarPdf(_procedimientoElegido?.url_archivo_acta_fallo, _procedimientoElegido?.numero_procedimiento)">
+                                            <i class="bi bi-file-pdf"></i>
+                                        </button>
+                                    </p></div>
+                        
+                                </div>
+    
+                                <div class="card-footer d-flex justify-content-end pt-3">
+                            
+                                    <button *ngIf="!formFallo.valid"  class="btn  btn-sm btn-outline-dark me-2" (click)="cancelarFalloProcedimiento()">
+                                        Regresar
+                                    </button>
+                                    
+                                    <button *ngIf="formFallo.valid" class="btn  btn-sm btn-danger me-2" (click)="cancelarAgregarProcedimientoModal(modalCancelar)">
+                                        Cancelar 
+                                    </button>
+                                    <button class="btn  btn-sm btn-success me-2"[disabled]="!formFallo.valid" (click)="guardarFallo()">
+                                        Guardar
+                                        <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+                                    </button>
+                                    
+                                
+                                </div>
+                            </form>
+
+                        </div>
+                
+                    </div>
+                    
+                </div>
+            </section>
+        </div>
+    </main>
+</div>   
+
+<!-- modal -->
+<ng-template #modalCancelar let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer cancelar y regresar?</h4>
+        <label class="mt-2 text-muted">No será posible recuperar después</label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default" (click)="cancelar()">No, continua!</button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="cancelarAgregarFallo()">
+            Sí, cancela!
+        </button>
+    </div>
+</ng-template>

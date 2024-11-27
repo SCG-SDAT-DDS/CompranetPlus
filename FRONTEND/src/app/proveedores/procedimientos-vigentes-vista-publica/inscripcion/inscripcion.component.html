@@ -1,0 +1,49 @@
+<div *ngIf="usuarioLogueado">
+  <app-header-publico></app-header-publico>
+  <div class="entrada" style="overflow-x: clip;">
+    <div class="row cls-titulo-portal">  
+    <div class="col-12 d-flex justify-content-center">
+      <div class="d-grid text-center">
+        <h2>Proceso de Inscripción</h2>
+      </div>
+    </div>
+  </div>
+  </div>
+  
+  <div class="container mt-5 d-flex justify-content-center">
+    <div class="card" style="padding: 5%; box-shadow: rgba(0,0,0,0.3) 0px 0px 15px;">
+    <div class="row">
+      <div class="col-sm-6 mt-2 mb-2" *ngIf="estatusProveedor == 3 && !loaderEstatus && !loaderInscripcion">
+        <div>
+          <h3 style="text-align: center;" *ngIf="procedimiento">Participar en la Licitación de No.: {{procedimiento.numero_procedimiento}}</h3>
+          <hr>
+        </div>
+        <div>
+          <h6 style="text-align: center;"><strong>Ingrese los datos de su e.firma</strong> </h6>
+            <app-e-firma [rfc_proveedor]="rfcProveedor" (efirmaValidacion)="validacionEfirma($event)"></app-e-firma>
+        </div>
+      </div>
+      <div class="col-sm-6 mt-2 mb-2" *ngIf="loaderEstatus">
+        <div>
+          <h3 style="text-align: center;">Validando el estatus del proveedor <div *ngIf="loaderEstatus" class="spinner-border spinner-border-sm" role="status"></div> </h3>
+        </div>
+      </div>
+      <div class="col-sm-6 mt-2 mb-2" *ngIf="loaderInscripcion">
+        <div>
+          <h3 style="text-align: center;">Finalizando inscripción <div *ngIf="loaderInscripcion" class="spinner-border spinner-border-sm" role="status"></div> </h3>
+        </div>
+      </div>
+      <div class="col-sm-6 mt-2 mb-2" style="display: grid; place-content: center; background: #960E53; padding: 50px;">
+        <img src="../../../../assets/images/logo-CN-white.svg" alt="Compranet Logo" class="img-fluid" style="margin-left: 1%; width: 300px;">
+      </div>
+    </div>
+    </div>
+  </div>
+  
+  <app-footer></app-footer>
+</div>
+
+<div *ngIf="!usuarioLogueado">
+  <app-login 
+  [loginInscripcion]="true"></app-login>
+</div>

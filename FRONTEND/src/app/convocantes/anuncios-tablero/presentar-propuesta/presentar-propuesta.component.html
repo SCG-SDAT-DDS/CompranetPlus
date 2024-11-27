@@ -1,0 +1,230 @@
+<app-header-admin></app-header-admin>
+<app-side-nav-admin
+  id="sidebar"
+  class="offcanvas offcanvas-start show"
+  data-bs-backdrop="false"
+  tabindex="-1"
+></app-side-nav-admin>
+
+<div class="content-layout-admin">
+  <main>
+    <div class="display-area">
+      <section>
+
+        <div class="container">
+          <div class="row">
+            <div class="d-inline-block col-md-12">
+              <h2 class="d-inline-block me-2">Recepción de Proposiciones</h2>
+              <h6 class="d-inline-block">
+                Carga de partidas y presentación de propuestas a la licitación.
+              </h6>
+            </div>
+          </div>
+        </div>
+
+        <app-encabezado-procedimiento
+          [__procedimientoElegido]="_procedimientoElegido"
+        ></app-encabezado-procedimiento>
+
+        <ul class="nav nav-tabs">
+          <li class="nav-item" *ngIf="!blnProcedimientoObra">
+            <a class="nav-link" href="javascript: void(0)" aria-current="page" (click)="mostrarPropuesta=false; activarMostrarPropuesta=true; busquedaPartidasPrimeraVez=false;" [class.active]="!mostrarPropuesta">Carga de partidas presupuestales</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="javascript: void(0)" aria-current="page" (click)="mostrarPropuesta=true;" [class.active]="mostrarPropuesta" [class.disabled]="!activarMostrarPropuesta">Carga de propuestas</a>
+          </li>
+        </ul>
+
+        <app-partidas-presupuestales *ngIf="!mostrarPropuesta && !blnProcedimientoObra"
+                [_procedimientoElegido]="_procedimientoElegido"
+                [_ocultarEncabezados]="true"
+                [_busquedaPrimeraVez]="busquedaPartidasPrimeraVez"
+                (_cancelarPartidasPresupuestales)="cancelarPresentarPropuesta()"
+                (_continuarCargaPropuesta)="continuarCargaPropuesta()"
+        >
+
+        </app-partidas-presupuestales>
+
+        <div *ngIf="mostrarPropuesta">
+          <div class="card">
+
+            <div class="container p-2">
+              <div class="row">
+                <div class="col-12 d-flex justify-content-center" *ngIf="loader">
+                  <div
+                    class="spinner-border spinner-border-lg"
+                    role="status"
+                  ></div>
+                </div>
+                <div
+                  class="col-sm-6 col-12"
+                  *ngIf="
+                    blnSubirPropuesta && !loader
+                  "
+                >
+                  <label
+                    >Propuesta técnica y economica (.zip):</label
+                  >
+                  <app-campo-obligatorio></app-campo-obligatorio>
+                  <input
+                    type="file"
+                    (change)="obtenerArchivosBase64($event)"
+                    class="form-control"
+                    accept=".zip"
+                    multiple
+                  />
+                </div>
+                <div
+                  class="col-sm-12 col-12"
+                  *ngIf="
+                    blnSubirPropuesta && !loader
+                  "
+                >
+                  <label *ngIf="archivosPropuestas && archivosPropuestas.length > 0"
+                    >Archivos agregados:</label
+                  >
+                  <div *ngIf="archivosPropuestas && archivosPropuestas.length > 0">
+                    <table class="table table-responsive" *ngIf="archivosPropuestas && archivosPropuestas.length > 0">
+                      <thead>
+                        <tr>
+                          <th scope="col">Nombre del Archivo</th>
+                          <th scope="col"> </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr *ngFor="let archivo of archivosPropuestas; let i = index">
+                          <td>{{ archivo.url_archivo_propuesta.nombreArchivo }}</td>
+                          <td *ngIf="!loaderGuardar">
+                            <button class="btn btn-circle btn-danger" ngbTooltip="Eliminar archivo" (click)="eliminarArchivo(i)"><span class="bi bi-trash"></span></button>
+                          </td>
+                          <td *ngIf="loaderGuardar">
+                            <span *ngIf="archivo.estado === 1" class="badge bg-success">Subiendo archivo...</span>
+                            <span *ngIf="archivo.estado === 2"><i class="bi bi-check-circle-fill text-success"></i></span>
+                            <span *ngIf="archivo.estado === 3" class="badge bg-danger">Error al subir archivo</span>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                  </div>
+
+                </div>
+                <div
+                  class="col-12"
+                  *ngIf="
+                    !this.blnSubirPropuesta && !loader
+                  "
+                >
+                <div class="d-flex">
+                  <div class="col-6 d-flex justify-content-start">
+                  <h5>Ya ha adjuntado una propuesta</h5>
+                </div>
+                  <div class="col-6 d-flex justify-content-end">
+                    <button
+                      class="btn btn-primary btn-sm me-2"
+                      type="button"
+                      (click)="adjuntarNuevaPropuesta()"
+                      *ngIf="btnAgregarPropuesta"
+                    >
+                      Subir nueva propuesta
+                      <i class="bi bi-plus-circle"></i>
+                    </button>
+                  </div>
+                </div>
+
+                  <div class="d-flex justify-content-center">
+                    <div class="container table-responsive">
+                      <table
+                        class="table table-striped"
+                        aria-describedby="listado_propuestas"
+                      >
+                        <thead>
+                          <tr>
+                            <th scope="col">Fecha Propuesta</th>
+                            <th scope="col">Hora Propuesta</th>
+                            <th scope="col">Archivo</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <!-- Suponiendo que 'propuestas' es tu array de resultados -->
+                          <tr *ngFor="let propuesta of _detalleParticipante; let i = index">
+                            <td>
+                              {{ propuesta.fecha_propuesta | date : "dd-MM-yyyy" }}
+                            </td>
+                            <td>
+                              {{ propuesta.fecha_propuesta | date : "shortTime" }}
+                            </td>
+                            <td>
+                              <button
+                                class="btn btn-warning btn-sm btn-circle me-2"
+                                type="button"
+                                id="dropdownMenuButton{{ i }}"
+                                (click)="onClickDescargarPdf(propuesta.url_archivo_propuesta, propuesta.rfc_proveedor.concat('_propuesta'))"
+                              >
+                                <i class="bi bi-arrow-down-circle-fill"></i>
+                              </button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-3">
+          <div class="col-md-12">
+            <div class="d-flex justify-content-end align-items-end">
+              <button
+                class="btn btn-sm btn-success"
+                style="margin-right: 1%"
+                (click)="validarEFirma(myModal)"
+                [disabled]="loaderGuardar || archivosPropuestas.length == 0"
+              >
+                Guardar
+
+                <div
+                  *ngIf="loaderGuardar"
+                  class="spinner-border spinner-border-sm"
+                  role="status"
+                ></div>
+              </button>
+              <button
+                class="btn btn-sm btn-outline-secondary"
+                type="button"
+                (click)="cancelarPresentarPropuesta()"
+              >
+                Regresar
+              </button>
+            </div>
+          </div>
+        </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<ng-template #myModal let-modal>
+  <div class="modal-header">
+    <h4 class="modal-title">
+      <strong
+        >Ingrese los datos de su e.firma para validar la subida de su propuesta.</strong
+      >
+    </h4>
+    <button
+      type="button"
+      class="btn-close"
+      aria-label="Close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body">
+    <app-e-firma
+      [rfc_proveedor]="rfcProveedor"
+      (efirmaValidacion)="efirmaResponse($event)"
+    ></app-e-firma>
+  </div>
+</ng-template>

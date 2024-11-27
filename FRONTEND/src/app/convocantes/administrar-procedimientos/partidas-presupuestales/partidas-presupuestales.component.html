@@ -1,0 +1,249 @@
+
+<div>
+
+  <main>
+    <div class="display-area">
+      <section>
+        <div class="container pt-5" >
+          <div class="row" *ngIf="!_ocultarEncabezados">
+            <div class="d-inline-block col-md-12">
+              <h2 class="d-inline-block me-2">Carga de partidas</h2>
+              <h6 class="d-inline-block">Ver carga de partidas</h6>
+            </div>
+          </div>
+
+          <div class="container pb-3" *ngIf="!_ocultarEncabezados">
+            <app-encabezado-procedimiento
+              [__procedimientoElegido]="_procedimientoElegido"></app-encabezado-procedimiento>
+          </div>
+
+          <div class="card mt-3">
+            <div class="container ">
+
+              <div class="row" *ngIf="!usuarioLoginEsProveedor">
+                <div class="col-12">
+                  <div class="container table-responsive">
+                    <table class="table table-striped " aria-describedby="table_participantes">
+                      <thead>
+                      <tr>
+                        <th scope="col">RFC</th>
+                        <th scope="col">Nombre o Razón social</th>
+                        <th scope="col">Giro de la empresa</th>
+                        <th scope="col">Invitado o Participando</th>
+                        <th scope="col">Estatus partida</th>
+                        <th scope="col">Seleccionado</th>
+                      </tr>
+                      </thead>
+                      <tbody>
+                      <tr *ngFor="let participante of lstParticipantes; index as i">
+
+                        <td>
+                          {{ participante.rfc_proveedor}}
+                        </td>
+                        <td>
+                          {{participante.nombre_proveedor}} {{participante.primer_apellido_proveedor}} {{participante.segundo_apellido_proveedor}} {{participante.razon_social}}
+                        </td>
+                        <td>
+                          {{ participante.descripcion_giro_empresa}}
+                        </td>
+
+                        <td>
+                          <span class="badge bg-default" *ngIf="participante.id_tipo_participacion ==2">Participando</span>
+                          <span class="badge bg-default" *ngIf="participante.id_tipo_participacion ==1">Invitado</span>
+                        </td>
+                        <td>
+                          <span [ngClass]="participante.estilo" >{{participante.nombre_estatus_participacion}}</span>
+
+                        </td>
+                        <td>
+                          <input type="radio"
+                                 name="participantes"
+                                 [(ngModel)]="participante.seleccionadoLista"
+                                 [value]="true"
+                                 [checked]="participante.seleccionadoLista"
+                                 (change)="cambiarProveedor(participante)"
+                          />
+                        </td>
+
+                      </tr>
+                      </tbody>
+                    </table>
+                    <div class="d-flex justify-content-center align-items-center pb-2" >
+                      <div *ngIf="loaderParticipantes" class="spinner-border spinner-border-lg" role="status"></div>
+                    </div>
+                    <ngb-alert *ngIf="lstParticipantes != null && lstParticipantes.length == 0 && !loaderParticipantes">
+                      Sin datos para mostrar
+                    </ngb-alert>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <div class="col-6">
+                  <div class="card mt-3">
+
+                    <div class="row">
+                      <div class="col-sm-12 col-md-12 col-xl-8 col-xxl-8">
+                        <h3 class="d-inline-block ml-3">Procedimiento</h3>
+                      </div>
+                      <div class="col-sm-12 col-md-12 col-xl-4 col-xxl-4" style="text-align: right"
+                           *ngIf="lstDatosPartidasProcedimiento != null && lstDatosPartidasProcedimiento.length > 0">
+                        <button class="btn btn-sm btn-success" type="button" (click)="descargarOriginal()"
+                                [disabled]="loaderDescargarArchivoOriginal"
+                                title="Descargar archivo original del procedimiento">
+                          <i class="bi bi-download"></i>
+                          Descargar
+                          <div *ngIf="loaderDescargarArchivoOriginal" class="spinner-border spinner-border-sm" role="status"></div>
+                        </button>
+                      </div>
+                    </div>
+
+                    <div class="table-responsive">
+                      <table class="table table-striped" aria-describedby="table_usuarios">
+                      <thead>
+                      <tr>
+                        <th scope="col">Consecutivo</th>
+                        <th scope="col">Partida</th>
+                        <th scope="col">Código</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Cantidad</th>
+                      </tr>
+                      </thead>
+                      <tbody *ngIf="lstDatosPartidasProcedimiento != null">
+                      <tr *ngFor="let partida of lstDatosPartidasProcedimiento; index as i">
+                        <td>{{ partida.numero_partida }}</td>
+                        <td>{{ partida.nombre_partida }}</td>
+                        <td>{{ partida.codigo_partida }}</td>
+                        <td>{{ partida.descripcion_partida }}</td>
+                        <td>{{ partida.cantidad_partida }}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                    </div>
+
+                    <div class="d-flex justify-content-center align-items-center pb-2">
+                      <div *ngIf="loaderCargaPartidasProcedimiento" class="spinner-border spinner-border-lg"
+                           role="status"></div>
+                    </div>
+                    <ngb-alert *ngIf="lstDatosPartidasProcedimiento != null
+                      && lstDatosPartidasProcedimiento.length == 0
+                      && !loaderCargaPartidasProcedimiento">
+                      Sin datos para mostrar
+                    </ngb-alert>
+                  </div>
+                </div>
+
+                <div class="col-6">
+                  <div class="card mt-3">
+
+                    <div class="row">
+                      <div class="col-sm-12 col-md-12 col-xl-8 col-xxl-8">
+                        <h3 class="d-inline-block ml-3">Proveedor</h3>
+                      </div>
+                      <div class="col-sm-12 col-md-12 col-xl-4 col-xxl-4" style="text-align: right">
+                        <button class="btn btn-sm btn-success" type="button" (click)="openSelect()"
+                                *ngIf="editar"
+                                title="Cargar archivo para la propuesta">
+                          <i class="bi bi-upload"></i>
+                          Cargar
+                        </button>
+                      </div>
+                    </div>
+
+                    <form [formGroup]="formAnexos">
+                      <input id="subirArchivoInput" #subirArchivoInput
+                             class="form-control" formControlName="archivo_anexo"
+                             [hidden]="true"
+                             id="archivoCargaPartidas" type="file" accept=".xls, .xlsx"
+                             (change)="cargarAnexo($event)" *ngIf="editar"
+                             [class.is-invalid]="formAnexos.get('archivo_anexo')?.invalid &&
+                                  (formAnexos.get('archivo_anexo')?.dirty || formAnexos.get('archivo_anexo')?.touched)"
+                      />
+
+                    </form>
+
+                    <div class="table-responsive">
+                      <table class="table table-striped" aria-describedby="table_usuarios">
+                      <thead>
+                      <tr>
+                        <th scope="col">Consecutivo</th>
+                        <th scope="col">Partida</th>
+                        <th scope="col">Código</th>
+                        <th scope="col">Descripción</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Precio unitario</th>
+                        <th scope="col">Importe</th>
+                      </tr>
+                      </thead>
+                      <tbody *ngIf="lstDatosPartidasProveedor!= null">
+                      <tr *ngFor="let partida of lstDatosPartidasProveedor; index as i" >
+                        <td [style]="partida.style">{{ partida.numero_partida }}</td>
+                        <td [style]="partida.style">{{ partida.nombre_partida }}</td>
+                        <td [style]="partida.style">{{ partida.codigo_partida }}</td>
+                        <td [style]="partida.style">{{ partida.descripcion_partida }}</td>
+                        <td [style]="partida.style">{{ partida.cantidad_partida }}</td>
+                        <td [style]="partida.style">{{ partida.precio_unitario }}</td>
+                        <td [style]="partida.style">{{ partida.importe }}</td>
+                      </tr>
+                      </tbody>
+                    </table>
+                    </div>
+
+                    <div class="d-flex justify-content-center align-items-center pb-2">
+                      <div *ngIf="loaderCargaPartidasProveedor" class="spinner-border spinner-border-lg"
+                           role="status"></div>
+                    </div>
+                    <ngb-alert *ngIf="lstDatosPartidasProveedor != null
+                      && lstDatosPartidasProveedor.length == 0
+                      && !loaderCargaPartidasProveedor">
+                      Sin datos para mostrar
+                    </ngb-alert>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="card-footer d-flex justify-content-end pt-3">
+
+              <button *ngIf="!_ocultarEncabezados || archivoCarga == null" class="btn  btn-sm btn-outline-dark me-2"
+                      (click)="cancelarCargarPartidas()">
+                Regresar
+              </button>
+
+              <button *ngIf="_ocultarEncabezados && archivoCarga != null" class="btn  btn-sm btn-danger me-2"
+                      (click)="abrirCerrarModalCancelarPartidas(true)">
+                Cancelar
+              </button>
+              <button class="btn  btn-sm btn-success me-2"
+                      *ngIf="editar"
+                      [disabled]="!datosValidos || archivoCarga == null" (click)="guardarCarga()">
+                Guardar
+                <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+              </button>
+
+            </div>
+
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<!-- modal -->
+<ng-template #modalCancelarCargaPartidas let-c="close" let-d="dismiss">
+  <div class="modal-body d-flex flex-column align-items-center">
+    <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+    <h4 class="mt-2 text-center">¿Estás seguro de querer cancelar y regresar?</h4>
+    <label class="mt-2 text-muted">No será posible recuperar después</label>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-default" (click)="abrirCerrarModalCancelarPartidas(false)">No,
+      continua!
+    </button>
+    <button type="button" class="btn btn-sm btn-danger" (click)="cancelarCargarPartidas()">
+      Sí, cancela!
+    </button>
+  </div>
+</ng-template>

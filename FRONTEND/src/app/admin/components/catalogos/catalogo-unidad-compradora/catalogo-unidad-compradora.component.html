@@ -1,0 +1,380 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin id="sidebar" class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"></app-side-nav-admin>
+
+
+<div class="content-layout-admin">
+  <section *ngIf="!blnEditar && !blnAgregar">
+    <div class="container pt-5">
+
+      <div class="row">
+        <div class="d-inline-block col-md-8">
+          <h2 class="d-inline-block me-2">Unidad Compradora</h2>
+          <h6 class="d-inline-block">Ver listado de Unidades Compradoras</h6>
+        </div>
+
+        <div class="col-md-4">
+          <div class="d-flex justify-content-end align-items-end">
+          <button *ngIf="canActivate('ADMIN_CAT_UCOMPRA_AGR')" class="btn  btn-sm btn-success" (click)="agregar()">
+            <i class="bi bi-plus-lg"></i> Agregar Unidad Compradora
+          </button>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- apartado para el formulario de busqueda-->
+      <div class="card mt-2">
+        <div class="container">
+          <form [formGroup]="formBusqueda" (ngSubmit)="buscarCatUnidadCompradora">
+            <div class="row pt-3 pb-3">
+              <div class="col-md-4">
+                <input id="descripcion_cuc" type="text" class="form-control" formControlName="descripcion_cuc" placeholder="Clave, Nombre de la unidad compradora" name="descripcion_cuc"/>
+              </div>
+              <div class="col-md-4" >
+                <select class="form-select" formControlName="id_unidad_responsable" id="id_unidad_responsable" name="id_unidad_responsable" >
+                  <option selected [ngValue]="null" >Todas las unidades Responsables</option>
+                  <option *ngFor="let cur of lstCatUnidadesResponsables" [ngValue]="cur.id_unidad_responsable" >{{cur.nombre_unidad_responsable}}</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <div class="d-flex justify-content-end align-items-end">
+                  <button class="btn  btn-sm btn-outline-secondary me-2" type="button"
+                          (click)="formBusqueda.reset()">
+                      Restablecer
+                  </button>
+                  <button type="submit" class="btn btn-sm btn-info" (click)="buscarCatUnidadCompradora()"
+                          [disabled]="!formBusqueda.valid || loaderBusqueda">
+                      Filtrar
+                      <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-sm" role="status"></div>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!--apartado para el tablero de resultados-->
+      <div class="card mt-3">
+        <div class="card-body">
+          <div class="container table-responsive">
+            <table class="table table-striped " aria-describedby="table_usuarios">
+              <thead>
+              <tr>
+                <th scope="col">Clave</th>
+                <th scope="col">Nombre</th>
+                <th scope="col">Unidad Responsable</th>
+                <th scope="col">Estatus</th>
+                <th scope="col" *ngIf="canActivate('ADMIN_CAT_UCOMPRA_MOD') || canActivate('ADMIN_CAT_UCOMPRA_ELM')">Acciones</th>
+              </tr>
+              </thead>
+              <tbody *ngIf="lstCatUnidadCompradora != null">
+                <tr *ngFor="let cuc of lstCatUnidadCompradora; index as i">
+                  <td>{{ cuc.clave_unidad_compradora }}</td>
+                  <td>{{ cuc.nombre_unidad_compradora}}</td>
+                  <td>{{ cuc.cat_unidades_responsables != null ? cuc.cat_unidades_responsables.nombre_unidad_responsable : 'Sin datos' }} </td>
+                  <td>
+                    <span class="badge bg-success" *ngIf="cuc.activo">Activo</span>
+                    <span class="badge bg-danger" *ngIf="!cuc.activo">Baja</span>
+                  </td>
+                  <td *ngIf="canActivate('ADMIN_CAT_UCOMPRA_MOD') || canActivate('ADMIN_CAT_UCOMPRA_ELM')" class="overflow-hidden text-center">
+                    <div ngbDropdown container="body">
+                      <button type="button" class="btn btn-warning btn-sm btn-circle  me-2" ngbDropdownToggle><i class="bi bi-three-dots-vertical"></i></button>
+                      <div ngbDropdownMenu>
+                        <button *ngIf="canActivate('ADMIN_CAT_UCOMPRA_MOD')" (click)="editar(cuc)" ngbDropdownItem>Modificar</button>
+                        <button *ngIf="canActivate('ADMIN_CAT_UCOMPRA_ELM')" (click)="eliminarModal(deleteUC,cuc)" ngbDropdownItem>Eliminar</button>
+                        <button *ngIf="canActivate('ADMIN_CAT_UCOMPRA_MOD')" [routerLink]="['/admin/unidad-compradora/usuarios/',cuc.id_unidad_compradora,id_unidad_responsable != null?id_unidad_responsable:'']"  ngbDropdownItem>Usuarios</button>
+                        <button *ngIf="canActivate('ADMIN_CAT_UCADE_MENU')" [routerLink]="['/admin/unidad-compradora/ad-extemporanea/',cuc.id_unidad_compradora,id_unidad_responsable != null?id_unidad_responsable:'']" ngbDropdownItem>AD Extemporanea</button>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <ngb-alert *ngIf="lstCatUnidadCompradora != null && lstCatUnidadCompradora.length == 0">
+                Sin datos para mostrar
+            </ngb-alert>
+            <div class="d-flex justify-content-between p-2">
+              <ngb-pagination *ngIf="lstCatUnidadCompradora != null && lstCatUnidadCompradora.length>pageSizeLstCatUnidadcompradora"
+                              [collectionSize]="lstCatUnidadCompradora.length"
+                              [(page)]="pageLstCatUnidadCompradora"
+                              [pageSize]="pageSizeLstCatUnidadcompradora">
+              </ngb-pagination>
+            </div>
+          </div>
+        </div>
+        <div class="card-footer" *ngIf="id_unidad_responsable">
+          <div class="container">
+            <div class="row">
+              <div class="text-rigth">
+                <button routerLink="/admin/unidad-responsable" *ngIf="canActivate('ADMIN_CAT_URESP_MENU')" class="btn btn-outline-secondary btn-sm">Regresar</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div><!--end tablero de resultados-->
+
+    </div>
+  </section>
+
+  <section *ngIf="blnAgregar || blnEditar">
+    <div class="container pt-4">
+      <div class="d-inline-block col-md-8">
+        <h2 class="d-inline-block me-2">{{messageTitle}}</h2>
+        <h6 class="d-inline-block">{{messageSubTitle}}</h6>
+      </div>
+      <div class="card mt-3">
+        <div class="container ">
+          <form [formGroup]="formRegistro" (ngSubmit)="guardarSubmit()">
+            <div class="row pt-3">
+              <div class="col-md-4">
+                <label for="uc_nombre" class="form-label">Clave Unidad Compradora <app-campo-obligatorio /></label>
+                <input class="form-control" placeholder="Clave de la Unidad Compradora" formControlName="clave_unidad_compradora"
+                        id="clave_unidad_compradora" name="clave_unidad_compradora" [class.is-invalid]="formRegistro.get('clave_unidad_compradora')?.invalid &&
+                        (formRegistro.get('clave_unidad_compradora')?.dirty || formRegistro.get('clave_unidad_compradora')?.touched)" />
+                <div *ngIf="formRegistro.get('nombre_unidad_compradora')?.invalid && formRegistro.get('clave_unidad_compradora')?.errors
+                    && (formRegistro.get('clave_unidad_compradora')?.dirty || formRegistro.get('clave_unidad_compradora')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('clave_unidad_compradora')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                  <small class="text-danger" *ngIf="formRegistro.get('clave_unidad_compradora')?.hasError('minlength')">
+                    El valor mínimo es 9 characters.
+                  </small>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="uc_nombre" class="form-label">Nombre Unidad Compradora <app-campo-obligatorio /></label>
+                <input class="form-control" placeholder="Nombre de la Unidad Compradora" formControlName="nombre_unidad_compradora"
+                        id="nombre_unidad_compradora" name="nombre_unidad_compradora" [class.is-invalid]="formRegistro.get('nombre_unidad_compradora')?.invalid &&
+                        (formRegistro.get('nombre_unidad_compradora')?.dirty || formRegistro.get('nombre_unidad_compradora')?.touched)" />
+                <div *ngIf="formRegistro.get('nombre_unidad_compradora')?.invalid && formRegistro.get('nombre_unidad_compradora')?.errors
+                    && (formRegistro.get('nombre_unidad_compradora')?.dirty || formRegistro.get('nombre_unidad_compradora')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('nombre_unidad_compradora')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                  <small class="text-danger" *ngIf="formRegistro.get('nombre_unidad_compradora')?.hasError('minlength')">
+                    El valor mínimo es 5 characters.
+                  </small>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Unidad Responsable <app-campo-obligatorio /></label>
+                <select class="form-select" formControlName="id_unidad_responsable" id="id_unidad_responsable" name="id_unidad_responsable" [disabled]="true"
+                        [class.is-invalid]="formRegistro.get('id_unidad_responsable')?.invalid &&
+                        (formRegistro.get('id_unidad_responsable')?.dirty || formRegistro.get('id_unidad_responsable')?.touched)">
+                  <option selected [ngValue]="null" >Seleccione opción</option>
+                  <option *ngFor="let cur of lstCatUnidadesResponsables; index as ictp" [ngValue]="cur.id_unidad_responsable" >{{cur.nombre_unidad_responsable}}</option>
+                </select>
+                <div *ngIf="formRegistro.get('id_unidad_responsable')?.invalid && formRegistro.get('id_unidad_responsable')?.errors
+                    && (formRegistro.get('id_unidad_responsable')?.dirty || formRegistro.get('id_unidad_responsable')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('id_unidad_responsable')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label for="cp_ucomp" class="form-label">Código postal: <app-campo-obligatorio /></label>
+                <div class="d-flex input-group">
+                  <input
+                    class="form-control"
+                    formControlName="codigo_postal"
+                    type="text"
+                    [class.is-invalid]="
+                      formRegistro.get('codigo_postal')?.invalid &&
+                      (formRegistro.get('codigo_postal')?.dirty || formRegistro.get('codigo_postal')?.touched)
+                    "
+                  />
+                  <span
+                    class="input-group-text text-white"
+                    style="background: var(--ternary-color); cursor:pointer;"
+                    id="basic-addon2"
+                    (click)="buscarPorCodigoPostal()"
+                    ><i class="bi bi-search" *ngIf="!loaderBuscarCP"></i
+                  >
+                  <div
+                    *ngIf="loaderBuscarCP"
+                    class="spinner-border spinner-border-sm"
+                    role="status"
+                    ></div>
+                </span>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="est_ucomp" class="form-label">Estado: <app-campo-obligatorio /></label>
+                <div class="d-flex input-group">
+                  <input
+                    class="form-control"
+                    formControlName="id_estado"
+                    type="text"
+                    [class.is-invalid]="
+                      formRegistro.get('estado')?.invalid &&
+                      (formRegistro.get('estado')?.dirty || formRegistro.get('estado')?.touched)
+                    "
+                    [ngModel]="estado_selected.nombre_estado"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="mun_ucomp" class="form-label">Municipio: <app-campo-obligatorio /></label>
+                <div class="d-flex input-group">
+                  <input
+                    class="form-control"
+                    formControlName="id_municipio"
+                    type="text"
+                    [class.is-invalid]="
+                      formRegistro.get('municipio')?.invalid &&
+                      (formRegistro.get('municipio')?.dirty || formRegistro.get('municipio')?.touched)
+                    "
+                    [ngModel]="municipio_selected.nombre_municipio"
+                    readonly
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label for="dir_ucomp" class="form-label">Dirección: <app-campo-obligatorio /></label>
+                <div class="d-flex input-group">
+                  <input
+                    class="form-control"
+                    formControlName="nombre_vialidad"
+                    type="text"
+                    [class.is-invalid]="
+                      formRegistro.get('nombre_vialidad')?.invalid &&
+                      (formRegistro.get('nombre_vialidad')?.dirty || formRegistro.get('nombre_vialidad')?.touched)
+                    "
+                  />
+                </div>
+              </div>
+              <div class="col-md-4">
+                <label for="pw_ucomp" class="form-label">Pagina Web: <app-campo-obligatorio /></label>
+                <div class="d-flex input-group">
+                  <input
+                    class="form-control"
+                    formControlName="pagina_web"
+                    type="text"
+                    [class.is-invalid]="
+                      formRegistro.get('pagina_web')?.invalid &&
+                      (formRegistro.get('pagina_web')?.dirty || formRegistro.get('pagina_web')?.touched)
+                    "
+                  />
+                </div>
+              </div>
+
+              <div class="col-md-4" *ngIf="blnEditar">
+                <label class="form-label">Estatus</label>
+                <select class="form-select" formControlName="activo" id="activoRegistro" name="activo"
+                        [class.is-invalid]="formRegistro.get('activo')?.invalid &&
+                        (formRegistro.get('activo')?.dirty || formRegistro.get('activo')?.touched)">
+                  <option selected [ngValue]="null" [disabled]="false">Seleccione opción</option>
+                  <option [ngValue]="1">Activo</option>
+                  <option [ngValue]="0">Baja</option>
+                </select>
+                <div *ngIf="formRegistro.get('activo')?.invalid &&
+                    formRegistro.get('activo')?.errors &&
+                    (formRegistro.get('activo')?.dirty || formRegistro.get('activo')?.touched)">
+                  <small class="text-danger" *ngIf="formRegistro.get('activo')?.hasError('required')">
+                    Este campo es requerido.
+                  </small>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Responsable: <app-campo-obligatorio /></label>
+                <input type="text" class="form-control"  formControlName="responsable"
+                id="responsable" name="responsable" [class.is-invalid]="
+                formRegistro.get('responsable')?.invalid &&
+                (formRegistro.get('responsable')?.dirty || formRegistro.get('responsable')?.touched)
+              ">
+                <div *ngIf="formRegistro.get('responsable')?.invalid &&
+                formRegistro.get('responsable')?.errors &&
+                (formRegistro.get('responsable')?.dirty || formRegistro.get('responsable')?.touched)">
+                <small class="text-danger" *ngIf="formRegistro.get('responsable')?.hasError('required')">
+                Este campo es requerido.
+                </small>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Correo: <app-campo-obligatorio /></label>
+                <input type="text" class="form-control" formControlName="correo"
+                id="correo" name="correo"  [class.is-invalid]="
+                formRegistro.get('correo')?.invalid &&
+                (formRegistro.get('correo')?.dirty || formRegistro.get('correo')?.touched)
+              ">
+              <div *ngIf="formRegistro.get('correo')?.invalid &&
+                formRegistro.get('correo')?.errors &&
+                (formRegistro.get('correo')?.dirty || formRegistro.get('correo')?.touched)">
+                <small class="text-danger" *ngIf="formRegistro.get('correo')?.hasError('required')">
+                Este campo es requerido.
+                </small>
+                </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Teléfono: <app-campo-obligatorio /></label>
+                <input type="text" class="form-control" formControlName="telefono"
+                id="telefono" name="telefono" [class.is-invalid]="
+                formRegistro.get('telefono')?.invalid &&
+                (formRegistro.get('telefono')?.dirty || formRegistro.get('telefono')?.touched)
+              ">
+              <div *ngIf="formRegistro.get('telefono')?.invalid &&
+              formRegistro.get('telefono')?.errors &&
+              (formRegistro.get('telefono')?.dirty || formRegistro.get('telefono')?.touched)">
+              <small class="text-danger" *ngIf="formRegistro.get('telefono')?.hasError('required')">
+              Este campo es requerido.
+              </small>
+              </div>
+              </div>
+
+              <div class="col-md-4">
+                <label class="form-label">Puesto: <app-campo-obligatorio /></label>
+                <input type="text" class="form-control" formControlName="puesto"
+                id="puesto" name="puesto" [class.is-invalid]="
+                formRegistro.get('puesto')?.invalid &&
+                (formRegistro.get('puesto')?.dirty || formRegistro.get('puesto')?.touched)
+              ">
+              <div *ngIf="formRegistro.get('puesto')?.invalid &&
+              formRegistro.get('puesto')?.errors &&
+              (formRegistro.get('puesto')?.dirty || formRegistro.get('puesto')?.touched)">
+              <small class="text-danger" *ngIf="formRegistro.get('puesto')?.hasError('required')">
+              Este campo es requerido.
+              </small>
+              </div>
+              </div>
+            </div>
+
+            <div class="card-footer d-flex justify-content-end mt-2">
+              <button type="button" class="btn btn-sm btn-outline-dark me-2" (click)="cancelar()">
+                Regresar
+              </button>
+              <button type="submit" class="btn btn-sm btn-success" [disabled]="!formRegistro.valid || loaderGuardar">
+                {{messageButton}} <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<!-- modal -->
+<ng-template #deleteUC let-c="close" let-d="dismiss">
+
+  <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer eliminar el registro?</h4>
+        <label class="mt-2 text-muted">No será posible recuperar después</label>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-default" (click)="cancelar()">No, cancela!</button>
+    <button type="button" class="btn btn-sm btn-danger" (click)="eliminarSubmit()" [disabled]="loaderGuardar">
+      Sí, eliminalo!
+      <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,275 @@
+<div class="card card-body side-bar-content">
+  <div  class="app-sidebar">
+
+    <!-- BEGIN scrollbar -->
+    <div class="app-sidebar-content" data-scrollbar="true" data-height="100%">
+
+
+      <!-- BEGIN brand -->
+      <div class="brand">
+
+        <a class="brand-logo" title="Compranet" data-bs-target="#sidebar" data-bs-toggle="collapse">
+          <img src="../../../assets/images/logo-CN-white.svg" class="logo"  alt="Compranet">
+          <i class="sidebar-toggle bi bi-arrow-left-circle fs-5" ></i>
+        </a>
+
+      </div>
+      <!-- END brand -->
+
+
+      <!-- BEGIN menu -->
+      <div class="menu">
+
+        <div class="menu-header" *ngIf="canActivate('ADMIN_TABPROC_MENU')">
+          <span class="menu-text">Navegación</span>
+        </div>
+        <div class="menu-item  active" *ngIf="canActivate('ADMIN_TABPROC_MENU')">
+          <a routerLink="/admin/tablero" class="menu-link">
+            <span class="menu-icon"><i class="bi bi-columns"></i></span>
+            <span class="menu-text">Tablero</span>
+
+          </a>
+
+        </div>
+        <div class="menu-divider"></div>
+        <div
+          class="menu-header"
+          *ngIf="
+            canActivate('ADMIN_CAT_ESTADOS_MENU') ||
+            canActivate('ADMIN_CAT_MUNS_MENU') ||
+            canActivate('ADMIN_CAT_LOCS_MENU') ||
+            canActivate('ADMIN_CAT_CODSP_MENU') ||
+            canActivate('ADMIN_CAT_TIPOARCH_MENU') ||
+            canActivate('ADMIN_CAT_USUARIOS_MENU') ||
+            canActivate('ADMIN_CAT_ROLES_MENU') ||
+            canActivate('ADMIN_CAT_FUNCIONES_MENU') ||
+            canActivate('ADMIN_CAT_UCOMPRA_MENU') ||
+            canActivate('ADMIN_CAT_COSTPART_MENU')
+          "
+        >
+          <span class="menu-text">Administración</span>
+        </div>
+
+        <div
+          class="menu-item has-sub"
+          *ngIf="
+            canActivate('ADMIN_CAT_ESTADOS_MENU') ||
+            canActivate('ADMIN_CAT_MUNS_MENU') ||
+            canActivate('ADMIN_CAT_LOCS_MENU') ||
+            canActivate('ADMIN_CAT_CODSP_MENU') ||
+            canActivate('ADMIN_CAT_TIPOARCH_MENU') ||
+            canActivate('ADMIN_CAT_USUARIOS_MENU') ||
+            canActivate('ADMIN_CAT_ROLES_MENU') ||
+            canActivate('ADMIN_CAT_FUNCIONES_MENU') ||
+            canActivate('ADMIN_CAT_UCOMPRA_MENU') ||
+            canActivate('ADMIN_CAT_COSTPART_MENU')
+          "
+        >
+          <a class="menu-link" data-bs-toggle="collapse" href="#collapseCatalogos" role="button" aria-expanded="false" aria-controls="collapse1">
+            <span class="menu-icon"><i class="bi bi-database"></i></span>
+            <span class="menu-text">Catálogos</span>
+            <span class="menu-caret"><i class="bi bi-caret-down-fill"></i></span>
+          </a>
+          <div class="menu-submenu collapse" id="collapseCatalogos">
+            <div class="card card-body">
+
+              <ul class="menu-sub-items">
+                <li routerLink="/admin/estados" *ngIf="canActivate('ADMIN_CAT_ESTADOS_MENU')">Estados</li>
+                <li routerLink="/admin/municipios" *ngIf="canActivate('ADMIN_CAT_MUNS_MENU')">Municipios</li>
+                <li routerLink="/admin/localidades" *ngIf="canActivate('ADMIN_CAT_LOCS_MENU')">Localidades</li>
+                <li routerLink="/admin/codigo-postal" *ngIf="canActivate('ADMIN_CAT_CODSP_MENU')">Códigos Postales</li>
+                <li routerLink="/admin/dias-festivos" *ngIf="canActivate('ADMIN_CAT_DIAS_MENU')">Días Festivos</li>
+                <li routerLink="/admin/conceptos" *ngIf="canActivate('ADMIN_CAT_TIPOARCH_MENU')">Tipos de Archivo</li>
+                <li routerLink="/admin/usuarios" *ngIf="canActivate('ADMIN_CAT_USUARIOS_MENU')">Usuarios</li>
+                <li routerLink="/admin/roles" *ngIf="canActivate('ADMIN_CAT_ROLES_MENU')">Roles y Perfiles</li>
+                <li routerLink="/admin/funciones" *ngIf="canActivate('ADMIN_CAT_FUNCIONES_MENU')">Funciones sistema</li>
+                <li routerLink="/admin/unidad-responsable" *ngIf="canActivate('ADMIN_CAT_URESP_MENU')">Unidades Responsables</li>
+                <li routerLink="/admin/unidad-compradora" *ngIf="canActivate('ADMIN_CAT_UCOMPRA_MENU')">Unidades Compradoras</li>
+                <li routerLink="/admin/costo-participacion" *ngIf="canActivate('ADMIN_CAT_COSTPART_MENU')">Costos de Participación</li>
+              </ul>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item"
+            *ngIf="
+              canActivate('ADMIN_CAT_ESTADOS_MENU') ||
+              canActivate('ADMIN_CAT_MUNS_MENU') ||
+              canActivate('ADMIN_CAT_LOCS_MENU') ||
+              canActivate('ADMIN_CAT_CODSP_MENU') ||
+              canActivate('ADMIN_CAT_TIPOARCH_MENU') ||
+              canActivate('ADMIN_CAT_USUARIOS_MENU') ||
+              canActivate('ADMIN_CAT_ROLES_MENU') ||
+              canActivate('ADMIN_CAT_FUNCIONES_MENU') ||
+              canActivate('ADMIN_CAT_UCOMPRA_MENU') ||
+              canActivate('ADMIN_CAT_COSTPART_MENU')
+            "
+          >
+          <a class="menu-link" routerLink="/admin/admin-proveedores" *ngIf="canActivate('ADMIN_CAT_PROV_MENU')">
+            <span class="menu-icon"><i class="bi bi-people"></i></span>
+            <span class="menu-text">Proveedores</span>
+          </a>
+        </div>
+
+
+        <div class="menu-divider"></div>
+        <div
+          class="menu-header"
+          *ngIf="canActivate('ADMIN_REPORTES_MENU') ||
+          canActivate('ADMIN_BITACORA_MENU')"
+        >
+          <span class="menu-text">Módulos</span>
+        </div>
+
+        <div class="menu-item has-sub " *ngIf="canActivate('ADMIN_BITACORA_MENU')">
+          <a class="menu-link" data-bs-toggle="collapse" href="#collapseBitacora" role="button" aria-expanded="false" aria-controls="collapseBitacora">
+            <span class="menu-icon"><i class="bi bi-file-earmark-text"></i></span>
+            <span class="menu-text">Bitacora</span>
+            <span class="menu-caret"><i class="bi bi-caret-down-fill"></i></span>
+          </a>
+          <div class="menu-submenu collapse" id="collapseBitacora">
+            <div class="card card-body">
+
+              <ul class="menu-sub-items">
+                <li
+                  class="menu-sub-link"
+                  routerLink="/admin/bitacora"
+                  *ngIf="canActivate('ADMIN_BITACORA_CONSULTAR')"
+                >
+                  Consultar Bitacora
+                </li>
+
+              </ul>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-item has-sub " *ngIf="canActivate('ADMIN_REPORTES_MENU')">
+          <a class="menu-link" data-bs-toggle="collapse" href="#collapseReportes" role="button" aria-expanded="false" aria-controls="collapseReportes">
+            <span class="menu-icon"><i class="bi bi-file-earmark-text"></i></span>
+            <span class="menu-text">Reportes</span>
+            <span class="menu-caret"><i class="bi bi-caret-down-fill"></i></span>
+          </a>
+          <div class="menu-submenu collapse" id="collapseReportes">
+            <div class="card card-body">
+
+              <ul class="menu-sub-items">
+                <li
+                  class="menu-sub-link"
+                  routerLink="/admin/reportes/crear-reportes"
+                  *ngIf="canActivate('ADMIN_REPORTES_MENU')"
+                >
+                  Generar Reportes
+                </li>
+
+              </ul>
+
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="menu-divider"></div>
+        <div
+          class="menu-header"
+          *ngIf="canActivate('ADMIN_LICPUB_MENU') ||
+          canActivate('ADMIN_LICSIMP_MENU') ||
+          canActivate('ADMIN_LICDIR_MENU')"
+        >
+          <span class="menu-text">Contrataciones</span>
+        </div>
+        <div
+          class="menu-item has-sub "
+          *ngIf="
+            canActivate('ADMIN_LICPUB_MENU') ||
+            canActivate('ADMIN_LICSIMP_MENU') ||
+            canActivate('ADMIN_LICDIR_MENU') ||
+            canActivate('ADMIN_LICDIREXT_MENU')
+          "
+        >
+          <a class="menu-link" data-bs-toggle="collapse" href="#collapseGC" role="button" aria-expanded="false" aria-controls="collapseGC">
+            <span class="menu-icon"><i class="bi bi-file-earmark-text"></i></span>
+            <span class="menu-text">Gestión de Contrataciones</span>
+            <span class="menu-caret"><i class="bi bi-caret-down-fill"></i></span>
+          </a>
+          <div class="menu-submenu collapse" id="collapseGC">
+            <div class="card card-body">
+
+              <ul class="menu-sub-items">
+                <li
+                  class="menu-sub-link"
+                  routerLink="/admin/panel/administrar-procedimientos/publica"
+                  *ngIf="canActivate('ADMIN_LICPUB_MENU')"
+                >
+                  Licitaciones Públicas
+                </li>
+                <li
+                  class="menu-sub-link"
+                  routerLink="/admin/panel/administrar-procedimientos/simplificada"
+                  *ngIf="canActivate('ADMIN_LICSIMP_MENU')"
+                >
+                  Licitaciones Simplificadas
+                </li>
+                <li
+                  class="menu-sub-link"
+                  routerLink="/admin/panel/administrar-adjudicaciones"
+                  *ngIf="canActivate('ADMIN_LICDIR_MENU')"
+                >
+                  Adjudicaciones Directas
+                </li>
+
+                <li
+                  class="menu-sub-link"
+                  routerLink="/admin/panel/agregar-adjudicacion"
+                  *ngIf="canActivate('ADMIN_LICDIREXT_MENU') && tieneExtemporaneas()"
+                >
+                  Adjudicaciones Extemporaneas
+                </li>
+              </ul>
+
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="menu-item has-sub "
+          *ngIf="canActivate('xx')"
+        >
+          <a class="menu-link" data-bs-toggle="collapse" href="#collapse2" role="button" aria-expanded="false" aria-controls="collapse2">
+            <span class="menu-icon"><i class="bi bi-file-earmark-text"></i></span>
+            <span class="menu-text">Adjudicaciones Extemporaneas</span>
+            <span class="menu-caret"><i class="bi bi-caret-down-fill"></i></span>
+          </a>
+          <div class="menu-submenu collapse" id="collapse2">
+            <div class="card card-body">
+
+              <ul class="menu-sub-items">
+                <li
+                  class="menu-sub-link"
+                  routerLink="/admin/panel/administrar-adjudicaciones"
+                  *ngIf="canActivate('xx')"
+                >
+                  Adjudicaciones extemporaneas
+                </li>
+              </ul>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="menu-divider"></div><div class="menu-header"><span class="menu-text">Cerrar Sesión</span></div>
+        <div class="menu-item">
+          <a class="menu-link" (click)="cerrarSesion()">
+            <span class="menu-icon"><i class="bi bi-box-arrow-right"></i></span>
+            <span class="menu-text">Salir del Sistema</span>
+          </a>
+        </div>
+      </div>
+      <!-- END menu -->
+    </div>
+
+  </div>
+</div>

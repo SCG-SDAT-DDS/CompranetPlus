@@ -1,0 +1,304 @@
+<app-header-admin></app-header-admin>
+
+<app-side-nav-admin id="sidebar" class="offcanvas offcanvas-start show" data-bs-backdrop="false" tabindex="-1"></app-side-nav-admin>
+
+<div class="content-layout-admin">
+  <section *ngIf="!blnEditar && !blnAgregar">
+    <div class="container pt-5">
+      
+      <div class="row">
+        <div class="d-inline-block col-md-8">
+          <h2 class="d-inline-block me-2">Codigo postal</h2>
+          <h6 class="d-inline-block">Ver listado de codigos postales en el sistema</h6>
+        </div>
+      
+  
+  <div class="col-md-4" *ngIf="canActivate('ADMIN_CAT_CODSP_AGR')">
+          <div class="d-flex justify-content-end align-items-end">
+            <button class="btn  btn-sm btn-success" (click)="agregar()">
+              <i class="bi bi-plus-lg"></i>
+                Agregar codigo postal
+            </button>
+          </div>
+        </div>
+      </div>
+
+
+      <div class="card mt-2">
+        <div class="container ">
+          <form [formGroup]="formBusqueda">
+            <div class="row pt-3">
+              <div class="col-md-4">
+                <input 
+                  class="form-control"
+                  placeholder="Escribe el codigo postal ..."
+                  name="cp"
+                  formControlName="cp"
+                  [class.is-invalid]="formBusqueda.get('cp')?.invalid &&
+                       (formBusqueda.get('cp')?.dirty || formBusqueda.get('cp')?.touched)"
+                />
+              </div>
+
+              <div class="col-md-4 mb-3">
+                <select 
+                  class="form-select" 
+                  id="idEstado"
+                  formControlName="idEstado"
+                >
+                  <option [ngValue]="null" >Todos los estados</option>
+                  <option   *ngFor="let estado of lstEstados; index as i" [ngValue]="estado.id">{{estado.estado}}</option>
+                </select>
+  
+              </div>
+              <div class="col-md-4 mb-3">
+                <select
+                  class="form-select" 
+                  id="idMunicipio"
+                  formControlName="idMunicipio"
+                >
+                  <option [ngValue]="null">Todos los municipios</option>
+                  <option   *ngFor="let mcpio of lstMunicipios; index as i" [ngValue]="mcpio.id">{{mcpio.municipio}}</option>
+                </select>
+               
+              </div>
+            </div>
+          
+            <div class="row pt-3 pb-3">
+              <div class="col-md-8">
+                <select class="form-select" formControlName="activo" id="activo"
+                        name="activo">
+                    <option selected [ngValue]="null" [disabled]="false">Seleccione opción</option>
+                    <option [ngValue]="1">Activo</option>
+                    <option [ngValue]="0">Baja</option>
+                </select>
+  
+              </div>
+              <div class="col-md-4">
+                <div class="d-flex justify-content-end align-items-end">
+                  <button class="btn  btn-sm btn-outline-secondary me-2" type="button" (click)="reset()">
+                    Restablecer
+                  </button>
+                  <button type="submit" class="btn  btn-sm btn-info" (click)="filtrar()" [disabled]="!formBusqueda.valid || loaderBusqueda">
+                    Filtrar
+                    <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-sm" role="status"></div>
+                  </button>
+  
+                </div>
+              </div>
+            </div>
+
+          </form>
+              
+        </div>
+
+      </div>
+
+
+      <div class="card mt-3">
+        <div class="container ">
+          
+          <table class="table table-striped" aria-describedby="table_codigos_postales">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Codigo postal</th>
+                <th scope="col">Asentamiento</th>
+                <th scope="col">Municipio</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Activo/Baja</th>
+                <th scope="col" *ngIf="canActivate('ADMIN_CAT_CODSP_MOD') || canActivate('ADMIN_CAT_CODSP_ELM')">Acciones</th>
+              </tr>
+            </thead>
+            <tbody *ngIf="!loaderBusqueda">
+              <tr *ngFor="let cp of lstTabla; index as i">
+                <td>
+                  {{ cp.id_asentamiento}}
+                </td>  
+                <td>
+                  {{ cp.codigo_postal}}
+                </td>
+                <td>
+                  {{ cp.nombre_asentamiento}}
+                </td>
+                <td>
+                    {{ cp.municipio}}
+                </td>
+                <td>
+                    {{ cp.estado}}
+                </td>
+                <td>
+                  <span class="badge bg-success" *ngIf="cp.activo">Activo</span>
+                  <span class="badge bg-danger" *ngIf="!cp.activo">Baja</span>
+                </td>
+                <td *ngIf="canActivate('ADMIN_CAT_CODSP_MOD') || canActivate('ADMIN_CAT_CODSP_ELM')">
+                  <button *ngIf="canActivate('ADMIN_CAT_CODSP_MOD')" class="btn btn-warning btn-sm btn-circle me-2" (click)="editar(cp)">
+                    <i class="bi bi-pencil-square"></i>
+                  </button>
+                  <button *ngIf=" canActivate('ADMIN_CAT_CODSP_ELM')" class="btn btn-danger btn-sm btn-circle" (click)="eliminarModal(modalEliminar,cp)">
+                    <i class="bi bi-trash3-fill"></i>
+                  </button>
+                </td>
+                  
+              </tr>
+            </tbody>
+          </table>
+          <div class="d-flex justify-content-center align-items-center pb-2" >
+            <div *ngIf="loaderBusqueda" class="spinner-border spinner-border-lg" role="status"></div>
+          </div>
+          <ngb-alert *ngIf="lstTabla != null && lstTabla.length == 0">
+              Sin datos para mostrar
+          </ngb-alert>
+            
+        </div>
+
+      </div>
+
+      <div class="container mt-2 p-2" *ngIf="!loaderBusqueda">
+        <div class="row ">
+            <div class="col-md-6 col-12 d-flex justify-content-start">
+            <div class="mt-1 table-responsive">
+                <ngb-pagination
+                size="sm"
+                [collectionSize]="collectionSize"
+                [(page)]="page"
+                [pageSize]="pageSize"
+                [maxSize]="5"
+                [rotate]="true"
+                [boundaryLinks]="true"
+                (pageChange)="buscarSubmit()"
+                ></ngb-pagination>
+            </div>
+            </div>
+            <div class="col-md-6 col-12 d-flex justify-content-end">
+            <div class="d-flex align-items-baseline">
+                <small class="me-2">Mostrando: </small>
+                <input 
+                  type="number"  
+                  class="form-control me-2" 
+                  style=" max-width: 4em; " 
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  [value]="pageSize"
+                  [(ngModel)]="pageSize"
+                  (change)="buscarSubmit(true)"
+                >
+                <small>registros por página</small>
+            </div>
+            </div>
+        </div>
+      </div>
+      
+    </div>
+  </section>
+
+   <!-- agregar -->
+  <section *ngIf="blnAgregar || blnEditar">
+
+    <div class="container pt-4">
+      <div class="d-inline-block col-md-8">
+        <h2 class="d-inline-block me-2">{{messageTitle}}</h2>
+        <h6 class="d-inline-block">{{messageSubTitle}}</h6>
+      </div>
+      
+      <div class="card mt-3">
+        <div class="container ">  
+          <form [formGroup]="formRegistro" (ngSubmit)="guardarSubmit()" >
+          
+            <div class="row pt-3">
+              <div class="col-md-4">
+                  <label for="codigo_postal" class="form-label">Codigo postal: <app-campo-obligatorio/></label>
+                  <input
+                  id="codigo_postal"
+                  class="form-control"
+                  placeholder="Escriba el codigo postal ..."
+                  name="codigo_postal"
+                  formControlName="codigo_postal"
+                  />
+              </div>
+              <div class="col-md-4">
+                  <label for="nombre_asentamiento" class="form-label">Nombre asentamiento: <app-campo-obligatorio/></label>
+                  <input
+                  id="nombre_asentamiento"
+                  class="form-control"
+                  placeholder="Escriba el codigo postal"
+                  name="nombre_asentamiento"
+                  formControlName="nombre_asentamiento"
+                  />
+              </div>
+              <div class="col-md-4">
+                  <label for="tipo_asentamiento" class="form-label">Tipo asentamiento: <app-campo-obligatorio/></label>
+                  <input
+                  id="tipo_asentamiento"
+                  class="form-control"
+                  placeholder="Escriba el codigo postal"
+                  name="tipo_asentamiento"
+                  formControlName="tipo_asentamiento"
+                  />
+
+              </div>
+            </div>
+                
+            <div class="row pt-3 pb-3">
+                <div class="col-md-6">
+                  <label for="exampleFormControlInput1" class="form-label">Estado: <app-campo-obligatorio/></label>
+                  <select 
+                    class="form-select" 
+                    id="id_estado"
+                    formControlName="id_estado"
+                    >
+                    <option [ngValue]="null" >Todos los estados</option>
+                    <option   *ngFor="let estado of lstEstados; index as i" [ngValue]="estado.id">{{estado.estado}}</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="exampleFormControlInput1" class="form-label">Municipio: <app-campo-obligatorio/></label>
+                  <select
+                    class="form-select" 
+                    id="id_municipio"
+                    formControlName="id_municipio"
+                  >
+                    <option [ngValue]="null">Todos los municipios</option>
+                    <option   *ngFor="let mcpio of lstMunicipios; index as i" [ngValue]="mcpio.id">{{mcpio.municipio}}</option>
+                  </select>
+                </div>
+            
+            
+            </div>
+            <div class="card-footer d-flex justify-content-end">
+              <button type="button" class="btn btn-sm btn-outline-dark me-2" (click)="cancelar()">
+                  Regresar
+              </button>
+              <button type="submit" class="btn btn-sm btn-success"
+                      [disabled]="!formRegistro.valid || loaderGuardar">
+                  {{messageButton}} <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+              </button>
+            </div>
+          </form> 
+            
+        </div>
+          
+
+      </div>
+
+    </div>
+    
+
+  </section>
+</div>
+
+
+<!-- modal -->
+<ng-template #modalEliminar let-c="close" let-d="dismiss">
+         
+  <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer eliminar este código postal?</h4>
+        <label class="mt-2 text-muted">No será posible recuperar después</label>
+  </div>
+  <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-default" (click)="cancelar()">No, cancela!</button>
+      <button type="button" class="btn btn-sm btn-danger" (click)="eliminarSubmit()">Sí, eliminalo!
+        <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+      </button>
+  </div>
+</ng-template>

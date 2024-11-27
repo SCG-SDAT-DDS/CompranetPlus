@@ -1,0 +1,344 @@
+<div>
+
+    <main>
+        <div class="display-area">
+            <section>
+                <div class="container pt-5">
+                    <div class="row">
+                        <div class="d-inline-block col-md-8">
+                            <h2 class="d-inline-block me-2">Junta de aclaraciones</h2>
+                            <h6 class="d-inline-block">Ver y responder a preguntas</h6>
+                        </div>
+
+                    </div>
+
+                    <div class="container pb-3">
+                        <app-encabezado-procedimiento
+                                [__procedimientoElegido]="_procedimientoElegido"></app-encabezado-procedimiento>
+                    </div>
+
+                    <div class="row lic_info">
+
+                        <div class="col-md-6 col-sm-6 col-12">
+                            <strong>Fecha programada de la junta de aclaraciones:</strong>
+                            {{ datosUlimtaJuntaAclaraciones?.fecha_junta_aclaraciones | fechasPipe }}
+                        </div>
+
+                        <div class="col-md-6 col-sm-6 col-12">
+                          <strong>Fecha apertura propuesta:</strong>
+
+                          <span *ngIf="_procedimientoElegido?.fecha_apertura_nueva != undefined ">
+                                  {{ _procedimientoElegido?.fecha_apertura_nueva | fechasPipe }}
+                              </span>
+
+                          <span *ngIf="_procedimientoElegido?.fecha_apertura_nueva == undefined || _procedimientoElegido?.fecha_apertura_nueva == null ">
+                                  {{ _procedimientoElegido?.fecha_apertura | fechasPipe }}
+                              </span>
+
+                        </div>
+
+                        <div class="col-md-6 col-sm-6 col-12">
+                            <strong>Fecha del acta de la junta de aclaraciones:</strong>
+                            {{ datosUlimtaJuntaAclaraciones?.fecha_carga_acta | fechasPipe }}
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-12">
+                            <div class="container table-responsive">
+                                <table class="table table-striped " aria-describedby="table_participantes">
+                                    <thead>
+                                    <tr>
+                                        <th scope="col">RFC</th>
+                                        <th scope="col">Nombre o Razón social</th>
+                                        <th scope="col">Giro de la empresa</th>
+                                        <th scope="col">Invitado o Participando</th>
+                                        <th scope="col">Estatus partida</th>
+                                        <th scope="col">Seleccionado</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    <tr *ngFor="let participante of lstParticipantes; index as i">
+
+                                        <td>
+                                            {{ participante.rfc_proveedor}}
+                                        </td>
+                                        <td>
+                                            {{participante.nombre_proveedor}} {{participante.primer_apellido_proveedor}} {{participante.segundo_apellido_proveedor}} {{participante.razon_social}}
+                                        </td>
+                                        <td>
+                                            {{ participante.descripcion_giro_empresa}}
+                                        </td>
+
+                                        <td>
+                                            <span class="badge bg-default"
+                                                  *ngIf="participante.id_tipo_participacion ==2">Participando</span>
+                                            <span class="badge bg-default"
+                                                  *ngIf="participante.id_tipo_participacion ==1">Invitado</span>
+                                        </td>
+                                        <td>
+                                            <span [ngClass]="participante.estilo">{{participante.nombre_estatus_participacion}}</span>
+
+                                        </td>
+                                        <td>
+                                            <input type="radio"
+                                                   name="participantes"
+                                                   [(ngModel)]="participante.seleccionadoLista"
+                                                   [value]="true"
+                                                   [checked]="participante.seleccionadoLista"
+                                                   (change)="cambiarProveedor(participante)"
+                                            />
+                                        </td>
+
+                                    </tr>
+                                    </tbody>
+                                </table>
+                                <div class="d-flex justify-content-center align-items-center pb-2">
+                                    <div *ngIf="loaderParticipantes" class="spinner-border spinner-border-lg"
+                                         role="status"></div>
+                                </div>
+                                <ngb-alert
+                                        *ngIf="lstParticipantes != null && lstParticipantes.length == 0 && !loaderParticipantes">
+                                    Sin datos para mostrar
+                                </ngb-alert>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card mt-3">
+                        <div class="container ">
+                            <input id="subirArchivoInput" #subirArchivoInput
+                                   class="form-control"
+                                   [hidden]="true"
+                                   type="file" accept=".pdf"
+                                   (change)="cargarActaJunta($event)" *ngIf="editar"
+                            />
+                            <input id="subirArchivoProrrogaInput" #subirArchivoProrrogaInput
+                                   class="form-control"
+                                   [hidden]="true"
+                                   type="file" accept=".pdf"
+                                   (change)="cargarActaDiferimiento($event)" *ngIf="editar"
+                            />
+
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="container table-responsive">
+                                        <table class="table table-striped " aria-describedby="table_participantes">
+                                            <thead>
+                                            <tr>
+                                                <th scope="col">Preguntas</th>
+                                                <th scope="col">Fecha de carga</th>
+                                                <th scope="col">Fecha de descarga convocante</th>
+                                                <th scope="col">Estatus</th>
+                                                <th scope="col">Acciones</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody>
+                                            <ng-container *ngFor="let pregunta of lstPreguntas; index as i">
+                                                <tr *ngIf="pregunta.visibleFiltro">
+                                                    <td>
+                                                        {{pregunta.url_archivo | nombreArchivoPipe}}
+                                                    </td>
+                                                    <td>
+                                                        {{ pregunta.fecha_ultima_mod | date:'dd/MM/yyyy HH:mm'}}
+                                                    </td>
+                                                    <td>
+                                                        <span *ngIf="pregunta.fecha_descarga_conv !== undefined && pregunta.fecha_descarga_conv !== null"> {{ pregunta.fecha_descarga_conv | date:'dd/MM/yyyy HH:mm'}} </span>
+                                                        <span *ngIf="pregunta.fecha_descarga_conv == undefined || pregunta.fecha_descarga_conv == null"> - </span>
+                                                    </td>
+                                                    <td>
+                                                    <span class="badge bg-info"
+                                                          *ngIf="pregunta.id_participante_procedimiento == undefined || pregunta.id_participante_procedimiento == null;">Por almacenar</span>
+                                                        <span class="badge bg-warning"
+                                                              *ngIf="pregunta.id_participante_procedimiento !== undefined && pregunta.id_participante_procedimiento !== null && (pregunta.fecha_descarga_conv == undefined || pregunta.fecha_descarga_conv == null)">Almacenado</span>
+                                                        <span class="badge bg-success"
+                                                              *ngIf="pregunta.id_participante_procedimiento !== undefined && pregunta.id_participante_procedimiento !== null && (pregunta.fecha_descarga_conv !== undefined && pregunta.fecha_descarga_conv !== null)">Leido convocante</span>
+                                                    </td>
+                                                    <td>
+                                                        <button class="btn btn-warning btn-sm btn-circle" type="button"
+                                                                (click)="descargar(pregunta)"
+                                                                [disabled]="loaderDescargarPregunta">
+                                                            <i *ngIf="!loaderDescargarPregunta"
+                                                               class="bi bi-download"></i>
+                                                            <div *ngIf="loaderDescargarPregunta"
+                                                                 class="spinner-border spinner-border-sm"
+                                                                 role="status"></div>
+                                                        </button>
+                                                    </td>
+
+                                                </tr>
+                                            </ng-container>
+                                            </tbody>
+                                        </table>
+                                        <div class="d-flex justify-content-center align-items-center pb-2">
+                                            <div *ngIf="loaderPreguntas" class="spinner-border spinner-border-lg"
+                                                 role="status"></div>
+                                        </div>
+                                        <ngb-alert
+                                                *ngIf="lstParticipantes != null && lstParticipantes.length == 0 && !loaderPreguntas">
+                                            Sin datos para mostrar
+                                        </ngb-alert>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-12" style="padding: 5px">
+                                <div class="d-flex justify-content-end align-items-end">
+                                    <span style="padding: 5px">{{achivoCargaActaJunta?.nombreArchivo}}</span>
+                                    <button class="btn btn-sm btn-success" type="button" (click)="openSelect()"
+                                            *ngIf="editar"
+                                            [disabled]="!esValidoAgregarActaJunta || !permitirResponder"
+                                            title="Agregar el acta de junta de aclaraciones, incluyendo sus respectivas respuestas">
+                                        <i class="bi bi-upload"></i>
+                                        Agregar acta de junta de aclaraciones
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" style="margin-left: 5px;"
+                                            type="button" (click)="solicitarProrroga()"
+                                            *ngIf="editar"
+                                            [disabled]="!esValidoAgregarActaJunta || datosUlimtaJuntaAclaraciones?.fecha_carga_acta!=null || !permitirResponder"
+                                            title="Acta de diferimiento de la junta de aclaración">
+                                        Agregar acta de diferimiento
+                                    </button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="card-footer d-flex justify-content-end pt-3">
+
+                            <button *ngIf="(achivoCargaActaJunta == undefined || achivoCargaActaJunta == null)"
+                                    class="btn  btn-sm btn-outline-dark me-2"
+                                    (click)="preguntarCancelar()">
+                                Regresar
+                            </button>
+
+                            <button *ngIf="(achivoCargaActaJunta !== undefined && achivoCargaActaJunta !== null)"
+                                    class="btn  btn-sm btn-danger me-2"
+                                    (click)="preguntarCancelar()">
+                                Cancelar
+                            </button>
+                            <button class="btn  btn-sm btn-success me-2"
+                                    *ngIf="editar"
+                                    [disabled]="(achivoCargaActaJunta == undefined || achivoCargaActaJunta == null)"
+                                    (click)="guardarRespuesta()">
+                                Guardar
+                                <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+                            </button>
+
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+</div>
+
+<!-- modal -->
+<ng-template #modalCancelar let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de querer cancelar y regresar?</h4>
+        <label class="mt-2 text-muted">No será posible recuperar después</label>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-sm btn-default" (click)="abrirCerrarModal(false)">No,
+            continua!
+        </button>
+        <button type="button" class="btn btn-sm btn-danger" (click)="cancelar()">
+            Sí, cancela!
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #modalProrroga let-c="close" let-d="dismiss">
+    <div class="modal-body d-flex flex-column align-items-center">
+        <i class="bi bi-exclamation-circle icono-grande" style="color: var(--warning-color-hover);"></i>
+        <h4 class="mt-2 text-center">¿Estás seguro de subir el acta de diferimiento?</h4>
+        <label class="mt-2 text-muted">Solo será posible continuar con la carga del acta de junta de aclaraciones hasta
+            la fecha de reprogramación</label>
+        <div *ngIf="formRegistroProrroga!=null">
+            <form [formGroup]="formRegistroProrroga">
+                <div class="row">
+                    <div class="col-6">
+                        <label for="fechajuntaaclaraciones" class="form-label">Fecha de junta aclaraciones:
+                            <app-campo-obligatorio></app-campo-obligatorio>
+                        </label>
+
+                        <div class="input-group">
+                            <input id="fechajuntaaclaraciones"
+                                   name="fechajuntaaclaraciones"
+                                   ngbDatepicker
+                                   placeholder="Fecha de junta de aclaraciones"
+                                   class="form-control"
+                                   #fechajuntaaclaraciones="ngbDatepicker"
+                                   formControlName="fecha_junta_aclaraciones"
+                                   [markDisabled]="dateIsDisabled"
+                                   [class.is-invalid]="formRegistroProrroga.get('fecha_junta_aclaraciones')?.invalid &&
+                                        (formRegistroProrroga.get('fecha_junta_aclaraciones')?.dirty || formRegistroProrroga.get('fecha_junta_aclaraciones')?.touched)"
+                            />
+                            <button class="btn btn-outline-secondary bi bi-calendar3"
+                                    (click)="fechajuntaaclaraciones.toggle()"
+                                    type="button"></button>
+                        </div>
+
+
+                        <div *ngIf="formRegistroProrroga.get('fecha_junta_aclaraciones')?.invalid
+                                    && formRegistroProrroga.get('fecha_junta_aclaraciones')?.errors
+                                    && (formRegistroProrroga.get('fecha_junta_aclaraciones')?.dirty || formRegistroProrroga.get('fecha_junta_aclaraciones')?.touched)">
+                            <small class="text-danger"
+                                   *ngIf="formRegistroProrroga.get('fecha_junta_aclaraciones')?.hasError('required')">
+                                Este campo es requerido.
+                            </small>
+                        </div>
+
+                    </div>
+                    <div class="col-6">
+                        <label for="horajuntaaclaraciones" class="form-label">Hora de junta aclaraciones:
+                            <app-campo-obligatorio></app-campo-obligatorio>
+                        </label>
+                        <input type="time" class="form-control" id="horajuntaaclaraciones"
+                               formControlName="hora_junta_aclaraciones" name="horajuntaaclaraciones"
+                               [class.is-invalid]="formRegistroProrroga.get('hora_junta_aclaraciones')?.invalid &&
+                                (formRegistroProrroga.get('hora_junta_aclaraciones')?.dirty || formRegistroProrroga.get('hora_junta_aclaraciones')?.touched)"/>
+
+                        <div *ngIf="formRegistroProrroga.get('hora_junta_aclaraciones')?.invalid
+                                    && formRegistroProrroga.get('hora_junta_aclaraciones')?.errors
+                                    && (formRegistroProrroga.get('hora_junta_aclaraciones')?.dirty || formRegistroProrroga.get('hora_junta_aclaraciones')?.touched)">
+                            <small class="text-danger"
+                                   *ngIf="formRegistroProrroga.get('hora_junta_aclaraciones')?.hasError('required')">
+                                Este campo es requerido.
+                            </small>
+                        </div>
+
+                    </div>
+                    <br/>
+                    <div class="col-12" style="margin-top: 10px;">
+                        <button class="btn btn-sm btn-success" type="button" (click)="openSelectProrroga()"
+                                *ngIf="editar"
+                                title="Agregar el acta de diferimiento de la junta de aclaraciones">
+                            <i class="bi bi-upload"></i>
+                            Agregar acta de diferimiento
+                        </button>
+                        <span style="padding: 5px">{{achivoCargaProrroga?.nombreArchivo}}</span>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn  btn-sm btn-danger me-2" (click)="cancelarProrroga()">No,
+            Cancelar
+        </button>
+        <button type="button" class="btn btn-sm btn-warning" (click)="guardarProrroga()"
+                [disabled]="formRegistroProrroga == null
+                    || formRegistroProrroga.get('fecha_junta_aclaraciones')?.invalid
+                    || formRegistroProrroga.get('hora_junta_aclaraciones')?.invalid
+                    || achivoCargaProrroga == null
+                    || loaderGuardar">
+            Sí, realiza diferimiento!
+            <div *ngIf="loaderGuardar" class="spinner-border spinner-border-sm" role="status"></div>
+        </button>
+    </div>
+</ng-template>

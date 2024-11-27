@@ -1,0 +1,15 @@
+<label class="form-label mt-3">Certificado (.cer) :</label>
+<input class="form-control" type="file" (change)="obtenerArchivoCer($event)" accept=".cer">
+<div *ngIf="rfcFirmante !== ''" class="alert alert-success mt-3" role="alert">
+  RFC : {{rfcFirmante}}
+</div>
+<label class="form-label mt-3">Clave privada (.key) :</label>
+<input class="form-control" type="file" (change)="obtenerArchivoKey($event)" accept=".key">
+<label class="form-label mt-3">Contraseña de clave privada :</label>
+<input class="form-control" [(ngModel)]="clavePrivada" type="password" placeholder="Contraseña">
+
+<div class="mt-4">
+  <button class="btn btn-sm btn-primary" style="margin-right: 10px;" [disabled]="!blnButtonFinalizar" (click)="validarFirma()">Finalizar
+    <div *ngIf="loaderFirma" class="spinner-border spinner-border-sm" role="status"></div></button>
+  <button class="btn btn-sm btn-outline-secondary" *ngIf="rfc_proveedor == undefined" (click)="redireccionarInicio()">Cancelar</button>
+</div>

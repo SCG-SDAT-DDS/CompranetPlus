@@ -1,0 +1,44 @@
+/* CSS para las animaciones */
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+
+.cls-titulo-portal {
+  padding: 1rem;
+  color: var(--ternary-color);
+  box-shadow: rgba(0, 0, 0, 0.2) 0px 0px 10px;
+}
+
+.cls-radio-button{
+  width: 1.2rem;
+  margin-right: 5px;
+  height: 1.2rem;
+}
+
+.cls-span-persona{
+  font-size: 1.2rem;
+  font-family: 'Montserrat',sans-serif;
+}
+
+.form-check-input:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.cls-persona-header{
+  background: var(--ternary-color);
+  /* margin: -17.5px -17.5px 10px -17.5px; */
+  margin: -2.5% -2.3% 10px -2.3%;
+  color: var(--blanco-color);
+  text-align: center;
+  border-radius: 10px 10px 0px 0px;
+  padding: 5px;
+}
